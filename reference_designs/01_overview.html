@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="web_dashboard" name="shell-type"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+@layer base { 
+  html, body { margin: 0; padding: 0; } 
+  body { overscroll-behavior: none; } 
+  main > :first-child { margin-top: 0 !important; } 
+  main > :last-child { margin-bottom: 0 !important; } 
+}
+::-webkit-scrollbar { display: none; }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "outline": "#76777d",
+        "outline-variant": "#c6c6cd",
+        "secondary-fixed-dim": "#6bd8cb",
+        "on-tertiary": "#ffffff",
+        "primary-fixed": "#dae2fd",
+        "surface-container-highest": "#d3e4fe",
+        "tertiary-fixed": "#d8e3fb",
+        "surface-bright": "#f8f9ff",
+        "on-tertiary-container": "#79849a",
+        "on-secondary": "#ffffff",
+        "surface-container-high": "#dce9ff",
+        "on-error": "#ffffff",
+        "background": "#f8f9ff",
+        "surface-container-low": "#eff4ff",
+        "on-tertiary-fixed": "#111c2d",
+        "secondary": "#006a61",
+        "error": "#ba1a1a",
+        "inverse-surface": "#213145",
+        "surface-variant": "#d3e4fe",
+        "on-primary-container": "#7c839b",
+        "surface-tint": "#565e74",
+        "on-background": "#0b1c30",
+        "on-surface": "#0b1c30",
+        "primary-container": "#131b2e",
+        "on-secondary-container": "#006f66",
+        "error-container": "#ffdad6",
+        "inverse-primary": "#bec6e0",
+        "surface-container-lowest": "#ffffff",
+        "on-primary-fixed": "#131b2e",
+        "inverse-on-surface": "#eaf1ff",
+        "tertiary-fixed-dim": "#bcc7de",
+        "on-primary": "#ffffff",
+        "on-primary-fixed-variant": "#3f465c",
+        "tertiary-container": "#111c2d",
+        "surface-dim": "#cbdbf5",
+        "surface": "#f8f9ff",
+        "secondary-container": "#86f2e4",
+        "primary-fixed-dim": "#bec6e0",
+        "on-error-container": "#93000a",
+        "on-surface-variant": "#45464d",
+        "secondary-fixed": "#89f5e7",
+        "on-secondary-fixed-variant": "#005049",
+        "primary": "#000000",
+        "on-tertiary-fixed-variant": "#3c475a",
+        "on-secondary-fixed": "#00201d",
+        "surface-container": "#e5eeff",
+        "tertiary": "#000000"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.125rem",
+        "lg": "0.25rem",
+        "xl": "0.5rem",
+        "full": "0.75rem"
+      },
+      "spacing": {
+        "space-md": "0.75rem",
+        "gutter": "1rem",
+        "space-xs": "0.25rem",
+        "space-xl": "1.5rem",
+        "margin": "1rem",
+        "space-lg": "1rem",
+        "space-sm": "0.5rem",
+        "gutter-desktop": "1.5rem",
+        "margin-desktop": "2rem",
+        "margin-tablet": "1.5rem"
+      },
+      "fontFamily": {
+        "headline-md": ["Inter"],
+        "headline-sm": ["Inter"],
+        "label-md": ["Inter"],
+        "headline-xl": ["Inter"],
+        "headline-xl-mobile": ["Inter"],
+        "label-sm": ["Inter"],
+        "headline-lg": ["Inter"],
+        "body-sm": ["Inter"],
+        "body-lg": ["Inter"],
+        "numeric-metric": ["Inter"],
+        "body-md": ["Inter"],
+        "numeric-table": ["Inter"]
+      },
+      "fontSize": {
+        "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+        "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+        "label-md": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+        "headline-xl": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+        "headline-xl-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+        "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.025em", "fontWeight": "600" }],
+        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+        "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+        "numeric-metric": ["28px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+        "numeric-table": ["13px", { "lineHeight": "20px", "letterSpacing": "-0.005em", "fontWeight": "500" }]
+      }
+    }
+  }
+};
+</script>
+</head>
+<body class="bg-surface font-body-md text-body-md text-on-surface min-h-screen">
+<aside class="fixed left-0 top-0 h-full w-72 bg-primary-container z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+<div class="flex flex-col h-full">
+<div class="p-space-lg flex items-center justify-between bg-tertiary-container">
+<div class="flex items-center gap-space-sm overflow-hidden">
+<img alt="THULIR Logo" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1UhC_Px3BtWayW5EaSFSIX1sHpqmkbda_aeRSPAo0D9dkZKqd2C5NgET9T9sEflavjvvNNIkIdl_SGMWNNENPLJyuXTiOq8T8bhk6yLSicc9acZN_CiagY0H3ftHvJtNDPc79STnjLykMnTmdvDG_qMGtlHAQkmOSqPYp0WKXw9RueZUfFKLZ2tyr6ER4ogYkOk71qjkJrFzeavdFRZUDrj4cpF5oG7x3HJN9uuWlDu"/>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-primary tracking-tight truncate">THULIR</span>
+<span class="font-label-sm text-label-sm text-on-primary-container truncate">Early-Warning &amp; Support System</span>
+</div>
+</div>
+</div>
+<div class="px-space-lg py-space-sm bg-inverse-surface">
+<span class="font-label-sm text-label-sm text-inverse-on-surface block truncate">Dept. of School Education</span>
+</div>
+<nav class="flex-1 overflow-y-auto px-space-md py-space-md space-y-space-md" data-active-classes="bg-secondary text-on-secondary font-label-md rounded">
+<div class="space-y-space-xs">
+<div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-primary-container uppercase tracking-wider">Navigation</div>
+<a aria-current="page" class="block px-space-sm py-space-xs transition-colors bg-secondary text-on-secondary font-label-md rounded" data-path="overview" href="#">Overview</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="students" href="#">Students</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="early-warnings" href="#">Early Warnings</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="support-cases" href="#">Support Cases</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="interventions" href="#">Interventions</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="reports" href="#">Reports</a>
+</div>
+<div class="space-y-space-xs">
+<div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-primary-container uppercase tracking-wider">System</div>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="data-import" href="#">Data Import</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="settings" href="#">Settings</a>
+</div>
+</nav>
+</div>
+</aside>
+<div class="pl-72 flex flex-col min-h-screen">
+<header class="fixed top-0 left-72 right-0 h-16 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter-desktop">
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] text-secondary">account_balance</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Government Higher Secondary School Kovilpatti</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">(UDISE: 33280100412)</span>
+</div>
+<div class="hidden xl:inline-flex items-center px-space-sm py-space-xs bg-surface-container rounded">
+<span class="font-label-sm text-label-sm text-on-surface">2024-25 • Term II</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="relative w-80">
+<span class="material-symbols-outlined absolute left-space-sm top-1/2 -translate-y-1/2 text-[18px] text-outline">search</span>
+<input class="w-full h-9 pl-8 pr-space-sm bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded placeholder-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary" placeholder="Search Student ID / EMIS / Name..." type="text"/>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-9 px-space-md bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>Log Review / Case</span>
+</button>
+</div>
+<div class="relative flex items-center justify-center p-space-xs cursor-pointer text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute -top-1 -right-1 bg-error text-on-error font-label-sm text-label-sm px-space-xs py-0 rounded-full leading-none">7</span>
+</div>
+<div class="flex items-center gap-space-sm pl-space-sm">
+<div class="flex flex-col text-right hidden lg:block">
+<span class="font-label-md text-label-md text-on-surface font-medium leading-tight">R. Meenakshi</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant leading-tight">Head Counselor (M.S.W.)</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+</div>
+</div>
+</div>
+</header>
+<main class="relative pt-16 bg-surface min-h-[calc(100vh-4rem)] w-full px-gutter-desktop py-space-md">
+<div class="flex flex-col w-full">
+<!-- Top Command Action Bar -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md mb-space-lg">
+<div>
+<div class="flex items-center gap-space-xs mb-1">
+<span class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Early-Warning &amp; Support Overview</span>
+<span class="inline-flex items-center px-space-xs py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+          Live Sync • 09:41 AM
+        </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Term II (2024-25) • Autonomous early detection across biometrics, periodic CAT assessments, and counselor field notes.
+      </p>
+</div>
+<!-- Filter & Dispatch Controls -->
+<div class="flex flex-wrap items-center gap-space-xs">
+<div class="inline-flex items-center bg-surface-container-lowest px-space-sm py-1 rounded shadow-sm">
+<span class="material-symbols-outlined text-[16px] text-outline mr-1">group</span>
+<select class="bg-transparent font-label-md text-label-md text-on-surface focus:outline-none cursor-pointer pr-space-xs">
+<option>All Cohorts (Grades 6–12)</option>
+<option>SSLC Cohort (Grade 10)</option>
+<option>HSC Cohort (Grade 12)</option>
+<option>Middle School (Grades 6-8)</option>
+</select>
+</div>
+<div class="inline-flex items-center bg-surface-container-lowest px-space-sm py-1 rounded shadow-sm">
+<span class="material-symbols-outlined text-[16px] text-outline mr-1">flag</span>
+<select class="bg-transparent font-label-md text-label-md text-on-surface focus:outline-none cursor-pointer pr-space-xs">
+<option>All Priority Levels</option>
+<option>Critical &amp; High Only</option>
+<option>Moderate Only</option>
+<option>Monitoring</option>
+</select>
+</div>
+<div class="inline-flex items-center bg-surface-container-lowest px-space-sm py-1 rounded shadow-sm">
+<span class="material-symbols-outlined text-[16px] text-outline mr-1">calendar_today</span>
+<select class="bg-transparent font-label-md text-label-md text-on-surface focus:outline-none cursor-pointer pr-space-xs">
+<option>Term II (Current)</option>
+<option>Term I (Archived)</option>
+</select>
+</div>
+<button class="h-9 px-space-sm bg-surface-container-lowest text-on-surface hover:bg-surface-container-high font-label-md text-label-md rounded flex items-center gap-space-xs shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+<span>Export CSV</span>
+</button>
+<button class="h-9 px-space-md bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded flex items-center gap-space-xs shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">assignment_turned_in</span>
+<span>Initiate Review Session</span>
+</button>
+</div>
+</div>
+<!-- Key Performance Indicators (Grid of 4) -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-space-md mb-space-lg">
+<!-- Card 1: Total Students -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Total Enrolled Cohort</span>
+<span class="material-symbols-outlined text-[20px] text-secondary">groups</span>
+</div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-numeric-metric text-numeric-metric text-on-surface">1,428</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">+12 this month</span>
+</div>
+</div>
+<div class="mt-space-sm pt-space-xs bg-surface-container-low px-space-xs py-1 rounded flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>38 Class Sections</span>
+<span>37.6 Avg / Section</span>
+</div>
+</div>
+<!-- Card 2: Requiring Review -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Requiring Review</span>
+<span class="material-symbols-outlined text-[20px] text-error">notification_important</span>
+</div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-numeric-metric text-numeric-metric text-on-surface">43</span>
+<span class="font-label-sm text-label-sm bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded font-semibold">+6 new triggers</span>
+</div>
+</div>
+<div class="mt-space-sm pt-space-xs bg-surface-container-low px-space-xs py-1 rounded flex justify-between font-label-sm text-label-sm">
+<span class="text-error font-medium">14 High Priority</span>
+<span class="text-on-surface-variant">29 Moderate</span>
+</div>
+</div>
+<!-- Card 3: Active Support Cases -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Active Support Cases</span>
+<span class="material-symbols-outlined text-[20px] text-secondary">support_agent</span>
+</div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-numeric-metric text-numeric-metric text-on-surface">67</span>
+<span class="font-label-sm text-label-sm bg-secondary-fixed-dim/30 text-secondary font-semibold px-1.5 py-0.5 rounded">82% plan adherence</span>
+</div>
+</div>
+<div class="mt-space-sm pt-space-xs bg-surface-container-low px-space-xs py-1 rounded flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>48 Remedial Teaching</span>
+<span>19 Psychosocial/Welfare</span>
+</div>
+</div>
+<!-- Card 4: Overdue Follow-ups -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Overdue Follow-ups</span>
+<span class="material-symbols-outlined text-[20px] text-error">alarm_on</span>
+</div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-numeric-metric text-numeric-metric text-error">09</span>
+<span class="font-label-sm text-label-sm bg-error-container text-on-error-container px-1.5 py-0.5 rounded font-semibold">Action &lt;48h Req.</span>
+</div>
+</div>
+<div class="mt-space-sm pt-space-xs bg-error-container/40 px-space-xs py-1 rounded flex justify-between font-label-sm text-label-sm text-on-error-container">
+<span>Escalated to HM Desk</span>
+<span>Max: 6d Lag</span>
+</div>
+</div>
+</div>
+<!-- Deep Visual Analytics (2 Column Grid) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-md mb-space-lg">
+<!-- Chart Column 1: Attendance & CAT Trajectory (7 Cols) -->
+<div class="xl:col-span-7 bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-start justify-between mb-space-sm">
+<div>
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface">Attendance &amp; Academic Trajectory</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 bg-surface-container-high text-on-surface-variant rounded">12-Week Rolling</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Dual-axis correlation of daily biometric registers against scheduled Continuous Assessment Tests (CAT).</p>
+</div>
+<div class="flex items-center gap-space-sm text-label-sm font-label-sm">
+<span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-secondary"></span> Attendance %</span>
+<span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span> CAT Pass %</span>
+</div>
+</div>
+<!-- Inline SVG Visualization -->
+<div class="relative w-full h-56 bg-surface-container-low rounded-lg p-space-sm flex flex-col justify-end overflow-hidden">
+<!-- Threshold line -->
+<div class="absolute left-0 right-0 top-1/2 flex items-center z-10 pointer-events-none opacity-80">
+<div class="w-full border-t border-dashed border-error"></div>
+<span class="bg-error text-on-error font-label-sm text-[10px] px-1 rounded absolute right-2 -top-2.5">
+              GO MS 104: 75% Statutory Floor
+            </span>
+</div>
+<!-- Festival Dip Highlight Area -->
+<div class="absolute left-[36%] w-[16%] top-2 bottom-6 bg-error-container/20 rounded pointer-events-none flex flex-col items-center pt-1">
+<span class="font-label-sm text-[10px] text-error font-semibold">Pongal Harvest Dip</span>
+</div>
+<!-- The SVG Line Graph -->
+<svg class="w-full h-full text-secondary" preserveaspectratio="none" viewbox="0 0 700 180">
+<!-- Grid Lines -->
+<line stroke="#dce9ff" stroke-dasharray="2,2" stroke-width="1" x1="0" x2="700" y1="30" y2="30"></line>
+<line stroke="#dce9ff" stroke-dasharray="2,2" stroke-width="1" x1="0" x2="700" y1="75" y2="75"></line>
+<line stroke="#dce9ff" stroke-dasharray="2,2" stroke-width="1" x1="0" x2="700" y1="120" y2="120"></line>
+<!-- CAT Marks Curve (Dark Slate) -->
+<polyline fill="none" points="20,70 80,68 140,75 200,82 260,110 320,105 380,85 440,72 500,60 560,54 620,58 680,50" stroke="#131b2e" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></polyline>
+<!-- Biometric Attendance Curve (Teal) -->
+<polyline fill="none" points="20,40 80,42 140,50 200,65 260,115 320,100 380,65 440,50 500,45 560,35 620,38 680,32" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></polyline>
+<!-- Nodes on Attendance -->
+<circle cx="260" cy="115" fill="#ba1a1a" r="4"></circle>
+<circle cx="320" cy="100" fill="#ba1a1a" r="4"></circle>
+<circle cx="560" cy="35" fill="currentColor" r="3.5"></circle>
+<circle cx="680" cy="32" fill="currentColor" r="3.5"></circle>
+</svg>
+<!-- X-Axis Labels -->
+<div class="flex justify-between text-outline text-label-sm font-label-sm pt-1 px-1">
+<span>W1 (Nov)</span>
+<span>W3</span>
+<span>W5 (Dec)</span>
+<span>W7 (Jan Dip)</span>
+<span>W9 (CAT 2)</span>
+<span>W11 (Feb)</span>
+<span>W12 (Current)</span>
+</div>
+</div>
+</div>
+<!-- Empirical Insight Strip -->
+<div class="mt-space-sm p-space-xs bg-surface-container rounded flex items-center gap-space-xs text-on-surface">
+<span class="material-symbols-outlined text-[18px] text-secondary flex-shrink-0">insights</span>
+<span class="font-body-sm text-body-sm">
+<strong>Key Empirical Finding:</strong> Students dropping below the 75% attendance line demonstrate a <strong>3.2x higher failure rate</strong> in CAT Science &amp; Math within 14 calendar days.
+        </span>
+</div>
+</div>
+<!-- Chart Column 2: Breakdown of Warning Drivers (5 Cols) -->
+<div class="xl:col-span-5 bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface">Review Indicators by Category</span>
+<span class="font-label-sm text-label-sm font-semibold text-secondary">N = 67 active flags</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Stratified root drivers identified through automated rules engine.</p>
+<!-- Progress Bars Breakdown -->
+<div class="space-y-space-xs">
+<div>
+<div class="flex justify-between font-label-md text-label-md text-on-surface mb-0.5">
+<span>Chronic Absenteeism (&gt;15 unexcused days)</span>
+<span class="font-semibold text-error">24 cases (36%)</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-error" style="width: 36%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-md text-label-md text-on-surface mb-0.5">
+<span>Sudden Academic Drop (&gt;25% across 2 CATs)</span>
+<span class="font-semibold text-amber-700">18 cases (27%)</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-amber-500" style="width: 27%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-md text-label-md text-on-surface mb-0.5">
+<span>Socio-Economic &amp; Transit Disruption</span>
+<span class="font-semibold text-secondary">13 cases (19%)</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary" style="width: 19%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-md text-label-md text-on-surface mb-0.5">
+<span>Psychosocial &amp; Behavioral Changes</span>
+<span class="font-semibold text-primary-container">8 cases (12%)</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-surface-tint" style="width: 12%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-md text-label-md text-on-surface mb-0.5">
+<span>Health &amp; Nutritional Interruption</span>
+<span class="font-semibold text-outline">4 cases (6%)</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-outline-variant" style="width: 6%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Critical Board Exam Focus Callout -->
+<div class="mt-space-sm pt-space-xs grid grid-cols-2 gap-space-xs">
+<div class="bg-surface-container-low p-space-xs rounded flex flex-col">
+<span class="font-label-sm text-label-sm text-outline uppercase font-semibold">SSLC (Grade 10)</span>
+<span class="font-headline-sm text-headline-sm text-error">19 at-risk</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">Focus: Science &amp; Math</span>
+</div>
+<div class="bg-surface-container-low p-space-xs rounded flex flex-col">
+<span class="font-label-sm text-label-sm text-outline uppercase font-semibold">HSC (Grade 12)</span>
+<span class="font-headline-sm text-headline-sm text-amber-700">14 at-risk</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">Focus: Physics &amp; CS</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Priority Student Roster Section -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-md mb-space-lg">
+<!-- Roster Header & Multi-tab Navigation -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm pb-space-sm mb-space-sm">
+<div class="flex items-center gap-space-xs overflow-x-auto pb-1 md:pb-0">
+<button class="px-space-sm py-1.5 bg-secondary text-on-secondary font-label-md text-label-md rounded flex items-center gap-1 shadow-sm font-semibold">
+<span>All Priority</span>
+<span class="px-1.5 py-0.2 bg-on-secondary/20 rounded-full text-xs">43</span>
+</button>
+<button class="px-space-sm py-1.5 bg-surface-container-low text-on-surface hover:bg-surface-container font-label-md text-label-md rounded flex items-center gap-1 transition-colors">
+<span class="text-error font-medium">High Priority</span>
+<span class="px-1.5 py-0.2 bg-error-container text-on-error-container rounded-full text-xs font-semibold">14</span>
+</button>
+<button class="px-space-sm py-1.5 bg-surface-container-low text-on-surface hover:bg-surface-container font-label-md text-label-md rounded flex items-center gap-1 transition-colors">
+<span>Consecutive Absences</span>
+<span class="px-1.5 py-0.2 bg-surface-container-high text-on-surface-variant rounded-full text-xs">19</span>
+</button>
+<button class="px-space-sm py-1.5 bg-surface-container-low text-on-surface hover:bg-surface-container font-label-md text-label-md rounded flex items-center gap-1 transition-colors">
+<span>Pending Guardian Contact</span>
+<span class="px-1.5 py-0.2 bg-surface-container-high text-on-surface-variant rounded-full text-xs">8</span>
+</button>
+</div>
+<!-- Table Tools -->
+<div class="flex items-center gap-space-xs">
+<div class="relative w-64">
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-[16px] text-outline">search</span>
+<input class="w-full h-8 pl-7 pr-space-xs bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded placeholder-outline focus:outline-none focus:bg-surface-container-lowest" placeholder="Filter roster..." type="text"/>
+</div>
+<button class="h-8 px-space-xs bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md rounded flex items-center gap-1" title="Customize columns">
+<span class="material-symbols-outlined text-[16px]">view_column</span>
+<span class="hidden sm:inline">Columns</span>
+</button>
+</div>
+</div>
+<!-- Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-outline font-label-sm text-label-sm uppercase tracking-wider">
+<th class="p-space-xs w-8 text-center">
+<input class="rounded text-secondary focus:ring-0 cursor-pointer" type="checkbox"/>
+</th>
+<th class="p-space-xs">Student &amp; EMIS ID</th>
+<th class="p-space-xs">Class / Sec</th>
+<th class="p-space-xs">Primary Trigger Reason</th>
+<th class="p-space-xs">30-Day Trend</th>
+<th class="p-space-xs">Latest CAT Metric</th>
+<th class="p-space-xs">Assigned Counselor</th>
+<th class="p-space-xs">Status</th>
+<th class="p-space-xs text-right">Action</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md text-on-surface">
+<!-- Row 1: Kavitha M -->
+<tr class="hover:bg-surface-container-low/70 transition-colors">
+<td class="p-space-xs text-center">
+<input class="rounded text-secondary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-space-xs">
+<div class="flex items-center gap-space-xs">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center font-label-sm font-semibold text-on-surface">KM</div>
+<div class="flex flex-col">
+<span class="font-label-md font-semibold text-on-surface">Kavitha M.</span>
+<span class="font-label-sm text-outline">EMIS: 3328014490</span>
+</div>
+</div>
+</td>
+<td class="p-space-xs font-label-md">Grade 10-B</td>
+<td class="p-space-xs">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-error flex-shrink-0"></span>
+<span class="font-body-sm text-on-surface font-medium">Sharp drop in CAT Math (24/100)</span>
+</div>
+<span class="font-label-sm text-outline pl-3.5 block">Was 78% in Term I baseline</span>
+</td>
+<td class="p-space-xs">
+<!-- Mini SVG Sparkline -->
+<svg class="w-20 h-5 text-error" viewbox="0 0 80 20">
+<polyline fill="none" points="0,5 15,6 30,8 45,15 60,18 75,19" stroke="currentColor" stroke-linecap="round" stroke-width="2"></polyline>
+</svg>
+</td>
+<td class="p-space-xs">
+<span class="font-numeric-table text-error font-semibold">24%</span>
+<span class="font-label-sm text-outline block">Math fail trigger</span>
+</td>
+<td class="p-space-xs font-body-sm text-on-surface-variant">R. Meenakshi (Counselor)</td>
+<td class="p-space-xs">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold">
+                Needs Review
+              </span>
+</td>
+<td class="p-space-xs text-right">
+<button class="px-space-xs py-1 bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded inline-flex items-center gap-1 shadow-sm">
+<span>Triage</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: Vignesh S -->
+<tr class="hover:bg-surface-container-low/70 transition-colors">
+<td class="p-space-xs text-center">
+<input class="rounded text-secondary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-space-xs">
+<div class="flex items-center gap-space-xs">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center font-label-sm font-semibold text-on-surface">VS</div>
+<div class="flex flex-col">
+<span class="font-label-md font-semibold text-on-surface">Vignesh S.</span>
+<span class="font-label-sm text-outline">EMIS: 3328011284</span>
+</div>
+</div>
+</td>
+<td class="p-space-xs font-label-md">Grade 9-C</td>
+<td class="p-space-xs">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-error flex-shrink-0"></span>
+<span class="font-body-sm text-on-surface font-medium">5 consecutive unexcused absences</span>
+</div>
+<span class="font-label-sm text-outline pl-3.5 block">Guardian phone unreachable</span>
+</td>
+<td class="p-space-xs">
+<svg class="w-20 h-5 text-error" viewbox="0 0 80 20">
+<polyline fill="none" points="0,4 20,4 40,8 60,18 70,20 75,20" stroke="currentColor" stroke-linecap="round" stroke-width="2"></polyline>
+</svg>
+</td>
+<td class="p-space-xs">
+<span class="font-numeric-table text-on-surface-variant font-semibold">51%</span>
+<span class="font-label-sm text-outline block">CAT-1 Aggregate</span>
+</td>
+<td class="p-space-xs font-body-sm text-on-surface-variant">S. Balan (PET / Mentor)</td>
+<td class="p-space-xs">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold">
+                Home Visit Req.
+              </span>
+</td>
+<td class="p-space-xs text-right">
+<button class="px-space-xs py-1 bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded inline-flex items-center gap-1 shadow-sm">
+<span>Dispatch</span>
+<span class="material-symbols-outlined text-[14px]">call</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Priya D -->
+<tr class="hover:bg-surface-container-low/70 transition-colors">
+<td class="p-space-xs text-center">
+<input class="rounded text-secondary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-space-xs">
+<div class="flex items-center gap-space-xs">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center font-label-sm font-semibold text-on-surface">PD</div>
+<div class="flex flex-col">
+<span class="font-label-md font-semibold text-on-surface">Priya D.</span>
+<span class="font-label-sm text-outline">EMIS: 3328019022</span>
+</div>
+</div>
+</td>
+<td class="p-space-xs font-label-md">Grade 11-A</td>
+<td class="p-space-xs">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></span>
+<span class="font-body-sm text-on-surface font-medium">Sudden dip in Sci/Eng (-32 marks)</span>
+</div>
+<span class="font-label-sm text-outline pl-3.5 block">Attendance steady at 91%</span>
+</td>
+<td class="p-space-xs">
+<svg class="w-20 h-5 text-amber-600" viewbox="0 0 80 20">
+<polyline fill="none" points="0,4 20,4 40,6 55,14 65,16 75,17" stroke="currentColor" stroke-linecap="round" stroke-width="2"></polyline>
+</svg>
+</td>
+<td class="p-space-xs">
+<span class="font-numeric-table text-amber-700 font-semibold">41%</span>
+<span class="font-label-sm text-outline block">Physics &amp; Chem</span>
+</td>
+<td class="p-space-xs font-body-sm text-on-surface-variant">K. Revathi (PGT Physics)</td>
+<td class="p-space-xs">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-label-sm bg-amber-100 text-amber-900 font-semibold">
+                Support Recommended
+              </span>
+</td>
+<td class="p-space-xs text-right">
+<button class="px-space-xs py-1 bg-surface-container-high text-on-surface hover:bg-surface-container-highest font-label-md text-label-md rounded inline-flex items-center gap-1">
+<span>Remedial</span>
+<span class="material-symbols-outlined text-[14px]">edit_note</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Sneha R -->
+<tr class="hover:bg-surface-container-low/70 transition-colors">
+<td class="p-space-xs text-center">
+<input class="rounded text-secondary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-space-xs">
+<div class="flex items-center gap-space-xs">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center font-label-sm font-semibold text-on-surface">SR</div>
+<div class="flex flex-col">
+<span class="font-label-md font-semibold text-on-surface">Sneha R.</span>
+<span class="font-label-sm text-outline">EMIS: 3328017833</span>
+</div>
+</div>
+</td>
+<td class="p-space-xs font-label-md">Grade 8-D</td>
+<td class="p-space-xs">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary flex-shrink-0"></span>
+<span class="font-body-sm text-on-surface font-medium">Transit barrier: TNSTC route #14 cut</span>
+</div>
+<span class="font-label-sm text-outline pl-3.5 block">Welfare bicycle eligibility verified</span>
+</td>
+<td class="p-space-xs">
+<svg class="w-20 h-5 text-secondary" viewbox="0 0 80 20">
+<polyline fill="none" points="0,5 20,6 40,14 55,10 65,8 75,5" stroke="currentColor" stroke-linecap="round" stroke-width="2"></polyline>
+</svg>
+</td>
+<td class="p-space-xs">
+<span class="font-numeric-table text-on-surface font-semibold">68%</span>
+<span class="font-label-sm text-outline block">Aggregate Stable</span>
+</td>
+<td class="p-space-xs font-body-sm text-on-surface-variant">T. Arumugam (Clerk)</td>
+<td class="p-space-xs">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-high text-on-surface-variant font-semibold">
+                Monitoring
+              </span>
+</td>
+<td class="p-space-xs text-right">
+<button class="px-space-xs py-1 bg-surface-container-high text-on-surface hover:bg-surface-container-highest font-label-md text-label-md rounded inline-flex items-center gap-1">
+<span>Welfare Pass</span>
+<span class="material-symbols-outlined text-[14px]">directions_bike</span>
+</button>
+</td>
+</tr>
+<!-- Row 5: Manikandan G -->
+<tr class="hover:bg-surface-container-low/70 transition-colors">
+<td class="p-space-xs text-center">
+<input class="rounded text-secondary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-space-xs">
+<div class="flex items-center gap-space-xs">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center font-label-sm font-semibold text-on-surface">MG</div>
+<div class="flex flex-col">
+<span class="font-label-md font-semibold text-on-surface">Manikandan G.</span>
+<span class="font-label-sm text-outline">EMIS: 3328016519</span>
+</div>
+</div>
+</td>
+<td class="p-space-xs font-label-md">Grade 10-A</td>
+<td class="p-space-xs">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-error flex-shrink-0"></span>
+<span class="font-body-sm text-on-surface font-medium">Biometric mismatch &amp; chronic afternoon dropout</span>
+</div>
+<span class="font-label-sm text-outline pl-3.5 block">Potential seasonal farm wage engagement</span>
+</td>
+<td class="p-space-xs">
+<svg class="w-20 h-5 text-error" viewbox="0 0 80 20">
+<polyline fill="none" points="0,6 20,8 35,9 50,15 65,16 75,18" stroke="currentColor" stroke-linecap="round" stroke-width="2"></polyline>
+</svg>
+</td>
+<td class="p-space-xs">
+<span class="font-numeric-table text-error font-semibold">31%</span>
+<span class="font-label-sm text-outline block">SSLC Pre-Board</span>
+</td>
+<td class="p-space-xs font-body-sm text-on-surface-variant">R. Meenakshi (Counselor)</td>
+<td class="p-space-xs">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-label-sm bg-error-container text-on-error-container font-semibold">
+                Needs Review
+              </span>
+</td>
+<td class="p-space-xs text-right">
+<button class="px-space-xs py-1 bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded inline-flex items-center gap-1 shadow-sm">
+<span>Triage</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</td>
+</tr>
+<!-- Row 6: Ananya K -->
+<tr class="hover:bg-surface-container-low/70 transition-colors">
+<td class="p-space-xs text-center">
+<input class="rounded text-secondary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-space-xs">
+<div class="flex items-center gap-space-xs">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center font-label-sm font-semibold text-on-surface">AK</div>
+<div class="flex flex-col">
+<span class="font-label-md font-semibold text-on-surface">Ananya K.</span>
+<span class="font-label-sm text-outline">EMIS: 3328018841</span>
+</div>
+</div>
+</td>
+<td class="p-space-xs font-label-md">Grade 12-B</td>
+<td class="p-space-xs">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary flex-shrink-0"></span>
+<span class="font-body-sm text-on-surface font-medium">Health recovery: Typhoid convalescence note</span>
+</div>
+<span class="font-label-sm text-outline pl-3.5 block">Approved medical leave / remedial pending</span>
+</td>
+<td class="p-space-xs">
+<svg class="w-20 h-5 text-secondary" viewbox="0 0 80 20">
+<polyline fill="none" points="0,18 20,18 40,16 55,10 65,6 75,4" stroke="currentColor" stroke-linecap="round" stroke-width="2"></polyline>
+</svg>
+</td>
+<td class="p-space-xs">
+<span class="font-numeric-table text-on-surface font-semibold">72%</span>
+<span class="font-label-sm text-outline block">Pre-leave score</span>
+</td>
+<td class="p-space-xs font-body-sm text-on-surface-variant">N. Sundaram (HM Desk)</td>
+<td class="p-space-xs">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-label-sm bg-secondary-fixed-dim/40 text-on-surface font-semibold">
+                Under Review
+              </span>
+</td>
+<td class="p-space-xs text-right">
+<button class="px-space-xs py-1 bg-surface-container-high text-on-surface hover:bg-surface-container-highest font-label-md text-label-md rounded inline-flex items-center gap-1">
+<span>Remedial Packet</span>
+<span class="material-symbols-outlined text-[14px]">menu_book</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="flex items-center justify-between pt-space-sm mt-space-xs font-body-sm text-body-sm text-on-surface-variant">
+<span>Showing <strong>1 to 6</strong> of <strong>43</strong> prioritized student records</span>
+<div class="flex items-center gap-1">
+<button class="px-2 py-1 bg-surface-container rounded font-label-sm text-label-sm hover:bg-surface-container-high disabled:opacity-50" disabled="">Previous</button>
+<button class="px-2.5 py-1 bg-secondary text-on-secondary rounded font-label-sm text-label-sm font-semibold">1</button>
+<button class="px-2.5 py-1 bg-surface-container rounded font-label-sm text-label-sm hover:bg-surface-container-high">2</button>
+<button class="px-2.5 py-1 bg-surface-container rounded font-label-sm text-label-sm hover:bg-surface-container-high">3</button>
+<span class="px-1 text-outline">...</span>
+<button class="px-2.5 py-1 bg-surface-container rounded font-label-sm text-label-sm hover:bg-surface-container-high">8</button>
+<button class="px-2 py-1 bg-surface-container rounded font-label-sm text-label-sm hover:bg-surface-container-high">Next</button>
+</div>
+</div>
+</div>
+<!-- Lower Operational Panel (Recent Activity & Data Sync Health) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-md mb-space-lg">
+<!-- Left: Activity Stream & Counselor Log (7 Cols) -->
+<div class="xl:col-span-7 bg-surface-container-lowest p-space-md rounded-xl shadow-sm">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[20px] text-secondary">history_edu</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Recent Support Actions &amp; Field Notes</span>
+</div>
+<a class="font-label-sm text-label-sm text-secondary hover:underline font-semibold" href="#">View Full Activity Log →</a>
+</div>
+<!-- Chronological Feed -->
+<div class="space-y-space-sm">
+<!-- Log Item 1 -->
+<div class="flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 text-secondary mt-0.5">
+<span class="material-symbols-outlined text-[18px]">home_work</span>
+</div>
+<div class="flex-1 bg-surface-container-low p-space-xs rounded-lg">
+<div class="flex items-center justify-between mb-0.5">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Home Visit Completed • Vignesh S. (9-C)</span>
+<span class="font-label-sm text-label-sm text-outline">Today, 08:30 AM</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Field Counselor S. Balan visited Kovilpatti East Hamlet. Student assisting parents in cotton picking. Parent signed attendance undertaking; student pledged return on Monday.
+            </p>
+<div class="mt-1 flex items-center gap-space-xs font-label-sm text-label-sm text-secondary">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Case Status: Scheduled Return Mon 17 Feb
+            </div>
+</div>
+</div>
+<!-- Log Item 2 -->
+<div class="flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 text-primary-container mt-0.5">
+<span class="material-symbols-outlined text-[18px]">auto_stories</span>
+</div>
+<div class="flex-1 bg-surface-container-low p-space-xs rounded-lg">
+<div class="flex items-center justify-between mb-0.5">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Remedial Learning Kit Dispatched • Grade 10 Math Cohort</span>
+<span class="font-label-sm text-label-sm text-outline">Yesterday, 04:15 PM</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Issued Tamil Nadu SCERT 45-day intensive problem sets to 14 students flagged with CAT math scores below 35%. Assigned peer mentors from Grade 12.
+            </p>
+</div>
+</div>
+<!-- Log Item 3 -->
+<div class="flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 text-secondary mt-0.5">
+<span class="material-symbols-outlined text-[18px]">pedal_bike</span>
+</div>
+<div class="flex-1 bg-surface-container-low p-space-xs rounded-lg">
+<div class="flex items-center justify-between mb-0.5">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Govt Free Bicycle Scheme Roster Verified</span>
+<span class="font-label-sm text-label-sm text-outline">12 Feb 2025</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Verified 6 remote-village habitations (&gt;4.5km radius) facing TNSTC feeder service disruptions. List forwarded to District Educational Office (DEO) for priority batch allocation.
+            </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Data Pipeline Completeness & Sync Status (5 Cols) -->
+<div class="xl:col-span-5 bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface">Data Engine Completeness</span>
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-semibold">
+<span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span> EMIS Linked
+          </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Integrity metrics across automated school ingest feeds for Term II.</p>
+<!-- Metric Bars -->
+<div class="space-y-space-sm">
+<div>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface mb-1">
+<span class="font-medium">Daily Biometric Attendance Registry</span>
+<span class="font-semibold text-secondary">100.0% Complete</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary" style="width: 100%;"></div>
+</div>
+<span class="font-body-sm text-[11px] text-outline mt-0.5 block">1,428 / 1,428 students logged today at terminal 02</span>
+</div>
+<div>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface mb-1">
+<span class="font-medium">Periodic CAT Marks Upload (CAT 1 &amp; 2)</span>
+<span class="font-semibold text-on-surface">94.2% Complete</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container" style="width: 94.2%;"></div>
+</div>
+<span class="font-body-sm text-[11px] text-outline mt-0.5 block">Pending: Grade 11 Computer Science practical entries</span>
+</div>
+<div>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface mb-1">
+<span class="font-medium">Govt School Health Screening (RBSK)</span>
+<span class="font-semibold text-amber-700">88.0% Complete</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-amber-500" style="width: 88%;"></div>
+</div>
+<span class="font-body-sm text-[11px] text-outline mt-0.5 block">Vision and BMI camp scheduled next Friday for Grades 6-8</span>
+</div>
+</div>
+</div>
+<!-- Master Sync Card -->
+<div class="mt-space-sm p-space-xs bg-surface-container-low rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[20px] text-outline">cloud_done</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">TN-EMIS Master Central Node</span>
+<span class="font-label-sm text-label-sm text-outline">Last differential pull: 4 mins ago</span>
+</div>
+</div>
+<button class="px-space-xs py-1 bg-surface-container-lowest text-secondary hover:bg-surface-container-high font-label-md text-label-md rounded shadow-sm inline-flex items-center gap-1 transition-colors font-medium">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+<span>Sync Now</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

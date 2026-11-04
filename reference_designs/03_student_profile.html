@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="web_dashboard" name="shell-type"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+@layer base { 
+  html, body { margin: 0; padding: 0; } 
+  body { overscroll-behavior: none; } 
+  main > :first-child { margin-top: 0 !important; } 
+  main > :last-child { margin-bottom: 0 !important; } 
+}
+::-webkit-scrollbar { display: none; }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "outline": "#76777d",
+        "outline-variant": "#c6c6cd",
+        "secondary-fixed-dim": "#6bd8cb",
+        "on-tertiary": "#ffffff",
+        "primary-fixed": "#dae2fd",
+        "surface-container-highest": "#d3e4fe",
+        "tertiary-fixed": "#d8e3fb",
+        "surface-bright": "#f8f9ff",
+        "on-tertiary-container": "#79849a",
+        "on-secondary": "#ffffff",
+        "surface-container-high": "#dce9ff",
+        "on-error": "#ffffff",
+        "background": "#f8f9ff",
+        "surface-container-low": "#eff4ff",
+        "on-tertiary-fixed": "#111c2d",
+        "secondary": "#006a61",
+        "error": "#ba1a1a",
+        "inverse-surface": "#213145",
+        "surface-variant": "#d3e4fe",
+        "on-primary-container": "#7c839b",
+        "surface-tint": "#565e74",
+        "on-background": "#0b1c30",
+        "on-surface": "#0b1c30",
+        "primary-container": "#131b2e",
+        "on-secondary-container": "#006f66",
+        "error-container": "#ffdad6",
+        "inverse-primary": "#bec6e0",
+        "surface-container-lowest": "#ffffff",
+        "on-primary-fixed": "#131b2e",
+        "inverse-on-surface": "#eaf1ff",
+        "tertiary-fixed-dim": "#bcc7de",
+        "on-primary": "#ffffff",
+        "on-primary-fixed-variant": "#3f465c",
+        "tertiary-container": "#111c2d",
+        "surface-dim": "#cbdbf5",
+        "surface": "#f8f9ff",
+        "secondary-container": "#86f2e4",
+        "primary-fixed-dim": "#bec6e0",
+        "on-error-container": "#93000a",
+        "on-surface-variant": "#45464d",
+        "secondary-fixed": "#89f5e7",
+        "on-secondary-fixed-variant": "#005049",
+        "primary": "#000000",
+        "on-tertiary-fixed-variant": "#3c475a",
+        "on-secondary-fixed": "#00201d",
+        "surface-container": "#e5eeff",
+        "tertiary": "#000000"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.125rem",
+        "lg": "0.25rem",
+        "xl": "0.5rem",
+        "full": "0.75rem"
+      },
+      "spacing": {
+        "space-md": "0.75rem",
+        "gutter": "1rem",
+        "space-xs": "0.25rem",
+        "space-xl": "1.5rem",
+        "margin": "1rem",
+        "space-lg": "1rem",
+        "space-sm": "0.5rem",
+        "gutter-desktop": "1.5rem",
+        "margin-desktop": "2rem",
+        "margin-tablet": "1.5rem"
+      },
+      "fontFamily": {
+        "headline-md": ["Inter"],
+        "headline-sm": ["Inter"],
+        "label-md": ["Inter"],
+        "headline-xl": ["Inter"],
+        "headline-xl-mobile": ["Inter"],
+        "label-sm": ["Inter"],
+        "headline-lg": ["Inter"],
+        "body-sm": ["Inter"],
+        "body-lg": ["Inter"],
+        "numeric-metric": ["Inter"],
+        "body-md": ["Inter"],
+        "numeric-table": ["Inter"]
+      },
+      "fontSize": {
+        "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+        "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+        "label-md": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+        "headline-xl": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+        "headline-xl-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+        "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.025em", "fontWeight": "600" }],
+        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+        "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+        "numeric-metric": ["28px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+        "numeric-table": ["13px", { "lineHeight": "20px", "letterSpacing": "-0.005em", "fontWeight": "500" }]
+      }
+    }
+  }
+};
+</script>
+</head>
+<body class="bg-surface font-body-md text-body-md text-on-surface min-h-screen">
+<aside class="fixed left-0 top-0 h-full w-72 bg-primary-container z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+<div class="flex flex-col h-full">
+<div class="p-space-lg flex items-center justify-between bg-tertiary-container">
+<div class="flex items-center gap-space-sm overflow-hidden">
+<img alt="THULIR Logo" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1UhC_Px3BtWayW5EaSFSIX1sHpqmkbda_aeRSPAo0D9dkZKqd2C5NgET9T9sEflavjvvNNIkIdl_SGMWNNENPLJyuXTiOq8T8bhk6yLSicc9acZN_CiagY0H3ftHvJtNDPc79STnjLykMnTmdvDG_qMGtlHAQkmOSqPYp0WKXw9RueZUfFKLZ2tyr6ER4ogYkOk71qjkJrFzeavdFRZUDrj4cpF5oG7x3HJN9uuWlDu"/>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-primary tracking-tight truncate">THULIR</span>
+<span class="font-label-sm text-label-sm text-on-primary-container truncate">Early-Warning &amp; Support System</span>
+</div>
+</div>
+</div>
+<div class="px-space-lg py-space-sm bg-inverse-surface">
+<span class="font-label-sm text-label-sm text-inverse-on-surface block truncate">Dept. of School Education</span>
+</div>
+<nav class="flex-1 overflow-y-auto px-space-md py-space-md space-y-space-md" data-active-classes="bg-secondary text-on-secondary font-label-md rounded">
+<div class="space-y-space-xs">
+<div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-primary-container uppercase tracking-wider">Navigation</div>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="overview" href="#">Overview</a>
+<a aria-current="page" class="block px-space-sm py-space-xs transition-colors bg-secondary text-on-secondary font-label-md rounded" data-path="students" href="#">Students</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="early-warnings" href="#">Early Warnings</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="support-cases" href="#">Support Cases</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="interventions" href="#">Interventions</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="reports" href="#">Reports</a>
+</div>
+<div class="space-y-space-xs">
+<div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-primary-container uppercase tracking-wider">System</div>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="data-import" href="#">Data Import</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="settings" href="#">Settings</a>
+</div>
+</nav>
+</div>
+</aside>
+<div class="pl-72 flex flex-col min-h-screen">
+<header class="fixed top-0 left-72 right-0 h-16 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter-desktop">
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] text-secondary">account_balance</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Government Higher Secondary School Kovilpatti</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">(UDISE: 33280100412)</span>
+</div>
+<div class="hidden xl:inline-flex items-center px-space-sm py-space-xs bg-surface-container rounded">
+<span class="font-label-sm text-label-sm text-on-surface">2024-25 • Term II</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="relative w-80">
+<span class="material-symbols-outlined absolute left-space-sm top-1/2 -translate-y-1/2 text-[18px] text-outline">search</span>
+<input class="w-full h-9 pl-8 pr-space-sm bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded placeholder-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary" placeholder="Search Student ID / EMIS / Name..." type="text"/>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-9 px-space-md bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>Log Review / Case</span>
+</button>
+</div>
+<div class="relative flex items-center justify-center p-space-xs cursor-pointer text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute -top-1 -right-1 bg-error text-on-error font-label-sm text-label-sm px-space-xs py-0 rounded-full leading-none">7</span>
+</div>
+<div class="flex items-center gap-space-sm pl-space-sm">
+<div class="flex flex-col text-right hidden lg:block">
+<span class="font-label-md text-label-md text-on-surface font-medium leading-tight">R. Meenakshi</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant leading-tight">Head Counselor (M.S.W.)</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+</div>
+</div>
+</div>
+</header>
+<main class="relative pt-16 bg-surface min-h-[calc(100vh-4rem)] w-full px-gutter-desktop py-space-md">
+<div class="flex flex-col w-full">
+<!-- Top Navigation & Return Anchor -->
+<div class="flex items-center justify-between py-space-sm mb-space-md">
+<a class="inline-flex items-center gap-space-xs text-on-surface-variant hover:text-secondary font-label-md text-label-md transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Back to Student Directory</span>
+</a>
+<div class="flex items-center gap-space-sm font-label-sm text-label-sm text-on-surface-variant">
+<span>System Audit Ref: <strong class="font-numeric-table text-on-surface">GHSS-KVP-2024-10B-089</strong></span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>Statutory Rule-Engine: <span class="text-secondary font-semibold">TNEB-v4.2 Verified</span></span>
+</div>
+</div>
+<!-- Student Master Identity Card -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm mb-space-lg relative overflow-hidden">
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-space-lg">
+<div class="flex flex-col sm:flex-row items-start sm:items-center gap-space-lg">
+<div class="relative w-20 h-20 rounded-xl overflow-hidden bg-surface-container flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Official portrait photograph of a 15-year-old South Indian female student wearing a clean government school uniform, soft studio institutional lighting, neutral expression, calm scholastic atmosphere with blue tinted background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSbxt0wAtbGjL0pGTWy9sa_-TRgOLFrUM2QFLq2rhV03uuzJ0FWBD7dCVWfMOA6E0PuJNFuDL02OMyV_XCbBrneMzONapcpj9hwQ4nN2f3gs3skWXBVBuzRfZVXIFx6zkn8zEK29OtvDXgAX56MauzJC7k5bw6gfNL_lxQQHBRJsWn9AKI47zqgelsJ3hiulnY8cvf4VseyfpP8yYg_z8J65knbpkUTq9SOEzaFKE"/>
+<span class="absolute bottom-1 right-1 w-3.5 h-3.5 bg-error rounded-full ring-2 ring-surface-container-lowest" title="Action Pending"></span>
+</div>
+<div class="flex flex-col space-y-space-xs">
+<div class="flex flex-wrap items-center gap-space-sm">
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Kavitha M.</h1>
+<span class="px-space-sm py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-on-surface font-semibold tracking-wide uppercase">Grade 10-B (SSLC Board Year)</span>
+<span class="inline-flex items-center gap-1 px-space-sm py-0.5 rounded bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">flag</span>
+              Needs Review — Multi-Factor Indicator Flagged (Nov 12, 2024)
+            </span>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-x-space-lg gap-y-space-xs pt-space-xs font-body-sm text-body-sm text-on-surface-variant">
+<div>EMIS ID: <span class="font-numeric-table font-semibold text-on-surface">3328014490</span></div>
+<div>UDISE Code: <span class="font-numeric-table font-semibold text-on-surface">33280100412</span></div>
+<div>Age / Gender: <span class="text-on-surface">15 Yrs / Female</span></div>
+<div>Primary Language: <span class="text-on-surface">Tamil (Medium 1)</span></div>
+<div class="md:col-span-2">Guardian: <span class="text-on-surface font-medium">Murugan K. (Father, Agricultural Labourer)</span></div>
+<div>Contact: <span class="font-numeric-table text-on-surface">+91 98421 XXXXX</span></div>
+<div class="truncate">Residence: <span class="text-on-surface">Melur Street, Kovilpatti (4.8 km)</span></div>
+</div>
+</div>
+</div>
+<!-- Quick Action Buttons -->
+<div class="flex flex-wrap xl:flex-col gap-space-xs justify-end flex-shrink-0">
+<button class="h-9 px-space-md bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">assignment_turned_in</span>
+<span>Record Review Decision</span>
+</button>
+<div class="flex items-center gap-space-xs">
+<button class="h-9 px-space-sm bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md rounded flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">add_circle</span>
+<span>Create Support Case</span>
+</button>
+<button class="h-9 px-space-sm bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md rounded flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">calendar_add_on</span>
+<span>Guardian Meet</span>
+</button>
+<button class="h-9 px-space-sm bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md rounded flex items-center justify-center transition-colors" title="Print Student Summary (PDF)" type="button">
+<span class="material-symbols-outlined text-[18px]">print</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Top KPI Mini-Widgets Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md mb-space-lg">
+<!-- Attendance Metric -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Term II Attendance</span>
+<span class="material-symbols-outlined text-[20px] text-error">event_busy</span>
+</div>
+<div class="my-space-xs">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-numeric-metric text-numeric-metric text-error">62.4%</span>
+<span class="font-label-sm text-label-sm text-error flex items-center font-medium">
+<span class="material-symbols-outlined text-[14px]">trending_down</span> -14.2%
+          </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Statutory Minimum: 75.0%</p>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 62.4%;"></div>
+</div>
+</div>
+<!-- CAT-2 Academic Aggregate -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">CAT-2 Aggregate Mark</span>
+<span class="material-symbols-outlined text-[20px] text-error">school</span>
+</div>
+<div class="my-space-xs">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-numeric-metric text-numeric-metric text-error">34.5%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">/ 100 max</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Math: 24 • Sci: 32 • Tam: 58</p>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 34.5%;"></div>
+</div>
+</div>
+<!-- Assignment Completion -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Assignment Completion</span>
+<span class="material-symbols-outlined text-[20px] text-outline">assignment_late</span>
+</div>
+<div class="my-space-xs">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-numeric-metric text-numeric-metric text-on-surface">45.0%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">3 of 7 logged</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">2 slips pending verification</p>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 45%;"></div>
+</div>
+</div>
+<!-- Active Support Case -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Intervention Status</span>
+<span class="material-symbols-outlined text-[20px] text-secondary">support</span>
+</div>
+<div class="my-space-xs">
+<div class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate">1 Proposed Case</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Pending Counselor Approval</p>
+</div>
+<div class="flex items-center gap-space-xs pt-1">
+<span class="px-space-xs py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-secondary font-semibold">Case #TC-2024-089</span>
+</div>
+</div>
+</div>
+<!-- Tabbed Navigation Bar -->
+<div class="bg-surface-container-lowest rounded-xl px-space-md pt-space-xs shadow-sm mb-space-lg overflow-x-auto">
+<div class="flex items-center gap-space-md whitespace-nowrap min-w-max">
+<button class="py-space-md px-space-sm font-label-md text-label-md text-secondary border-b-2 border-secondary font-semibold flex items-center gap-space-xs" type="button">
+<span class="material-symbols-outlined text-[18px]">fact_check</span>
+<span>Overview &amp; Evidence</span>
+</button>
+<button class="py-space-md px-space-sm font-label-md text-label-md text-on-surface-variant hover:text-on-surface font-medium flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+<span>Attendance Detailed Logs</span>
+</button>
+<button class="py-space-md px-space-sm font-label-md text-label-md text-on-surface-variant hover:text-on-surface font-medium flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">history_edu</span>
+<span>Academic &amp; CAT Records</span>
+</button>
+<button class="py-space-md px-space-sm font-label-md text-label-md text-on-surface-variant hover:text-on-surface font-medium flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">folder_shared</span>
+<span>Support Cases &amp; History</span>
+</button>
+<button class="py-space-md px-space-sm font-label-md text-label-md text-on-surface-variant hover:text-on-surface font-medium flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">timeline</span>
+<span>Activity Timeline</span>
+</button>
+</div>
+</div>
+<!-- Main Grid Content: 8 cols (left) + 4 cols (right) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- LEFT COLUMN: 8 Columns -->
+<div class="lg:col-span-8 flex flex-col space-y-space-lg">
+<!-- 1. Explainable Warning Indicators & Evidence Panel -->
+<section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-md mb-space-md bg-surface-container-low -mx-space-lg -mt-space-lg px-space-lg py-space-md rounded-t-xl">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-error text-[22px]">policy</span>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Observable Review Indicators (Rule-Based, Non-Predictive)</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Deterministic threshold triggers evaluated on official EMIS attendance logs and school test records.</p>
+</div>
+</div>
+<span class="px-space-sm py-0.5 rounded bg-error-container text-on-error-container font-label-sm text-label-sm font-bold tracking-wide uppercase">3 Triggers</span>
+</div>
+<div class="space-y-space-md">
+<!-- Indicator 1 -->
+<div class="p-space-md bg-surface rounded-lg relative overflow-hidden">
+<div class="flex items-start justify-between gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-error"></span>
+<span class="font-label-md text-label-md font-semibold text-on-surface">Sharp Academic Drop in Mathematics (-38.0% drop)</span>
+</div>
+<span class="px-space-xs py-0.5 bg-surface-container rounded font-label-sm text-label-sm text-on-surface-variant font-mono">Rule REF-MATH-25</span>
+</div>
+<div class="mt-space-sm text-body-md text-body-md text-on-surface pl-space-md space-y-space-xs">
+<p><strong class="font-medium text-on-surface">Verified Record:</strong> CAT-1 score was 62/100 (August 18); CAT-2 score registered at 24/100 (October 28). Threshold: Drop &gt;25% between successive institutional terms in core board curriculum.</p>
+<div class="p-space-xs bg-surface-container-low rounded text-body-sm text-body-sm text-on-surface-variant flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary mt-0.5">edit_note</span>
+<span><strong>Class Teacher Note (S. Malathi):</strong> "Student was absent during foundational Algebra unit lessons during the October regional harvest week. Needs immediate catch-up module."</span>
+</div>
+</div>
+</div>
+<!-- Indicator 2 -->
+<div class="p-space-md bg-surface rounded-lg relative overflow-hidden">
+<div class="flex items-start justify-between gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-error"></span>
+<span class="font-label-md text-label-md font-semibold text-on-surface">Attendance Dropped Below Statutory 75% Mark (Current: 62.4%)</span>
+</div>
+<span class="px-space-xs py-0.5 bg-surface-container rounded font-label-sm text-label-sm text-on-surface-variant font-mono">Statute SEC-75A</span>
+</div>
+<div class="mt-space-sm text-body-md text-body-md text-on-surface pl-space-md space-y-space-xs">
+<p><strong class="font-medium text-on-surface">Verified Record:</strong> 8 consecutive unexcused absences recorded between October 14 and October 23, 2024. No prior medical certificate logged in school registry.</p>
+<div class="p-space-xs bg-surface-container-low rounded text-body-sm text-body-sm text-on-surface-variant flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary mt-0.5">commute</span>
+<span><strong>Welfare Observation (R. Meenakshi):</strong> "Melur village public transit Route 14B was cancelled for 10 school days. Commute distance is 4.8 km each way. Student was unable to walk due to torrential rains."</span>
+</div>
+</div>
+</div>
+<!-- Indicator 3 -->
+<div class="p-space-md bg-surface rounded-lg relative overflow-hidden">
+<div class="flex items-start justify-between gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-outline"></span>
+<span class="font-label-md text-label-md font-semibold text-on-surface">Coursework &amp; Assignment Submissions: Incomplete (3 of 7)</span>
+</div>
+<span class="px-space-xs py-0.5 bg-surface-container rounded font-label-sm text-label-sm text-on-surface-variant font-mono">Rule ASG-TERMB</span>
+</div>
+<div class="mt-space-sm text-body-md text-body-md text-on-surface pl-space-md space-y-space-xs">
+<p><strong class="font-medium text-on-surface">Verified Record:</strong> 4 unsubmitted Math exercise workbooks in Term II. Categorized distinctly as administrative missing data rather than negative competency assessment.</p>
+<div class="p-space-xs bg-surface-container-low rounded text-body-sm text-body-sm text-on-surface-variant flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary mt-0.5">inventory_2</span>
+<span><strong>Note:</strong> Free workbook reprint copy was requisitioned and handed over on Oct 30. Submission period extended through Nov 20.</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 2. Longitudinal Performance & Attendance Trends -->
+<section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs pb-space-md mb-space-md">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Longitudinal Performance &amp; Attendance Diagnostics</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Multi-term tracking across academic milestones and official EMIS roll logs.</p>
+</div>
+<div class="flex items-center gap-space-xs font-label-sm text-label-sm">
+<span class="flex items-center gap-1 text-on-surface-variant"><span class="w-2 h-2 rounded bg-secondary"></span> Attendance %</span>
+<span class="flex items-center gap-1 text-on-surface-variant ml-space-sm"><span class="w-2 h-2 rounded bg-error"></span> Statutory Min (75%)</span>
+</div>
+</div>
+<!-- Monthly Attendance Bar Chart (Custom Inline SVG) -->
+<div class="p-space-md bg-surface-container-low rounded-lg mb-space-lg">
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Monthly Attendance Trajectory (2024-25 Academic Year)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Total Working Days Evaluated: 104 Days</span>
+</div>
+<div class="relative w-full h-44 flex flex-col justify-end pt-4 pb-6">
+<!-- 75% Statutory Guide Line -->
+<div class="absolute left-0 right-0 top-[25%] pointer-events-none flex items-center">
+<div class="w-full border-t border-dashed border-error/50"></div>
+<span class="absolute right-0 -top-3 text-[10px] font-semibold text-error px-1 bg-surface-container-low">75% Benchmark</span>
+</div>
+<!-- SVG Graph visualization -->
+<svg class="w-full h-32 overflow-visible" preserveaspectratio="none" viewbox="0 0 600 120">
+<!-- June (91%) -->
+<rect class="fill-secondary" height="109.2" opacity="0.85" rx="4" width="50" x="25" y="10.8"></rect>
+<!-- July (88%) -->
+<rect class="fill-secondary" height="105.6" opacity="0.85" rx="4" width="50" x="125" y="14.4"></rect>
+<!-- Aug (84%) -->
+<rect class="fill-secondary" height="100.8" opacity="0.85" rx="4" width="50" x="225" y="19.2"></rect>
+<!-- Sep (76%) -->
+<rect class="fill-secondary" height="91.2" opacity="0.85" rx="4" width="50" x="325" y="28.8"></rect>
+<!-- Oct (62%) -->
+<rect class="fill-error" height="74.4" opacity="0.9" rx="4" width="50" x="425" y="45.6"></rect>
+<!-- Nov (64%) -->
+<rect class="fill-error" height="76.8" opacity="0.9" rx="4" width="50" x="525" y="43.2"></rect>
+<!-- Line Connector -->
+<polyline fill="none" points="50,10.8 150,14.4 250,19.2 350,28.8 450,45.6 550,43.2" stroke="#131b2e" stroke-width="2"></polyline>
+<circle class="fill-surface-container-lowest stroke-primary stroke-2" cx="50" cy="10.8" r="3.5"></circle>
+<circle class="fill-surface-container-lowest stroke-primary stroke-2" cx="150" cy="14.4" r="3.5"></circle>
+<circle class="fill-surface-container-lowest stroke-primary stroke-2" cx="250" cy="19.2" r="3.5"></circle>
+<circle class="fill-surface-container-lowest stroke-primary stroke-2" cx="350" cy="28.8" r="3.5"></circle>
+<circle class="fill-error stroke-surface-container-lowest stroke-2" cx="450" cy="45.6" r="3.5"></circle>
+<circle class="fill-error stroke-surface-container-lowest stroke-2" cx="550" cy="43.2" r="3.5"></circle>
+</svg>
+<!-- Month Label Row -->
+<div class="flex justify-between px-2 pt-2 text-center font-numeric-table text-on-surface-variant text-[11px]">
+<div class="w-16">Jun <span class="block font-semibold text-on-surface">91%</span></div>
+<div class="w-16">Jul <span class="block font-semibold text-on-surface">88%</span></div>
+<div class="w-16">Aug <span class="block font-semibold text-on-surface">84%</span></div>
+<div class="w-16">Sep <span class="block font-semibold text-on-surface">76%</span></div>
+<div class="w-16">Oct <span class="block font-semibold text-error">62%</span></div>
+<div class="w-16">Nov (MTD) <span class="block font-semibold text-error">64%</span></div>
+</div>
+</div>
+</div>
+<!-- Subject-Wise Mark Trajectory Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left font-body-sm text-body-sm">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-space-sm px-space-md rounded-l">Subject</th>
+<th class="py-space-sm px-space-md text-right">Baseline (Jul)</th>
+<th class="py-space-sm px-space-md text-right">CAT-1 (Aug)</th>
+<th class="py-space-sm px-space-md text-right">CAT-2 (Oct)</th>
+<th class="py-space-sm px-space-md text-right">Target (Model Ex)</th>
+<th class="py-space-sm px-space-md rounded-r text-center">Status</th>
+</tr>
+</thead>
+<tbody class="text-on-surface">
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-space-sm px-space-md font-medium">Tamil (Language I)</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table">64</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table">68</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table font-semibold text-secondary">58</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table text-on-surface-variant">70</td>
+<td class="py-space-sm px-space-md text-center"><span class="px-space-xs py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm">Satisfactory</span></td>
+</tr>
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-space-sm px-space-md font-medium">English (Language II)</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table">52</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table">54</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table font-semibold text-on-surface">48</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table text-on-surface-variant">60</td>
+<td class="py-space-sm px-space-md text-center"><span class="px-space-xs py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm">Borderline</span></td>
+</tr>
+<tr class="bg-error-container/20 hover:bg-error-container/30 transition-colors">
+<td class="py-space-sm px-space-md font-semibold text-error flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                  Mathematics
+                </td>
+<td class="py-space-sm px-space-md text-right font-numeric-table">58</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table">62</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table font-bold text-error">24</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table text-on-surface-variant">50</td>
+<td class="py-space-sm px-space-md text-center"><span class="px-space-xs py-0.5 rounded bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">Priority Action</span></td>
+</tr>
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-space-sm px-space-md font-medium">Science (Theory &amp; Prac)</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table">46</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table">50</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table font-semibold text-error">32</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table text-on-surface-variant">50</td>
+<td class="py-space-sm px-space-md text-center"><span class="px-space-xs py-0.5 rounded bg-error-container text-on-error-container font-label-sm text-label-sm">Remedial Flag</span></td>
+</tr>
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-space-sm px-space-md font-medium">Social Science</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table">55</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table">58</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table font-semibold text-on-surface">45</td>
+<td class="py-space-sm px-space-md text-right font-numeric-table text-on-surface-variant">60</td>
+<td class="py-space-sm px-space-md text-center"><span class="px-space-xs py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm">Borderline</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- 3. Previous Reviews & Support Case History -->
+<section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-md mb-space-md">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[20px] text-secondary">handshake</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Active &amp; Historical Support Cases</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Case Registry: GHSS-KVP</span>
+</div>
+<div class="space-y-space-md">
+<!-- Case Card -->
+<div class="p-space-md rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs mb-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="px-space-xs py-0.5 rounded bg-primary-container text-on-primary font-numeric-table text-label-sm font-semibold">Case #TC-2024-089</span>
+<span class="font-label-md text-label-md font-semibold text-on-surface">Math Remedial &amp; Special Transport Pass Scheme</span>
+</div>
+<span class="inline-flex items-center px-space-xs py-0.5 rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm font-semibold self-start sm:self-auto">
+                Status: Pending Approval
+              </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">
+              Integrated plan proposing 20 hours after-school peer remediation with S. Malathi, coupled with free state rural bus transit emergency voucher application submitted to Kovilpatti Depot.
+            </p>
+<div class="flex flex-wrap items-center justify-between gap-space-sm pt-space-xs text-on-surface-variant font-label-sm text-label-sm">
+<div class="flex items-center gap-space-md">
+<span>Assigned Case Worker: <strong class="text-on-surface font-medium">R. Meenakshi (M.S.W.)</strong></span>
+<span>Initiated: <strong class="text-on-surface font-medium">Nov 04, 2024</strong></span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-7 px-space-sm bg-surface-container-lowest text-secondary hover:bg-surface-container font-label-sm text-label-sm rounded flex items-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-[14px]">visibility</span>
+<span>View Full Docket</span>
+</button>
+<button class="h-7 px-space-sm bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-sm text-label-sm rounded transition-colors" type="button">
+                  Approve Plan
+                </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- RIGHT COLUMN: 4 Columns -->
+<div class="lg:col-span-4 flex flex-col space-y-space-lg">
+<!-- 1. Student Support Team & Contacts -->
+<section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between pb-space-xs mb-space-sm">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Support Stakeholders</h3>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">group</span>
+</div>
+<div class="space-y-space-sm">
+<!-- Class Teacher -->
+<div class="flex items-center justify-between p-space-xs bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center font-label-sm font-bold text-on-surface flex-shrink-0">
+                SM
+              </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface font-medium truncate">S. Malathi</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">Class Teacher • Maths Dept</span>
+</div>
+</div>
+<a class="p-space-xs text-secondary hover:bg-surface-container rounded transition-colors" href="tel:+919442000001" title="Call Teacher">
+<span class="material-symbols-outlined text-[18px]">call</span>
+</a>
+</div>
+<!-- Assigned Counselor -->
+<div class="flex items-center justify-between p-space-xs bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-label-sm font-bold flex-shrink-0">
+                RM
+              </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface font-medium truncate">R. Meenakshi</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">Assigned Lead Counselor (M.S.W.)</span>
+</div>
+</div>
+<a class="p-space-xs text-secondary hover:bg-surface-container rounded transition-colors" href="tel:+919442000002" title="Call Counselor">
+<span class="material-symbols-outlined text-[18px]">call</span>
+</a>
+</div>
+<!-- Welfare Officer -->
+<div class="flex items-center justify-between p-space-xs bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center font-label-sm font-bold text-on-surface flex-shrink-0">
+                KR
+              </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface font-medium truncate">K. Ramasamy</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">District Social Welfare Officer</span>
+</div>
+</div>
+<a class="p-space-xs text-secondary hover:bg-surface-container rounded transition-colors" href="tel:+919442000003" title="Call Welfare Officer">
+<span class="material-symbols-outlined text-[18px]">call</span>
+</a>
+</div>
+</div>
+</section>
+<!-- 2. Guardian & State Welfare Scheme Entitlements -->
+<section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between pb-space-xs mb-space-sm">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Welfare &amp; Entitlement Audit</h3>
+<span class="material-symbols-outlined text-[18px] text-secondary">verified</span>
+</div>
+<div class="space-y-space-xs font-body-sm text-body-sm">
+<div class="flex items-center justify-between p-space-xs bg-surface-container-low rounded">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
+<span class="text-on-surface">Free Textbooks &amp; Notebooks</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Distributed (Jun 12)</span>
+</div>
+<div class="flex items-center justify-between p-space-xs bg-error-container/30 rounded">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[16px] text-error">pending</span>
+<span class="text-on-surface font-medium">Free State Bicycle Scheme</span>
+</div>
+<span class="font-label-sm text-label-sm text-error font-semibold">Verification Pending</span>
+</div>
+<p class="px-space-xs font-label-sm text-label-sm text-on-surface-variant italic">
+            *Eligible under 4km+ rural threshold (Residence Melur: 4.8 km).
+          </p>
+<div class="flex items-center justify-between p-space-xs bg-surface-container-low rounded">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
+<span class="text-on-surface">Midday Meal Scheme</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-medium">Regular Recipient</span>
+</div>
+<div class="flex items-center justify-between p-space-xs bg-surface-container-low rounded">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
+<span class="text-on-surface">Special Coaching Subsidy</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Enrolled (Grade 10)</span>
+</div>
+</div>
+</section>
+<!-- 3. Chronological Activity & Intervention Timeline -->
+<section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between pb-space-xs mb-space-sm">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Activity Timeline</h3>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">schedule</span>
+</div>
+<div class="relative pl-space-lg space-y-space-md">
+<!-- Continuous Timeline Track Line -->
+<div class="absolute left-2.5 top-2 bottom-2 w-0.5 bg-surface-container"></div>
+<!-- Event 1: Today -->
+<div class="relative">
+<span class="absolute -left-[1.375rem] top-1 w-3 h-3 rounded-full bg-secondary"></span>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Today, 10:15 AM</div>
+<div class="font-label-md text-label-md font-semibold text-on-surface">Field Visit Observation Logged</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+              Counselor R. Meenakshi verified bus Route 14B non-operation with village head and filed bus pass priority form.
+            </p>
+</div>
+<!-- Event 2: Oct 30 -->
+<div class="relative">
+<span class="absolute -left-[1.375rem] top-1 w-3 h-3 rounded-full bg-error"></span>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Oct 30, 2024</div>
+<div class="font-label-md text-label-md font-semibold text-on-surface">CAT-2 Math Mark Entry</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+              Score 24/100 entered by S. Malathi. Automated indicator rule REF-MATH-25 triggered.
+            </p>
+</div>
+<!-- Event 3: Oct 24 -->
+<div class="relative">
+<span class="absolute -left-[1.375rem] top-1 w-3 h-3 rounded-full bg-error"></span>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Oct 24, 2024</div>
+<div class="font-label-md text-label-md font-semibold text-on-surface">Continuous Absence Rule Flagged</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+              EMIS Attendance Engine flagged 8 consecutive unexcused school absences (Oct 14 - Oct 23).
+            </p>
+</div>
+<!-- Event 4: Aug 15 -->
+<div class="relative">
+<span class="absolute -left-[1.375rem] top-1 w-3 h-3 rounded-full bg-outline"></span>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Aug 15, 2024</div>
+<div class="font-label-md text-label-md font-semibold text-on-surface">Term I Progress Review Signed</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+              Father Murugan K. attended Independence Day Parent-Teacher Council meeting; satisfactory baseline logged.
+            </p>
+</div>
+</div>
+<button class="w-full mt-space-md py-space-xs text-center font-label-sm text-label-sm text-secondary hover:text-on-secondary-container hover:bg-surface-container rounded transition-colors font-medium" type="button">
+          Load Full Historical Audit (14 Events)
+        </button>
+</section>
+<!-- 4. Quick Field Note Attachment -->
+<section class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs">Quick Counselor Note</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Official observations are permanently timestamped and logged into EMIS Case Dossier.</p>
+<textarea class="w-full p-space-sm bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded placeholder-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary resize-none" placeholder="Enter objective observation notes (e.g. transport, remedial attendance, medical slips)..." rows="3"></textarea>
+<div class="flex items-center justify-between mt-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+            Encrypted &amp; Signed
+          </span>
+<button class="h-8 px-space-md bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded transition-colors" type="button">
+            Append Entry
+          </button>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,122 @@
+{
+  "app": {
+    "name": "THULIR",
+    "subtitle": "Early-Warning & Support System",
+    "tagline": "Recognize Early. Support Better. Grow Together.",
+    "department": "Dept. of School Education, Tamil Nadu",
+    "disclaimer": "THULIR is a secure, explainable decision-support platform that helps government-school staff notice students who may need support and track the help given. Every warning is a prompt for human review, not an automated diagnosis or prediction.",
+    "language_switch": "Language / மொழி"
+  },
+  "nav": {
+    "navigation_group": "Navigation",
+    "system_group": "System",
+    "overview": "Overview",
+    "students": "Students",
+    "early_warnings": "Early Warnings",
+    "support_cases": "Support Cases",
+    "interventions": "Interventions",
+    "reports": "Reports",
+    "data_import": "Data Import",
+    "settings": "Settings"
+  },
+  "header": {
+    "term": "2024-25 • Term II",
+    "search_placeholder": "Search Student ID / EMIS / Name...",
+    "log_review_case": "Log Review / Case",
+    "notifications": "Notifications",
+    "sign_in": "Sign In",
+    "sign_out": "Sign Out",
+    "role_admin": "School Administrator",
+    "role_teacher": "Subject Teacher",
+    "role_counsellor": "Head Counselor"
+  },
+  "common": {
+    "actions": "Actions",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "edit": "Edit",
+    "delete": "Delete",
+    "filter": "Filter",
+    "clear_filters": "Clear Filters",
+    "export_csv": "Export CSV",
+    "search": "Search",
+    "loading": "Loading...",
+    "no_data": "No records found",
+    "error": "Error",
+    "success": "Success",
+    "status": "Status",
+    "priority": "Priority",
+    "date": "Date",
+    "student": "Student",
+    "class_sec": "Class / Sec",
+    "assigned_to": "Assigned Staff",
+    "evidence": "Supporting Evidence",
+    "notes": "Notes",
+    "insufficient_data": "Insufficient Data",
+    "awaiting_review": "Awaiting Human Review"
+  },
+  "priority": {
+    "all": "All Priority Levels",
+    "critical": "Critical",
+    "high": "High Priority",
+    "moderate": "Moderate",
+    "low": "Low",
+    "monitoring": "Monitoring"
+  },
+  "status": {
+    "needs_review": "Needs Review",
+    "under_review": "Under Review",
+    "support_recommended": "Support Recommended",
+    "referred_for_support": "Referred for Support",
+    "reviewed": "Reviewed",
+    "closed": "Closed",
+    "open": "Open",
+    "in_progress": "In Progress",
+    "completed": "Completed",
+    "overdue": "Overdue"
+  },
+  "rules": {
+    "ATT_LOW": "Attendance below 75% threshold",
+    "ATT_DECLINE": "Attendance dropped 10+ points between periods",
+    "ATT_CONSEC": "3 or more consecutive unexcused absences",
+    "MARK_LOW": "Assessment score below 35%",
+    "MARK_DECLINE": "3 consecutive declining assessments (15+ point drop)",
+    "ASG_LOW": "Assignment completion below 60%",
+    "ASG_DECLINE": "Assignment completion dropped 20+ points"
+  },
+  "intervention_types": {
+    "academic_guidance": "Academic Guidance",
+    "remedial_support": "Remedial Support",
+    "assignment_planning": "Assignment Planning",
+    "attendance_followup": "Attendance Follow-up",
+    "teacher_discussion": "Teacher-Student Discussion",
+    "counsellor_referral": "Referral to School Support Resource"
+  },
+  "overview": {
+    "title": "Early-Warning & Support Overview",
+    "subtitle": "Term II (2024-25) • Rule-based early detection across biometric registers, CAT assessments, and staff observations.",
+    "live_sync": "Live Sync",
+    "initiate_review": "Initiate Review Session",
+    "kpi_total_enrolled": "Total Enrolled Cohort",
+    "kpi_requiring_review": "Requiring Review",
+    "kpi_active_cases": "Active Support Cases",
+    "kpi_overdue_followups": "Overdue Follow-ups",
+    "chart_trajectory_title": "Attendance & Academic Trajectory",
+    "chart_trajectory_desc": "Longitudinal correlation of attendance against scheduled Continuous Assessment Tests (CAT).",
+    "chart_drivers_title": "Review Indicators by Category",
+    "chart_drivers_desc": "Active early indicators requiring human review."
+  },
+  "auth": {
+    "title": "THULIR Sign In",
+    "username": "Username / EMIS User",
+    "password": "Password",
+    "login_button": "Sign In to School Portal",
+    "logging_in": "Signing In...",
+    "invalid_credentials": "Invalid username or password.",
+    "session_expired": "Your session has expired. Please sign in again.",
+    "unauthorized": "You do not have permission to access this resource."
+  }
+}
+

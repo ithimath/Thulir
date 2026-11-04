@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="web_dashboard" name="shell-type"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+@layer base { 
+  html, body { margin: 0; padding: 0; } 
+  body { overscroll-behavior: none; } 
+  main > :first-child { margin-top: 0 !important; } 
+  main > :last-child { margin-bottom: 0 !important; } 
+}
+::-webkit-scrollbar { display: none; }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "outline": "#76777d",
+        "outline-variant": "#c6c6cd",
+        "secondary-fixed-dim": "#6bd8cb",
+        "on-tertiary": "#ffffff",
+        "primary-fixed": "#dae2fd",
+        "surface-container-highest": "#d3e4fe",
+        "tertiary-fixed": "#d8e3fb",
+        "surface-bright": "#f8f9ff",
+        "on-tertiary-container": "#79849a",
+        "on-secondary": "#ffffff",
+        "surface-container-high": "#dce9ff",
+        "on-error": "#ffffff",
+        "background": "#f8f9ff",
+        "surface-container-low": "#eff4ff",
+        "on-tertiary-fixed": "#111c2d",
+        "secondary": "#006a61",
+        "error": "#ba1a1a",
+        "inverse-surface": "#213145",
+        "surface-variant": "#d3e4fe",
+        "on-primary-container": "#7c839b",
+        "surface-tint": "#565e74",
+        "on-background": "#0b1c30",
+        "on-surface": "#0b1c30",
+        "primary-container": "#131b2e",
+        "on-secondary-container": "#006f66",
+        "error-container": "#ffdad6",
+        "inverse-primary": "#bec6e0",
+        "surface-container-lowest": "#ffffff",
+        "on-primary-fixed": "#131b2e",
+        "inverse-on-surface": "#eaf1ff",
+        "tertiary-fixed-dim": "#bcc7de",
+        "on-primary": "#ffffff",
+        "on-primary-fixed-variant": "#3f465c",
+        "tertiary-container": "#111c2d",
+        "surface-dim": "#cbdbf5",
+        "surface": "#f8f9ff",
+        "secondary-container": "#86f2e4",
+        "primary-fixed-dim": "#bec6e0",
+        "on-error-container": "#93000a",
+        "on-surface-variant": "#45464d",
+        "secondary-fixed": "#89f5e7",
+        "on-secondary-fixed-variant": "#005049",
+        "primary": "#000000",
+        "on-tertiary-fixed-variant": "#3c475a",
+        "on-secondary-fixed": "#00201d",
+        "surface-container": "#e5eeff",
+        "tertiary": "#000000"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.125rem",
+        "lg": "0.25rem",
+        "xl": "0.5rem",
+        "full": "0.75rem"
+      },
+      "spacing": {
+        "space-md": "0.75rem",
+        "gutter": "1rem",
+        "space-xs": "0.25rem",
+        "space-xl": "1.5rem",
+        "margin": "1rem",
+        "space-lg": "1rem",
+        "space-sm": "0.5rem",
+        "gutter-desktop": "1.5rem",
+        "margin-desktop": "2rem",
+        "margin-tablet": "1.5rem"
+      },
+      "fontFamily": {
+        "headline-md": ["Inter"],
+        "headline-sm": ["Inter"],
+        "label-md": ["Inter"],
+        "headline-xl": ["Inter"],
+        "headline-xl-mobile": ["Inter"],
+        "label-sm": ["Inter"],
+        "headline-lg": ["Inter"],
+        "body-sm": ["Inter"],
+        "body-lg": ["Inter"],
+        "numeric-metric": ["Inter"],
+        "body-md": ["Inter"],
+        "numeric-table": ["Inter"]
+      },
+      "fontSize": {
+        "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+        "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+        "label-md": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+        "headline-xl": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+        "headline-xl-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+        "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.025em", "fontWeight": "600" }],
+        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+        "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+        "numeric-metric": ["28px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+        "numeric-table": ["13px", { "lineHeight": "20px", "letterSpacing": "-0.005em", "fontWeight": "500" }]
+      }
+    }
+  }
+};
+</script>
+</head>
+<body class="bg-surface font-body-md text-body-md text-on-surface min-h-screen">
+<aside class="fixed left-0 top-0 h-full w-72 bg-primary-container z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+<div class="flex flex-col h-full">
+<div class="p-space-lg flex items-center justify-between bg-tertiary-container">
+<div class="flex items-center gap-space-sm overflow-hidden">
+<img alt="THULIR Logo" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1UhC_Px3BtWayW5EaSFSIX1sHpqmkbda_aeRSPAo0D9dkZKqd2C5NgET9T9sEflavjvvNNIkIdl_SGMWNNENPLJyuXTiOq8T8bhk6yLSicc9acZN_CiagY0H3ftHvJtNDPc79STnjLykMnTmdvDG_qMGtlHAQkmOSqPYp0WKXw9RueZUfFKLZ2tyr6ER4ogYkOk71qjkJrFzeavdFRZUDrj4cpF5oG7x3HJN9uuWlDu"/>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-primary tracking-tight truncate">THULIR</span>
+<span class="font-label-sm text-label-sm text-on-primary-container truncate">Early-Warning &amp; Support System</span>
+</div>
+</div>
+</div>
+<div class="px-space-lg py-space-sm bg-inverse-surface">
+<span class="font-label-sm text-label-sm text-inverse-on-surface block truncate">Dept. of School Education</span>
+</div>
+<nav class="flex-1 overflow-y-auto px-space-md py-space-md space-y-space-md" data-active-classes="bg-secondary text-on-secondary font-label-md rounded">
+<div class="space-y-space-xs">
+<div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-primary-container uppercase tracking-wider">Navigation</div>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="overview" href="#">Overview</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="students" href="#">Students</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="early-warnings" href="#">Early Warnings</a>
+<a aria-current="page" class="block px-space-sm py-space-xs transition-colors bg-secondary text-on-secondary font-label-md rounded" data-path="support-cases" href="#">Support Cases</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="interventions" href="#">Interventions</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="reports" href="#">Reports</a>
+</div>
+<div class="space-y-space-xs">
+<div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-primary-container uppercase tracking-wider">System</div>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="data-import" href="#">Data Import</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="settings" href="#">Settings</a>
+</div>
+</nav>
+</div>
+</aside>
+<div class="pl-72 flex flex-col min-h-screen">
+<header class="fixed top-0 left-72 right-0 h-16 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter-desktop">
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] text-secondary">account_balance</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Government Higher Secondary School Kovilpatti</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">(UDISE: 33280100412)</span>
+</div>
+<div class="hidden xl:inline-flex items-center px-space-sm py-space-xs bg-surface-container rounded">
+<span class="font-label-sm text-label-sm text-on-surface">2024-25 • Term II</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="relative w-80">
+<span class="material-symbols-outlined absolute left-space-sm top-1/2 -translate-y-1/2 text-[18px] text-outline">search</span>
+<input class="w-full h-9 pl-8 pr-space-sm bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded placeholder-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary" placeholder="Search Student ID / EMIS / Name..." type="text"/>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-9 px-space-md bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>Log Review / Case</span>
+</button>
+</div>
+<div class="relative flex items-center justify-center p-space-xs cursor-pointer text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute -top-1 -right-1 bg-error text-on-error font-label-sm text-label-sm px-space-xs py-0 rounded-full leading-none">7</span>
+</div>
+<div class="flex items-center gap-space-sm pl-space-sm">
+<div class="flex flex-col text-right hidden lg:block">
+<span class="font-label-md text-label-md text-on-surface font-medium leading-tight">R. Meenakshi</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant leading-tight">Head Counselor (M.S.W.)</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+</div>
+</div>
+</div>
+</header>
+<main class="relative pt-16 bg-surface min-h-[calc(100vh-4rem)] w-full px-gutter-desktop py-space-md">
+<div class="flex flex-col w-full">
+<div class="flex flex-col gap-space-md mb-space-lg">
+<div class="flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface-variant">
+<span>Home</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface font-semibold">Support Cases</span>
+</div>
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex flex-col">
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Support Cases &amp; Intervention Coordination</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">67 active support cases across Academic Remediation, Welfare, and Counseling • 09 requiring immediate follow-up action</p>
+</div>
+<div class="flex items-center flex-wrap gap-space-sm">
+<button class="h-9 px-space-md bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md rounded flex items-center gap-space-xs shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px] text-outline">file_download</span>
+<span>Export Cases (CSV)</span>
+</button>
+<button class="h-9 px-space-md bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md rounded flex items-center gap-space-xs shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px] text-outline">supervisor_account</span>
+<span>Batch Reassign</span>
+</button>
+<button class="h-9 px-space-md bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded flex items-center gap-space-xs shadow-sm transition-all" onclick="document.getElementById('action-drawer').classList.remove('translate-x-full')" type="button">
+<span class="material-symbols-outlined text-[18px]">add_task</span>
+<span>Create New Support Case</span>
+</button>
+</div>
+</div>
+</div>
+<section class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-space-md mb-space-lg">
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Active Support Cases</span>
+<span class="p-1 rounded bg-surface-container text-secondary material-symbols-outlined text-[18px]">cases</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-xs">
+<span class="font-numeric-metric text-numeric-metric text-on-surface">67</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">total roster</span>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full mt-space-sm overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 78%"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Pending Initial Action</span>
+<span class="p-1 rounded bg-surface-container text-on-surface-variant material-symbols-outlined text-[18px]">pending_actions</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-xs">
+<span class="font-numeric-metric text-numeric-metric text-on-surface">14</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">needs review</span>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full mt-space-sm overflow-hidden">
+<div class="bg-surface-tint h-full rounded-full" style="width: 35%"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Due This Week</span>
+<span class="p-1 rounded bg-surface-container text-secondary material-symbols-outlined text-[18px]">calendar_clock</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-xs">
+<span class="font-numeric-metric text-numeric-metric text-on-surface">18</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">scheduled</span>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full mt-space-sm overflow-hidden">
+<div class="bg-secondary-fixed-dim h-full rounded-full" style="width: 60%"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-error-container uppercase tracking-wider">Overdue (&gt;48h)</span>
+<span class="p-1 rounded bg-error-container text-error material-symbols-outlined text-[18px]">warning</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-xs">
+<span class="font-numeric-metric text-numeric-metric text-error">09</span>
+<span class="font-label-sm text-label-sm text-error font-medium">action mandatory</span>
+</div>
+<div class="w-full bg-error-container h-1.5 rounded-full mt-space-sm overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 45%"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between col-span-2 md:col-span-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Resolved (Term II)</span>
+<span class="p-1 rounded bg-surface-container text-secondary material-symbols-outlined text-[18px]">task_alt</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-xs">
+<span class="font-numeric-metric text-numeric-metric text-on-surface">29</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">reintegrated</span>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full mt-space-sm overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</section>
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-md mb-space-lg flex flex-col gap-space-md">
+<div class="flex items-center justify-between flex-wrap gap-space-sm">
+<div class="flex items-center gap-space-xs overflow-x-auto pb-1" id="tab-nav">
+<button class="px-space-md py-1.5 rounded-lg font-label-md text-label-md bg-secondary text-on-secondary shadow-sm transition-colors whitespace-nowrap">All Active Cases (67)</button>
+<button class="px-space-md py-1.5 rounded-lg font-label-md text-label-md bg-surface-container-low text-on-surface hover:bg-surface-container transition-colors whitespace-nowrap">Academic Remediation (48)</button>
+<button class="px-space-md py-1.5 rounded-lg font-label-md text-label-md bg-surface-container-low text-on-surface hover:bg-surface-container transition-colors whitespace-nowrap">Welfare &amp; Transit (12)</button>
+<button class="px-space-md py-1.5 rounded-lg font-label-md text-label-md bg-surface-container-low text-on-surface hover:bg-surface-container transition-colors whitespace-nowrap">Psychosocial / Guidance (7)</button>
+<button class="px-space-md py-1.5 rounded-lg font-label-md text-label-md bg-error-container text-error hover:bg-surface-container transition-colors whitespace-nowrap flex items-center gap-1 font-semibold">
+<span>Overdue Follow-ups</span>
+<span class="bg-error text-on-error px-1.5 rounded-full text-label-sm">9</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg font-label-md text-label-md bg-surface-container-low text-on-surface-variant hover:bg-surface-container transition-colors whitespace-nowrap">Resolved &amp; Closed (29)</button>
+</div>
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="font-label-sm text-label-sm">Sort by:</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold cursor-pointer">Urgency / Due Date</span>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-sm pt-space-xs">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Assigned Staff</label>
+<select class="w-full h-9 px-space-sm bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded-lg focus:outline-none focus:bg-surface-container-lowest">
+<option>All Staff &amp; Counselors</option>
+<option>R. Meenakshi (Head Counselor)</option>
+<option>P. Anbarasan (Counselor)</option>
+<option>S. Malathi (Math Teacher)</option>
+<option>T. Selvakumar (Chemistry)</option>
+<option>S. Mary (Class Teacher)</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Target Grade &amp; Section</label>
+<select class="w-full h-9 px-space-sm bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded-lg focus:outline-none focus:bg-surface-container-lowest">
+<option>All Grades (8 to 12)</option>
+<option>Grade 8</option>
+<option>Grade 9</option>
+<option>Grade 10</option>
+<option>Grade 11</option>
+<option>Grade 12</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Priority Classification</label>
+<select class="w-full h-9 px-space-sm bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded-lg focus:outline-none focus:bg-surface-container-lowest">
+<option>All Priorities</option>
+<option>High / Critical Risk</option>
+<option>Medium / Early Warning</option>
+<option>Standard Maintenance</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Follow-Up Schedule Range</label>
+<input class="w-full h-9 px-space-sm bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded-lg focus:outline-none focus:bg-surface-container-lowest" type="date" value="2024-11-14"/>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg mb-space-xl">
+<div class="lg:col-span-8 flex flex-col gap-space-md">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-md relative overflow-hidden transition-all hover:shadow-md">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary"></div>
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-space-sm pl-space-xs">
+<div class="flex items-start gap-space-sm">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center font-headline-sm text-headline-sm text-secondary flex-shrink-0">KM</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-headline-sm text-headline-sm text-on-surface">Kavitha M.</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container text-on-surface-variant">Gr 10-B</span>
+<span class="font-label-sm text-label-sm text-outline">EMIS: 3328014490</span>
+<span class="font-label-sm text-label-sm text-on-tertiary-container">#TC-104</span>
+</div>
+<div class="font-body-md text-body-md text-on-surface font-medium mt-1">Class 10 Math Remedial Group B + TNSTC Bus Pass Replacement</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Objective: Bring CAT-3 Math score to ≥50% and restore school attendance to ≥80%</div>
+</div>
+</div>
+<span class="self-start px-2 py-1 rounded bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm font-semibold whitespace-nowrap">Active — In Progress</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-sm mt-space-md pt-space-sm pl-space-xs bg-surface-container-low rounded-lg p-space-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Responsible Leads</span>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold mt-0.5">R. Meenakshi (Counselor)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">S. Malathi (Math Teacher)</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Milestone Progress (2/4 Done)</span>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex-1 bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 50%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">50%</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px] mt-1">Bus pass documents submitted</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Next Follow-Up Deadline</span>
+<div class="flex items-center gap-1 text-secondary mt-0.5">
+<span class="material-symbols-outlined text-[16px]">event</span>
+<span class="font-label-md text-label-md font-semibold">Tomorrow, Nov 15</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px]">Home visit &amp; workbook delivery</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-space-md pt-space-xs pl-space-xs">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">verified</span>
+<span>Last reviewed 2 days ago by Head Counselor</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-8 px-space-md bg-secondary text-on-secondary font-label-sm text-label-sm rounded hover:bg-on-secondary-container transition-colors flex items-center gap-1" onclick="document.getElementById('action-drawer').classList.remove('translate-x-full')" type="button">
+<span class="material-symbols-outlined text-[15px]">edit_note</span>
+<span>Log Follow-up Note</span>
+</button>
+<button class="h-8 px-space-sm bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm rounded transition-colors" type="button">
+              View Plan
+            </button>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-md relative overflow-hidden transition-all hover:shadow-md">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-error"></div>
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-space-sm pl-space-xs">
+<div class="flex items-start gap-space-sm">
+<div class="w-12 h-12 rounded-lg bg-error-container flex items-center justify-center font-headline-sm text-headline-sm text-error flex-shrink-0">KP</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-headline-sm text-headline-sm text-on-surface">Karthik P.</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container text-on-surface-variant">Gr 12-B</span>
+<span class="font-label-sm text-label-sm text-outline">EMIS: 3328013319</span>
+<span class="font-label-sm text-label-sm text-error font-semibold">#TC-098</span>
+</div>
+<div class="font-body-md text-body-md text-on-surface font-medium mt-1">HSC Board Examination Special Study Catch-up Plan</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Objective: Urgent re-engagement after 14 days consecutive absence; verify health &amp; family status</div>
+</div>
+</div>
+<span class="self-start px-2 py-1 rounded bg-error-container text-error font-label-sm text-label-sm font-semibold whitespace-nowrap">Escalated to Headmaster</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-sm mt-space-md pt-space-sm pl-space-xs bg-surface-container-low rounded-lg p-space-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Responsible Leads</span>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold mt-0.5">P. Anbarasan (Counselor)</span>
+<span class="font-body-sm text-body-sm text-error text-[11px] font-medium">Headmaster Escalation Tagged</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Milestone Progress (1/5 Done)</span>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex-1 bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 20%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-error font-semibold">20%</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px] mt-1">Student unreachable via phone</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Next Follow-Up Deadline</span>
+<div class="flex items-center gap-1 text-error mt-0.5 font-bold">
+<span class="material-symbols-outlined text-[16px]">crisis_alert</span>
+<span class="font-label-md text-label-md">Overdue by 6 days (Nov 8)</span>
+</div>
+<span class="font-body-sm text-body-sm text-error text-[11px]">Field visit pending verification</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-space-md pt-space-xs pl-space-xs">
+<div class="flex items-center gap-space-xs text-error font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">priority_high</span>
+<span>Case escalated due to statutory dropout warning window</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-8 px-space-md bg-error text-on-error font-label-sm text-label-sm rounded hover:bg-on-error-container transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[15px]">campaign</span>
+<span>Urgent Action</span>
+</button>
+<button class="h-8 px-space-sm bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm rounded transition-colors" type="button">
+              Reschedule
+            </button>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-md relative overflow-hidden transition-all hover:shadow-md">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary"></div>
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-space-sm pl-space-xs">
+<div class="flex items-start gap-space-sm">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center font-headline-sm text-headline-sm text-secondary flex-shrink-0">PD</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-headline-sm text-headline-sm text-on-surface">Priya D.</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container text-on-surface-variant">Gr 11-A</span>
+<span class="font-label-sm text-label-sm text-outline">EMIS: 3328019022</span>
+<span class="font-label-sm text-label-sm text-on-tertiary-container">#TC-112</span>
+</div>
+<div class="font-body-md text-body-md text-on-surface font-medium mt-1">Peer Tutoring in Chemistry + Hostel Study Room Access</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Objective: Clarify Organic Chemistry fundamentals with Peer Tutor K. Deepa</div>
+</div>
+</div>
+<span class="self-start px-2 py-1 rounded bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm font-semibold whitespace-nowrap">Active — On Track</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-sm mt-space-md pt-space-sm pl-space-xs bg-surface-container-low rounded-lg p-space-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Responsible Leads</span>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold mt-0.5">T. Selvakumar (Chemistry Dept)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">K. Deepa (Peer Tutor, Gr 12)</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Milestone Progress (3/4 Done)</span>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex-1 bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 75%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">75%</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px] mt-1">Module 2 recap completed</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Next Follow-Up Deadline</span>
+<div class="flex items-center gap-1 text-on-surface mt-0.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">schedule</span>
+<span class="font-label-md text-label-md font-semibold">Nov 18, 2024</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px]">Weekly assessment review</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-space-md pt-space-xs pl-space-xs">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
+<span>Hostel study room allocated for evening slots</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-8 px-space-md bg-secondary text-on-secondary font-label-sm text-label-sm rounded hover:bg-on-secondary-container transition-colors flex items-center gap-1" onclick="document.getElementById('action-drawer').classList.remove('translate-x-full')" type="button">
+<span class="material-symbols-outlined text-[15px]">playlist_add_check</span>
+<span>Log Session</span>
+</button>
+<button class="h-8 px-space-sm bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm rounded transition-colors" type="button">
+              Case Summary
+            </button>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-md relative overflow-hidden transition-all hover:shadow-md">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-outline"></div>
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-space-sm pl-space-xs">
+<div class="flex items-start gap-space-sm">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center font-headline-sm text-headline-sm text-on-surface flex-shrink-0">SR</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-headline-sm text-headline-sm text-on-surface">Sneha R.</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container text-on-surface-variant">Gr 8-D</span>
+<span class="font-label-sm text-label-sm text-outline">EMIS: 3328017833</span>
+<span class="font-label-sm text-label-sm text-on-tertiary-container">#TC-085</span>
+</div>
+<div class="font-body-md text-body-md text-on-surface font-medium mt-1">Government Free Bicycle Scheme Sanction &amp; Transit Support</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Objective: Resolve 4.8 km walking commute causing frequent morning tardiness</div>
+</div>
+</div>
+<span class="self-start px-2 py-1 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold whitespace-nowrap">Awaiting Dept Sanction</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-sm mt-space-md pt-space-sm pl-space-xs bg-surface-container-low rounded-lg p-space-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Responsible Leads</span>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold mt-0.5">S. Mary (Class Teacher)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Welfare Officer Coordination</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Milestone Progress (2/3 Done)</span>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex-1 bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-surface-tint h-full rounded-full" style="width: 66%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">66%</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px] mt-1">Application verified by BEO</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Next Follow-Up Deadline</span>
+<div class="flex items-center gap-1 text-on-surface mt-0.5">
+<span class="material-symbols-outlined text-[16px] text-outline">pending</span>
+<span class="font-label-md text-label-md font-semibold">Nov 20, 2024</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px]">Bicycle distribution voucher</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-space-md pt-space-xs pl-space-xs">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">mail</span>
+<span>BEO approval batch dispatched Nov 10</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-8 px-space-md bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm rounded transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[15px]">sync</span>
+<span>Check Status</span>
+</button>
+<button class="h-8 px-space-sm bg-secondary text-on-secondary font-label-sm text-label-sm rounded hover:bg-on-secondary-container transition-colors" onclick="document.getElementById('action-drawer').classList.remove('translate-x-full')" type="button">
+              Update Notes
+            </button>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-4 flex flex-col gap-space-md">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-md flex flex-col">
+<div class="flex items-center justify-between pb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px]">history_edu</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Recent Logged Actions</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Live Feed</span>
+</div>
+<div class="relative pl-4 space-y-space-md pt-space-xs before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-container">
+<div class="relative flex flex-col">
+<div class="absolute -left-[19px] top-1 w-2.5 h-2.5 rounded-full bg-secondary"></div>
+<div class="flex items-baseline justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Nov 14, 10:15 AM</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Home Visit</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface mt-1">Home visit logged by <strong>P. Anbarasan</strong>: Father committed to student attending remedial sessions regularly without morning farm chores.</p>
+<span class="font-label-sm text-label-sm text-outline mt-1">Student: Karthik P. (#TC-098)</span>
+</div>
+<div class="relative flex flex-col">
+<div class="absolute -left-[19px] top-1 w-2.5 h-2.5 rounded-full bg-surface-tint"></div>
+<div class="flex items-baseline justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Nov 13, 09:30 AM</span>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Remedial Dispatch</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface mt-1">Academic remedial packet distributed to Grade 10 Math cohort (14 students) with workbook tracking sheets signed.</p>
+<span class="font-label-sm text-label-sm text-outline mt-1">Coordinator: S. Malathi</span>
+</div>
+<div class="relative flex flex-col">
+<div class="absolute -left-[19px] top-1 w-2.5 h-2.5 rounded-full bg-secondary-fixed-dim"></div>
+<div class="flex items-baseline justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Nov 12, 03:45 PM</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Peer Setup</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface mt-1">Peer tutoring scheduled for Priya D. in Chemistry; paired with senior topper K. Deepa with weekly goals confirmed.</p>
+<span class="font-label-sm text-label-sm text-outline mt-1">Student: Priya D. (#TC-112)</span>
+</div>
+<div class="relative flex flex-col">
+<div class="absolute -left-[19px] top-1 w-2.5 h-2.5 rounded-full bg-outline"></div>
+<div class="flex items-baseline justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Nov 11, 11:20 AM</span>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Transit Formalities</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface mt-1">TNSTC route concession form certified by Headmaster and handed to local transport depot coordinator.</p>
+<span class="font-label-sm text-label-sm text-outline mt-1">Beneficiary: Kavitha M. (#TC-104)</span>
+</div>
+</div>
+<button class="w-full mt-space-md py-2 bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md rounded flex items-center justify-center gap-1 transition-colors" onclick="document.getElementById('action-drawer').classList.remove('translate-x-full')" type="button">
+<span class="material-symbols-outlined text-[16px]">add_circle</span>
+<span>Log New Intervention Note</span>
+</button>
+</div>
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-md flex flex-col">
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-headline-sm text-headline-sm text-on-surface">Intervention Categories</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Breakdown</span>
+</div>
+<div class="space-y-space-sm">
+<div>
+<div class="flex justify-between font-label-sm text-label-sm mb-1">
+<span class="text-on-surface font-medium">Academic Catch-up</span>
+<span class="text-on-surface-variant">48 cases (71%)</span>
+</div>
+<div class="w-full bg-surface-container-low h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 71%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-sm text-label-sm mb-1">
+<span class="text-on-surface font-medium">Transit &amp; Material Welfare</span>
+<span class="text-on-surface-variant">12 cases (18%)</span>
+</div>
+<div class="w-full bg-surface-container-low h-2 rounded-full overflow-hidden">
+<div class="bg-surface-tint h-full rounded-full" style="width: 18%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-sm text-label-sm mb-1">
+<span class="text-on-surface font-medium">Psychosocial &amp; Attendance</span>
+<span class="text-on-surface-variant">7 cases (11%)</span>
+</div>
+<div class="w-full bg-surface-container-low h-2 rounded-full overflow-hidden">
+<div class="bg-secondary-fixed-dim h-full rounded-full" style="width: 11%"></div>
+</div>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm bg-surface-container-low p-space-sm rounded-lg flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[24px] flex-shrink-0">shield_with_heart</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Institutional Standard</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px] leading-tight">Every case requires a logged update every 7 calendar days to prevent dropouts.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="fixed inset-y-0 right-0 w-full sm:w-[480px] bg-surface-container-lowest shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto flex flex-col justify-between" id="action-drawer">
+<div>
+<div class="p-space-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[22px]">post_add</span>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Log Support Action</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Document progress, parent communication, or milestone</p>
+</div>
+</div>
+<button class="p-1 rounded-full hover:bg-surface-container text-on-surface-variant" onclick="document.getElementById('action-drawer').classList.add('translate-x-full')" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<form class="p-space-lg flex flex-col gap-space-md">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Select Case / Student</label>
+<select class="w-full h-10 px-space-sm bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded focus:ring-1 focus:ring-secondary focus:outline-none">
+<option>TC-104 — Kavitha M. (Gr 10-B • Remedial Math)</option>
+<option>TC-098 — Karthik P. (Gr 12-B • Catch-up Plan)</option>
+<option>TC-112 — Priya D. (Gr 11-A • Chemistry Peer Tutoring)</option>
+<option>TC-085 — Sneha R. (Gr 8-D • Transit &amp; Bicycle)</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Intervention Category</label>
+<div class="grid grid-cols-2 gap-space-xs">
+<label class="flex items-center gap-2 p-2 rounded bg-surface-container-low cursor-pointer">
+<input checked="" class="accent-secondary" name="intervention_type" type="radio"/>
+<span class="font-label-sm text-label-sm text-on-surface">Guardian Contact</span>
+</label>
+<label class="flex items-center gap-2 p-2 rounded bg-surface-container-low cursor-pointer">
+<input class="accent-secondary" name="intervention_type" type="radio"/>
+<span class="font-label-sm text-label-sm text-on-surface">Home Visit Log</span>
+</label>
+<label class="flex items-center gap-2 p-2 rounded bg-surface-container-low cursor-pointer">
+<input class="accent-secondary" name="intervention_type" type="radio"/>
+<span class="font-label-sm text-label-sm text-on-surface">Remedial Session</span>
+</label>
+<label class="flex items-center gap-2 p-2 rounded bg-surface-container-low cursor-pointer">
+<input class="accent-secondary" name="intervention_type" type="radio"/>
+<span class="font-label-sm text-label-sm text-on-surface">Welfare Sanction</span>
+</label>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Logged By</label>
+<input class="w-full h-9 px-space-sm bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded focus:ring-1 focus:ring-secondary focus:outline-none" readonly="" type="text" value="R. Meenakshi (Counselor)"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Action Date</label>
+<input class="w-full h-9 px-space-sm bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded focus:ring-1 focus:ring-secondary focus:outline-none" type="date" value="2024-11-14"/>
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Case Notes &amp; Observations</label>
+<textarea class="w-full h-28 p-space-sm bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded focus:ring-1 focus:ring-secondary focus:outline-none resize-none placeholder-outline" placeholder="Enter objective, respectful observations. Include guardian commitments, verified transit status, or academic progress notes..."></textarea>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Milestone Completed?</label>
+<select class="w-full h-9 px-space-sm bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded focus:ring-1 focus:ring-secondary focus:outline-none">
+<option>No Milestone update</option>
+<option>Milestone 1 completed</option>
+<option>Milestone 2 completed</option>
+<option>Milestone 3 completed</option>
+<option>All milestones cleared</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Next Follow-Up Deadline</label>
+<input class="w-full h-9 px-space-sm bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded focus:ring-1 focus:ring-secondary focus:outline-none" type="date" value="2024-11-21"/>
+</div>
+</div>
+<div class="flex items-center gap-2 p-space-sm bg-surface-container-low rounded">
+<input class="accent-secondary h-4 w-4" id="escalate" type="checkbox"/>
+<label class="font-label-sm text-label-sm text-on-surface cursor-pointer" for="escalate">Flag for Headmaster Attention &amp; Department Social Worker</label>
+</div>
+</form>
+</div>
+<div class="p-space-lg bg-surface-container-low flex items-center justify-end gap-space-sm">
+<button class="h-9 px-space-md bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md rounded transition-colors" onclick="document.getElementById('action-drawer').classList.add('translate-x-full')" type="button">
+        Cancel
+      </button>
+<button class="h-9 px-space-md bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded transition-colors flex items-center gap-1 shadow-sm" onclick="document.getElementById('action-drawer').classList.add('translate-x-full')" type="button">
+<span class="material-symbols-outlined text-[16px]">save</span>
+<span>Save Support Entry</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

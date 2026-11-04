@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="web_dashboard" name="shell-type"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+@layer base { 
+  html, body { margin: 0; padding: 0; } 
+  body { overscroll-behavior: none; } 
+  main > :first-child { margin-top: 0 !important; } 
+  main > :last-child { margin-bottom: 0 !important; } 
+}
+::-webkit-scrollbar { display: none; }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "outline": "#76777d",
+        "outline-variant": "#c6c6cd",
+        "secondary-fixed-dim": "#6bd8cb",
+        "on-tertiary": "#ffffff",
+        "primary-fixed": "#dae2fd",
+        "surface-container-highest": "#d3e4fe",
+        "tertiary-fixed": "#d8e3fb",
+        "surface-bright": "#f8f9ff",
+        "on-tertiary-container": "#79849a",
+        "on-secondary": "#ffffff",
+        "surface-container-high": "#dce9ff",
+        "on-error": "#ffffff",
+        "background": "#f8f9ff",
+        "surface-container-low": "#eff4ff",
+        "on-tertiary-fixed": "#111c2d",
+        "secondary": "#006a61",
+        "error": "#ba1a1a",
+        "inverse-surface": "#213145",
+        "surface-variant": "#d3e4fe",
+        "on-primary-container": "#7c839b",
+        "surface-tint": "#565e74",
+        "on-background": "#0b1c30",
+        "on-surface": "#0b1c30",
+        "primary-container": "#131b2e",
+        "on-secondary-container": "#006f66",
+        "error-container": "#ffdad6",
+        "inverse-primary": "#bec6e0",
+        "surface-container-lowest": "#ffffff",
+        "on-primary-fixed": "#131b2e",
+        "inverse-on-surface": "#eaf1ff",
+        "tertiary-fixed-dim": "#bcc7de",
+        "on-primary": "#ffffff",
+        "on-primary-fixed-variant": "#3f465c",
+        "tertiary-container": "#111c2d",
+        "surface-dim": "#cbdbf5",
+        "surface": "#f8f9ff",
+        "secondary-container": "#86f2e4",
+        "primary-fixed-dim": "#bec6e0",
+        "on-error-container": "#93000a",
+        "on-surface-variant": "#45464d",
+        "secondary-fixed": "#89f5e7",
+        "on-secondary-fixed-variant": "#005049",
+        "primary": "#000000",
+        "on-tertiary-fixed-variant": "#3c475a",
+        "on-secondary-fixed": "#00201d",
+        "surface-container": "#e5eeff",
+        "tertiary": "#000000"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.125rem",
+        "lg": "0.25rem",
+        "xl": "0.5rem",
+        "full": "0.75rem"
+      },
+      "spacing": {
+        "space-md": "0.75rem",
+        "gutter": "1rem",
+        "space-xs": "0.25rem",
+        "space-xl": "1.5rem",
+        "margin": "1rem",
+        "space-lg": "1rem",
+        "space-sm": "0.5rem",
+        "gutter-desktop": "1.5rem",
+        "margin-desktop": "2rem",
+        "margin-tablet": "1.5rem"
+      },
+      "fontFamily": {
+        "headline-md": ["Inter"],
+        "headline-sm": ["Inter"],
+        "label-md": ["Inter"],
+        "headline-xl": ["Inter"],
+        "headline-xl-mobile": ["Inter"],
+        "label-sm": ["Inter"],
+        "headline-lg": ["Inter"],
+        "body-sm": ["Inter"],
+        "body-lg": ["Inter"],
+        "numeric-metric": ["Inter"],
+        "body-md": ["Inter"],
+        "numeric-table": ["Inter"]
+      },
+      "fontSize": {
+        "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+        "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+        "label-md": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+        "headline-xl": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+        "headline-xl-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+        "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.025em", "fontWeight": "600" }],
+        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+        "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+        "numeric-metric": ["28px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+        "numeric-table": ["13px", { "lineHeight": "20px", "letterSpacing": "-0.005em", "fontWeight": "500" }]
+      }
+    }
+  }
+};
+</script>
+</head>
+<body class="bg-surface font-body-md text-body-md text-on-surface min-h-screen">
+<aside class="fixed left-0 top-0 h-full w-72 bg-primary-container z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+<div class="flex flex-col h-full">
+<div class="p-space-lg flex items-center justify-between bg-tertiary-container">
+<div class="flex items-center gap-space-sm overflow-hidden">
+<img alt="THULIR Logo" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1UhC_Px3BtWayW5EaSFSIX1sHpqmkbda_aeRSPAo0D9dkZKqd2C5NgET9T9sEflavjvvNNIkIdl_SGMWNNENPLJyuXTiOq8T8bhk6yLSicc9acZN_CiagY0H3ftHvJtNDPc79STnjLykMnTmdvDG_qMGtlHAQkmOSqPYp0WKXw9RueZUfFKLZ2tyr6ER4ogYkOk71qjkJrFzeavdFRZUDrj4cpF5oG7x3HJN9uuWlDu"/>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-primary tracking-tight truncate">THULIR</span>
+<span class="font-label-sm text-label-sm text-on-primary-container truncate">Early-Warning &amp; Support System</span>
+</div>
+</div>
+</div>
+<div class="px-space-lg py-space-sm bg-inverse-surface">
+<span class="font-label-sm text-label-sm text-inverse-on-surface block truncate">Dept. of School Education</span>
+</div>
+<nav class="flex-1 overflow-y-auto px-space-md py-space-md space-y-space-md" data-active-classes="bg-secondary text-on-secondary font-label-md rounded">
+<div class="space-y-space-xs">
+<div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-primary-container uppercase tracking-wider">Navigation</div>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="overview" href="#">Overview</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="students" href="#">Students</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="early-warnings" href="#">Early Warnings</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="support-cases" href="#">Support Cases</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="interventions" href="#">Interventions</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="reports" href="#">Reports</a>
+</div>
+<div class="space-y-space-xs">
+<div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-primary-container uppercase tracking-wider">System</div>
+<a aria-current="page" class="block px-space-sm py-space-xs transition-colors bg-secondary text-on-secondary font-label-md rounded" data-path="data-import" href="#">Data Import</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="settings" href="#">Settings</a>
+</div>
+</nav>
+</div>
+</aside>
+<div class="pl-72 flex flex-col min-h-screen">
+<header class="fixed top-0 left-72 right-0 h-16 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter-desktop">
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] text-secondary">account_balance</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Government Higher Secondary School Kovilpatti</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">(UDISE: 33280100412)</span>
+</div>
+<div class="hidden xl:inline-flex items-center px-space-sm py-space-xs bg-surface-container rounded">
+<span class="font-label-sm text-label-sm text-on-surface">2024-25 • Term II</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="relative w-80">
+<span class="material-symbols-outlined absolute left-space-sm top-1/2 -translate-y-1/2 text-[18px] text-outline">search</span>
+<input class="w-full h-9 pl-8 pr-space-sm bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded placeholder-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary" placeholder="Search Student ID / EMIS / Name..." type="text"/>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-9 px-space-md bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>Log Review / Case</span>
+</button>
+</div>
+<div class="relative flex items-center justify-center p-space-xs cursor-pointer text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute -top-1 -right-1 bg-error text-on-error font-label-sm text-label-sm px-space-xs py-0 rounded-full leading-none">7</span>
+</div>
+<div class="flex items-center gap-space-sm pl-space-sm">
+<div class="flex flex-col text-right hidden lg:block">
+<span class="font-label-md text-label-md text-on-surface font-medium leading-tight">R. Meenakshi</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant leading-tight">Head Counselor (M.S.W.)</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+</div>
+</div>
+</div>
+</header>
+<main class="relative pt-16 bg-surface min-h-[calc(100vh-4rem)] w-full px-gutter-desktop py-space-md">
+<div class="flex flex-col w-full">
+<!-- Top Context Header & Actions -->
+<div class="flex flex-col lg:flex-row lg:items-end justify-between pb-space-lg gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<span>Home</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface font-semibold">Data Import &amp; Quality</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Data Import &amp; Registry Quality Console</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Upload, map, validate, and synchronize school attendance and assessment records with TN-EMIS Cloud</p>
+</div>
+<div class="flex items-center gap-space-sm flex-shrink-0">
+<button class="h-9 px-space-md bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md rounded flex items-center gap-space-xs shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">download_for_offline</span>
+<span>Download CSV Template</span>
+</button>
+<button class="h-9 px-space-md bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md rounded flex items-center gap-space-xs shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">menu_book</span>
+<span>View Documentation</span>
+</button>
+</div>
+</div>
+<!-- Step-by-Step Stepper Component -->
+<div class="w-full bg-surface-container-lowest p-space-md rounded-xl shadow-sm mb-space-lg">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-space-sm relative">
+<!-- Step 1 -->
+<div class="flex items-center gap-space-sm p-space-xs rounded">
+<div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-label-md text-label-md flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Step 1</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold truncate">Upload File</span>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex items-center gap-space-sm p-space-xs rounded">
+<div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-label-md text-label-md flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Step 2</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold truncate">Map Columns</span>
+</div>
+</div>
+<!-- Step 3 (Active) -->
+<div class="flex items-center gap-space-sm p-space-xs bg-surface-container-high rounded shadow-inner">
+<div class="w-8 h-8 rounded-full bg-primary-container text-primary-fixed flex items-center justify-center font-label-md text-label-md font-bold flex-shrink-0">
+          3
+        </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm text-secondary font-bold uppercase tracking-wider">Active</span>
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-bold truncate">Preview &amp; Validate</span>
+</div>
+</div>
+<!-- Step 4 -->
+<div class="flex items-center gap-space-sm p-space-xs rounded opacity-60">
+<div class="w-8 h-8 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center font-label-md text-label-md flex-shrink-0">
+          4
+        </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Step 4</span>
+<span class="font-label-md text-label-md text-on-surface truncate">Conflict Resolution</span>
+</div>
+</div>
+<!-- Step 5 -->
+<div class="flex items-center gap-space-sm p-space-xs rounded opacity-60">
+<div class="w-8 h-8 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center font-label-md text-label-md flex-shrink-0">
+          5
+        </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Step 5</span>
+<span class="font-label-md text-label-md text-on-surface truncate">Confirm Import</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Job Meta Bar -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm mb-space-lg flex flex-col xl:flex-row xl:items-center justify-between gap-space-lg">
+<div class="flex flex-wrap items-center gap-space-md">
+<div class="w-12 h-12 rounded bg-surface-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[28px] text-secondary">table_view</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Kovilpatti_GHSS_Term2_CAT2_Attendance_BatchNov.xlsx</span>
+<span class="px-space-sm py-0.5 bg-secondary text-on-secondary rounded font-label-sm text-label-sm font-semibold">STAGED</span>
+</div>
+<div class="flex items-center gap-space-md text-on-surface-variant font-body-sm text-body-sm mt-0.5 flex-wrap">
+<span>File Size: <strong class="text-on-surface">248 KB</strong></span>
+<span>•</span>
+<span>Records: <strong class="text-on-surface">142 total rows</strong></span>
+<span>•</span>
+<span>Origin: <strong class="text-on-surface">School Exam Cell &amp; Biometrics</strong></span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm bg-surface-container-low px-space-md py-space-sm rounded">
+<span class="material-symbols-outlined text-secondary text-[20px]">cloud_sync</span>
+<div class="flex flex-col text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Target Datastores</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Student Attendance • CAT-2 Assessments</span>
+</div>
+</div>
+</div>
+<!-- Validation Summary KPI Cards with Mini Visual Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-space-md mb-space-lg">
+<!-- Card 1: Total Rows -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Total Ingest Rows</span>
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">format_list_numbered</span>
+</div>
+<div class="mt-space-md flex items-baseline justify-between">
+<span class="font-numeric-metric text-numeric-metric text-on-surface">142</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">100% Parsed</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden mt-space-sm">
+<div class="bg-surface-tint h-full w-full"></div>
+</div>
+</div>
+<!-- Card 2: Valid -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Ready for Sync</span>
+<span class="material-symbols-outlined text-[20px] text-secondary">verified</span>
+</div>
+<div class="mt-space-md flex items-baseline justify-between">
+<span class="font-numeric-metric text-numeric-metric text-secondary">136</span>
+<span class="font-label-sm text-label-sm px-space-xs py-0.5 rounded font-semibold bg-secondary-container text-on-secondary-container">95.8% Pass</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden mt-space-sm">
+<div class="bg-secondary h-full w-[95.8%]"></div>
+</div>
+</div>
+<!-- Card 3: Discrepancies -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Non-Blocking Warnings</span>
+<span class="material-symbols-outlined text-[20px] text-outline">warning</span>
+</div>
+<div class="mt-space-md flex items-baseline justify-between">
+<span class="font-numeric-metric text-numeric-metric text-on-surface">4</span>
+<span class="font-label-sm text-label-sm px-space-xs py-0.5 rounded font-semibold bg-surface-container text-on-surface-variant">2.8% Missing Opt.</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden mt-space-sm">
+<div class="bg-outline h-full w-[2.8%]"></div>
+</div>
+</div>
+<!-- Card 4: Critical Errors -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Critical Conflicts</span>
+<span class="material-symbols-outlined text-[20px] text-error">error</span>
+</div>
+<div class="mt-space-md flex items-baseline justify-between">
+<span class="font-numeric-metric text-numeric-metric text-error">2</span>
+<span class="font-label-sm text-label-sm px-space-xs py-0.5 rounded font-semibold bg-error-container text-on-error-container">Requires Review</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden mt-space-sm">
+<div class="bg-error h-full w-[1.4%]"></div>
+</div>
+</div>
+</div>
+<!-- Bento Section: Column Mapping Summary + Visual Sync Health -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg mb-space-lg">
+<!-- Column Mapping Table (8 Cols) -->
+<div class="lg:col-span-8 bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col">
+<div class="flex items-center justify-between pb-space-sm mb-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[20px]">join_inner</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Schema &amp; Attribute Mapping Summary</h2>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-container-high text-on-surface px-space-sm py-0.5 rounded font-semibold">6 of 6 Mandatory Fields Matched</span>
+</div>
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-space-xs px-space-sm rounded-l">Spreadsheet Source Column</th>
+<th class="py-space-xs px-space-sm">Target EMIS Registry Field</th>
+<th class="py-space-xs px-space-sm">Extracted Sample</th>
+<th class="py-space-xs px-space-sm rounded-r text-right">Confidence / Status</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-space-sm px-space-sm font-numeric-table font-semibold text-on-surface">student_emis_no</td>
+<td class="py-space-sm px-space-sm">EMIS ID (Primary Key)</td>
+<td class="py-space-sm px-space-sm font-numeric-table text-on-surface-variant">3328014490</td>
+<td class="py-space-sm px-space-sm text-right">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-secondary font-bold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> 100% Match
+                </span>
+</td>
+</tr>
+<tr class="bg-surface-container-low/50 hover:bg-surface-container-low transition-colors">
+<td class="py-space-sm px-space-sm font-numeric-table font-semibold text-on-surface">stud_name</td>
+<td class="py-space-sm px-space-sm">Student Full Name</td>
+<td class="py-space-sm px-space-sm text-on-surface-variant">Kavitha M.</td>
+<td class="py-space-sm px-space-sm text-right">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-secondary font-bold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> 100% Match
+                </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-space-sm px-space-sm font-numeric-table font-semibold text-on-surface">grade_sec</td>
+<td class="py-space-sm px-space-sm">Class &amp; Section</td>
+<td class="py-space-sm px-space-sm font-numeric-table text-on-surface-variant">10-B</td>
+<td class="py-space-sm px-space-sm text-right">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-secondary font-bold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> 100% Match
+                </span>
+</td>
+</tr>
+<tr class="bg-surface-container-low/50 hover:bg-surface-container-low transition-colors">
+<td class="py-space-sm px-space-sm font-numeric-table font-semibold text-on-surface">oct_attendance_pct</td>
+<td class="py-space-sm px-space-sm">Monthly Attendance %</td>
+<td class="py-space-sm px-space-sm font-numeric-table text-on-surface-variant">62.4</td>
+<td class="py-space-sm px-space-sm text-right">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-secondary font-bold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> 100% Match
+                </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-space-sm px-space-sm font-numeric-table font-semibold text-on-surface">cat2_math_marks</td>
+<td class="py-space-sm px-space-sm">CAT-2 Mathematics (0-100)</td>
+<td class="py-space-sm px-space-sm font-numeric-table text-on-surface-variant">24</td>
+<td class="py-space-sm px-space-sm text-right">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-secondary font-bold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> 100% Match
+                </span>
+</td>
+</tr>
+<tr class="bg-surface-container-low/50 hover:bg-surface-container-low transition-colors">
+<td class="py-space-sm px-space-sm font-numeric-table font-semibold text-on-surface">cat2_sci_marks</td>
+<td class="py-space-sm px-space-sm">CAT-2 Science (0-100)</td>
+<td class="py-space-sm px-space-sm font-numeric-table text-on-surface-variant">32</td>
+<td class="py-space-sm px-space-sm text-right">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-secondary font-bold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> 100% Match
+                </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Health Donut Chart & Registry Safeguards (4 Cols) -->
+<div class="lg:col-span-4 bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-space-xs mb-space-sm">
+<span class="font-headline-sm text-headline-sm text-on-surface">Batch Integrity</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">security</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md">Real-time schema adherence before committing to TN-EMIS persistent store.</p>
+<!-- Inline Vector Chart: Donut breakdown -->
+<div class="flex items-center justify-center py-space-sm">
+<div class="relative w-36 h-36 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<!-- Background ring -->
+<path class="text-surface-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<!-- Green segment (95.8%) -> dasharray ~ 95.8, 100 -->
+<path class="text-secondary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="95.8, 100" stroke-linecap="round" stroke-width="3.5"></path>
+<!-- Red segment (1.4%) -->
+<path class="text-error" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="1.4, 100" stroke-dashoffset="-95.8" stroke-width="3.5"></path>
+<!-- Yellow segment (2.8%) -->
+<path class="text-outline" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="2.8, 100" stroke-dashoffset="-97.2" stroke-width="3.5"></path>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="font-numeric-metric text-numeric-metric text-on-surface">95.8%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Validated</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-space-xs mt-space-sm text-center">
+<div class="p-space-xs bg-surface-container-low rounded">
+<span class="font-numeric-table font-bold text-secondary block">136</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant uppercase">Ready</span>
+</div>
+<div class="p-space-xs bg-surface-container-low rounded">
+<span class="font-numeric-table font-bold text-outline block">4</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant uppercase">Warn</span>
+</div>
+<div class="p-space-xs bg-surface-container-low rounded">
+<span class="font-numeric-table font-bold text-error block">2</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant uppercase">Conflicts</span>
+</div>
+</div>
+</div>
+<!-- Institutional Safety Guarantee Notice -->
+<div class="mt-space-md p-space-sm bg-surface-container rounded flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[18px] flex-shrink-0 mt-0.5">verified_user</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Zero Silent-Overwrite Guarantee</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant leading-tight">System halts syncing whenever duplicate scores or unverified EMIS IDs collide until logged by the IT Coordinator.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive Validation & Conflict Resolution Workspace -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm mb-space-lg overflow-hidden flex flex-col">
+<!-- Filter Tabs Bar -->
+<div class="flex flex-wrap items-center justify-between p-space-md bg-surface-container-low gap-space-md">
+<div class="flex items-center gap-space-xs bg-surface-container p-1 rounded">
+<button class="tab-btn px-space-md py-1 rounded font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" id="tab-all" onclick="filterRecords('all')" type="button">
+          All Records (142)
+        </button>
+<button class="tab-btn px-space-md py-1 rounded font-label-md text-label-md bg-surface-container-lowest text-on-surface font-semibold shadow-sm transition-colors" id="tab-conflicts" onclick="filterRecords('conflicts')" type="button">
+          Critical Conflicts (2)
+        </button>
+<button class="tab-btn px-space-md py-1 rounded font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" id="tab-warnings" onclick="filterRecords('warnings')" type="button">
+          Warnings (4)
+        </button>
+<button class="tab-btn px-space-md py-1 rounded font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" id="tab-valid" onclick="filterRecords('valid')" type="button">
+          Valid Records (136)
+        </button>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Filter by Action Status:</span>
+<span class="px-space-sm py-1 bg-error-container text-on-error-container font-label-sm text-label-sm rounded font-bold">2 Action Required</span>
+</div>
+</div>
+<!-- Active Records View -->
+<div class="p-space-lg flex flex-col gap-space-md">
+<!-- Critical Conflict Row 1 -->
+<div class="record-item conflict-item bg-surface-container-low rounded-xl p-space-md shadow-sm transition-all">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-10 h-10 rounded bg-error-container text-on-error-container flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[22px]">person_off</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-label-sm text-label-sm bg-error text-on-error px-space-xs py-0.5 rounded font-bold">CRITICAL #48</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">R. Suresh</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-numeric-table">EMIS: 3328019901</span>
+<span class="font-label-sm text-label-sm bg-surface-container text-on-surface px-space-xs py-0.5 rounded">Class 10-A</span>
+</div>
+<div class="mt-space-xs flex items-center gap-space-xs text-error font-body-sm text-body-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]">error</span>
+<span>EMIS ID not found in Master School Enrollment Directory (UDISE: 33280100412)</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Student was not indexed in the Term 1 student registry. Possible typo in EMIS or transfer student awaiting induction.</p>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-space-sm flex-shrink-0 self-end lg:self-center">
+<button class="h-8 px-space-md bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded flex items-center gap-space-xs shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">person_search</span>
+<span>Link Existing Student</span>
+</button>
+<button class="h-8 px-space-md bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md rounded flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">skip_next</span>
+<span>Skip Row</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Critical Conflict Row 2 -->
+<div class="record-item conflict-item bg-surface-container-low rounded-xl p-space-md shadow-sm transition-all">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-10 h-10 rounded bg-error-container text-on-error-container flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[22px]">difference</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-label-sm text-label-sm bg-error text-on-error px-space-xs py-0.5 rounded font-bold">CONFLICT #112</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Kavitha M.</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-numeric-table">EMIS: 3328014490</span>
+<span class="font-label-sm text-label-sm bg-surface-container text-on-surface px-space-xs py-0.5 rounded">Class 10-B</span>
+</div>
+<div class="mt-space-xs flex items-center gap-space-xs text-error font-body-sm text-body-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]">rule</span>
+<span>Score Mismatch: Uploaded CAT-2 Math (28/100) conflicts with Master Registry (24/100)</span>
+</div>
+<div class="flex items-center gap-space-md mt-space-xs text-on-surface-variant font-body-sm text-body-sm">
+<span>Existing Cloud Record: <strong class="text-on-surface font-numeric-table">24 Marks</strong> (Entered 12 Nov by T. Soundar)</span>
+<span>•</span>
+<span>File Value: <strong class="text-secondary font-numeric-table">28 Marks</strong></span>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-space-xs flex-wrap self-end lg:self-center">
+<button class="h-8 px-space-sm bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md rounded flex items-center gap-space-xs transition-colors" type="button">
+<span>Keep Existing (24)</span>
+</button>
+<button class="h-8 px-space-sm bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded flex items-center gap-space-xs shadow-sm transition-colors" type="button">
+<span>Overwrite with (28)</span>
+</button>
+<button class="h-8 px-space-sm bg-surface-container text-outline hover:text-on-surface font-label-md text-label-md rounded flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">flag</span>
+<span>Flag for HM Review</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Sample Warning Item (Hidden in Conflict tab unless toggled) -->
+<div class="record-item warning-item bg-surface-container-low rounded-xl p-space-md shadow-sm transition-all hidden">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-10 h-10 rounded bg-surface-container text-outline flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[22px]">contact_phone</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-label-sm text-label-sm bg-outline text-on-tertiary px-space-xs py-0.5 rounded font-bold">WARNING #14</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">P. Vignesh</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-numeric-table">EMIS: 3328014521</span>
+<span class="font-label-sm text-label-sm bg-surface-container text-on-surface px-space-xs py-0.5 rounded">Class 10-A</span>
+</div>
+<div class="mt-space-xs text-on-surface-variant font-body-sm text-body-sm">
+                Missing Secondary Parent Phone Number — Record will be imported with primary mobile fallback.
+              </div>
+</div>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-container text-on-surface px-space-sm py-1 rounded font-semibold self-end lg:self-center">Auto-Permitted</span>
+</div>
+</div>
+<!-- Sample Valid Item (Hidden in Conflict tab unless toggled) -->
+<div class="record-item valid-item bg-surface-container-low rounded-xl p-space-md shadow-sm transition-all hidden">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-10 h-10 rounded bg-secondary-container text-on-secondary-container flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[22px]">check_circle</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-label-sm text-label-sm bg-secondary text-on-secondary px-space-xs py-0.5 rounded font-bold">VALID #01</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">A. Anitha</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-numeric-table">EMIS: 3328014302</span>
+<span class="font-label-sm text-label-sm bg-surface-container text-on-surface px-space-xs py-0.5 rounded">Class 10-A</span>
+</div>
+<div class="mt-space-xs text-on-surface-variant font-body-sm text-body-sm">
+                Oct Attendance: 88.2% • CAT-2 Math: 58 • CAT-2 Science: 64 — Fully validated.
+              </div>
+</div>
+</div>
+<span class="font-label-sm text-label-sm bg-secondary text-on-secondary px-space-sm py-1 rounded font-semibold self-end lg:self-center">Synchronizable</span>
+</div>
+</div>
+</div>
+<!-- Active Workspace Footer Bar -->
+<div class="flex flex-col sm:flex-row items-center justify-between p-space-md bg-surface-container-high gap-space-md">
+<div class="flex items-center gap-space-sm">
+<button class="h-9 px-space-md bg-surface-container text-on-surface hover:bg-surface-container-highest font-label-md text-label-md rounded flex items-center gap-space-xs shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px] text-error">assignment_late</span>
+<span>Download Error Report (CSV)</span>
+</button>
+<button class="h-9 px-space-sm text-outline hover:text-error font-label-md text-label-md rounded flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">delete_sweep</span>
+<span>Discard Import Job</span>
+</button>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="h-10 px-space-lg bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded flex items-center gap-space-xs shadow-sm font-semibold transition-all" type="button">
+<span>Resolve 2 Conflicts &amp; Proceed to Confirm Sync</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Historical Import Pipeline Audit Table -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col mb-space-lg">
+<div class="flex items-center justify-between pb-space-sm mb-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[20px]">history</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Recent Import History &amp; Cloud Synchronizations</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-numeric-table">Last automated backup: Today, 08:30 AM</span>
+</div>
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-space-xs px-space-sm rounded-l">Execution Timestamp</th>
+<th class="py-space-xs px-space-sm">Ingested Spreadsheet File</th>
+<th class="py-space-xs px-space-sm">Operator (Coordinator)</th>
+<th class="py-space-xs px-space-sm">Total Records</th>
+<th class="py-space-xs px-space-sm">Health Rate</th>
+<th class="py-space-xs px-space-sm rounded-r text-right">Registry Status</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-space-sm px-space-sm font-numeric-table text-on-surface-variant">14 Nov 2024, 11:22 AM</td>
+<td class="py-space-sm px-space-sm font-semibold text-on-surface">Kovilpatti_GHSS_Term2_CAT1_Final.xlsx</td>
+<td class="py-space-sm px-space-sm">R. Meenakshi (Counselling)</td>
+<td class="py-space-sm px-space-sm font-numeric-table">142 rows</td>
+<td class="py-space-sm px-space-sm">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-secondary font-bold">
+                100% Pass
+              </span>
+</td>
+<td class="py-space-sm px-space-sm text-right">
+<span class="inline-flex items-center gap-1 px-space-sm py-0.5 bg-secondary-container text-on-secondary-container font-label-sm text-label-sm rounded font-bold">
+<span class="material-symbols-outlined text-[14px]">cloud_done</span> Synchronized
+              </span>
+</td>
+</tr>
+<tr class="bg-surface-container-low/50 hover:bg-surface-container-low transition-colors">
+<td class="py-space-sm px-space-sm font-numeric-table text-on-surface-variant">08 Nov 2024, 04:15 PM</td>
+<td class="py-space-sm px-space-sm font-semibold text-on-surface">BioAttendance_Biometric_Oct_GHSS.csv</td>
+<td class="py-space-sm px-space-sm">M. Sundaram (IT Lead)</td>
+<td class="py-space-sm px-space-sm font-numeric-table">140 rows</td>
+<td class="py-space-sm px-space-sm">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-secondary font-bold">
+                98.5% Pass
+              </span>
+</td>
+<td class="py-space-sm px-space-sm text-right">
+<span class="inline-flex items-center gap-1 px-space-sm py-0.5 bg-secondary-container text-on-secondary-container font-label-sm text-label-sm rounded font-bold">
+<span class="material-symbols-outlined text-[14px]">cloud_done</span> Synchronized
+              </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-space-sm px-space-sm font-numeric-table text-on-surface-variant">28 Oct 2024, 09:40 AM</td>
+<td class="py-space-sm px-space-sm font-semibold text-on-surface">Quarterly_Exam_Grades_Consolidated.xlsx</td>
+<td class="py-space-sm px-space-sm">S. Arumugam (Exam Cell)</td>
+<td class="py-space-sm px-space-sm font-numeric-table">138 rows</td>
+<td class="py-space-sm px-space-sm">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-secondary font-bold">
+                100% Pass
+              </span>
+</td>
+<td class="py-space-sm px-space-sm text-right">
+<span class="inline-flex items-center gap-1 px-space-sm py-0.5 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded font-bold">
+<span class="material-symbols-outlined text-[14px]">archive</span> Completed
+              </span>
+</td>
+</tr>
+<tr class="bg-surface-container-low/50 hover:bg-surface-container-low transition-colors">
+<td class="py-space-sm px-space-sm font-numeric-table text-on-surface-variant">15 Oct 2024, 02:10 PM</td>
+<td class="py-space-sm px-space-sm font-semibold text-on-surface">GHSS_Kovilpatti_Enrolment_Reconciliation.csv</td>
+<td class="py-space-sm px-space-sm">R. Meenakshi (Counselling)</td>
+<td class="py-space-sm px-space-sm font-numeric-table">142 rows</td>
+<td class="py-space-sm px-space-sm">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-secondary font-bold">
+                99.2% Pass
+              </span>
+</td>
+<td class="py-space-sm px-space-sm text-right">
+<span class="inline-flex items-center gap-1 px-space-sm py-0.5 bg-secondary-container text-on-secondary-container font-label-sm text-label-sm rounded font-bold">
+<span class="material-symbols-outlined text-[14px]">cloud_done</span> Synchronized
+              </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<script>
+    function filterRecords(type) {
+      const allItems = document.querySelectorAll('.record-item');
+      const tabs = document.querySelectorAll('.tab-btn');
+      
+      tabs.forEach(tab => {
+        tab.classList.remove('bg-surface-container-lowest', 'text-on-surface', 'font-semibold', 'shadow-sm');
+        tab.classList.add('text-on-surface-variant');
+      });
+
+      const activeTab = document.getElementById(`tab-${type}`);
+      if (activeTab) {
+        activeTab.classList.remove('text-on-surface-variant');
+        activeTab.classList.add('bg-surface-container-lowest', 'text-on-surface', 'font-semibold', 'shadow-sm');
+      }
+
+      allItems.forEach(item => {
+        if (type === 'all') {
+          item.classList.remove('hidden');
+        } else if (type === 'conflicts') {
+          if (item.classList.contains('conflict-item')) {
+            item.classList.remove('hidden');
+          } else {
+            item.classList.add('hidden');
+          }
+        } else if (type === 'warnings') {
+          if (item.classList.contains('warning-item')) {
+            item.classList.remove('hidden');
+          } else {
+            item.classList.add('hidden');
+          }
+        } else if (type === 'valid') {
+          if (item.classList.contains('valid-item')) {
+            item.classList.remove('hidden');
+          } else {
+            item.classList.add('hidden');
+          }
+        }
+      });
+    }
+  </script>
+</div>
+</main>
+</div>
+</body></html>

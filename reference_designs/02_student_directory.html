@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="web_dashboard" name="shell-type"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+@layer base { 
+  html, body { margin: 0; padding: 0; } 
+  body { overscroll-behavior: none; } 
+  main > :first-child { margin-top: 0 !important; } 
+  main > :last-child { margin-bottom: 0 !important; } 
+}
+::-webkit-scrollbar { display: none; }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "outline": "#76777d",
+        "outline-variant": "#c6c6cd",
+        "secondary-fixed-dim": "#6bd8cb",
+        "on-tertiary": "#ffffff",
+        "primary-fixed": "#dae2fd",
+        "surface-container-highest": "#d3e4fe",
+        "tertiary-fixed": "#d8e3fb",
+        "surface-bright": "#f8f9ff",
+        "on-tertiary-container": "#79849a",
+        "on-secondary": "#ffffff",
+        "surface-container-high": "#dce9ff",
+        "on-error": "#ffffff",
+        "background": "#f8f9ff",
+        "surface-container-low": "#eff4ff",
+        "on-tertiary-fixed": "#111c2d",
+        "secondary": "#006a61",
+        "error": "#ba1a1a",
+        "inverse-surface": "#213145",
+        "surface-variant": "#d3e4fe",
+        "on-primary-container": "#7c839b",
+        "surface-tint": "#565e74",
+        "on-background": "#0b1c30",
+        "on-surface": "#0b1c30",
+        "primary-container": "#131b2e",
+        "on-secondary-container": "#006f66",
+        "error-container": "#ffdad6",
+        "inverse-primary": "#bec6e0",
+        "surface-container-lowest": "#ffffff",
+        "on-primary-fixed": "#131b2e",
+        "inverse-on-surface": "#eaf1ff",
+        "tertiary-fixed-dim": "#bcc7de",
+        "on-primary": "#ffffff",
+        "on-primary-fixed-variant": "#3f465c",
+        "tertiary-container": "#111c2d",
+        "surface-dim": "#cbdbf5",
+        "surface": "#f8f9ff",
+        "secondary-container": "#86f2e4",
+        "primary-fixed-dim": "#bec6e0",
+        "on-error-container": "#93000a",
+        "on-surface-variant": "#45464d",
+        "secondary-fixed": "#89f5e7",
+        "on-secondary-fixed-variant": "#005049",
+        "primary": "#000000",
+        "on-tertiary-fixed-variant": "#3c475a",
+        "on-secondary-fixed": "#00201d",
+        "surface-container": "#e5eeff",
+        "tertiary": "#000000"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.125rem",
+        "lg": "0.25rem",
+        "xl": "0.5rem",
+        "full": "0.75rem"
+      },
+      "spacing": {
+        "space-md": "0.75rem",
+        "gutter": "1rem",
+        "space-xs": "0.25rem",
+        "space-xl": "1.5rem",
+        "margin": "1rem",
+        "space-lg": "1rem",
+        "space-sm": "0.5rem",
+        "gutter-desktop": "1.5rem",
+        "margin-desktop": "2rem",
+        "margin-tablet": "1.5rem"
+      },
+      "fontFamily": {
+        "headline-md": ["Inter"],
+        "headline-sm": ["Inter"],
+        "label-md": ["Inter"],
+        "headline-xl": ["Inter"],
+        "headline-xl-mobile": ["Inter"],
+        "label-sm": ["Inter"],
+        "headline-lg": ["Inter"],
+        "body-sm": ["Inter"],
+        "body-lg": ["Inter"],
+        "numeric-metric": ["Inter"],
+        "body-md": ["Inter"],
+        "numeric-table": ["Inter"]
+      },
+      "fontSize": {
+        "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+        "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+        "label-md": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+        "headline-xl": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+        "headline-xl-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+        "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.025em", "fontWeight": "600" }],
+        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+        "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+        "numeric-metric": ["28px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+        "numeric-table": ["13px", { "lineHeight": "20px", "letterSpacing": "-0.005em", "fontWeight": "500" }]
+      }
+    }
+  }
+};
+</script>
+</head>
+<body class="bg-surface font-body-md text-body-md text-on-surface min-h-screen">
+<aside class="fixed left-0 top-0 h-full w-72 bg-primary-container z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+<div class="flex flex-col h-full">
+<div class="p-space-lg flex items-center justify-between bg-tertiary-container">
+<div class="flex items-center gap-space-sm overflow-hidden">
+<img alt="THULIR Logo" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1UhC_Px3BtWayW5EaSFSIX1sHpqmkbda_aeRSPAo0D9dkZKqd2C5NgET9T9sEflavjvvNNIkIdl_SGMWNNENPLJyuXTiOq8T8bhk6yLSicc9acZN_CiagY0H3ftHvJtNDPc79STnjLykMnTmdvDG_qMGtlHAQkmOSqPYp0WKXw9RueZUfFKLZ2tyr6ER4ogYkOk71qjkJrFzeavdFRZUDrj4cpF5oG7x3HJN9uuWlDu"/>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-primary tracking-tight truncate">THULIR</span>
+<span class="font-label-sm text-label-sm text-on-primary-container truncate">Early-Warning &amp; Support System</span>
+</div>
+</div>
+</div>
+<div class="px-space-lg py-space-sm bg-inverse-surface">
+<span class="font-label-sm text-label-sm text-inverse-on-surface block truncate">Dept. of School Education</span>
+</div>
+<nav class="flex-1 overflow-y-auto px-space-md py-space-md space-y-space-md" data-active-classes="bg-secondary text-on-secondary font-label-md rounded">
+<div class="space-y-space-xs">
+<div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-primary-container uppercase tracking-wider">Navigation</div>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="overview" href="#">Overview</a>
+<a aria-current="page" class="block px-space-sm py-space-xs transition-colors bg-secondary text-on-secondary font-label-md rounded" data-path="students" href="#">Students</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="early-warnings" href="#">Early Warnings</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="support-cases" href="#">Support Cases</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="interventions" href="#">Interventions</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="reports" href="#">Reports</a>
+</div>
+<div class="space-y-space-xs">
+<div class="px-space-sm py-space-xs font-label-sm text-label-sm text-on-primary-container uppercase tracking-wider">System</div>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="data-import" href="#">Data Import</a>
+<a class="block px-space-sm py-space-xs font-label-md text-label-md text-primary-fixed hover:bg-surface-tint hover:text-on-primary rounded transition-colors" data-path="settings" href="#">Settings</a>
+</div>
+</nav>
+</div>
+</aside>
+<div class="pl-72 flex flex-col min-h-screen">
+<header class="fixed top-0 left-72 right-0 h-16 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter-desktop">
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] text-secondary">account_balance</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Government Higher Secondary School Kovilpatti</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">(UDISE: 33280100412)</span>
+</div>
+<div class="hidden xl:inline-flex items-center px-space-sm py-space-xs bg-surface-container rounded">
+<span class="font-label-sm text-label-sm text-on-surface">2024-25 • Term II</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="relative w-80">
+<span class="material-symbols-outlined absolute left-space-sm top-1/2 -translate-y-1/2 text-[18px] text-outline">search</span>
+<input class="w-full h-9 pl-8 pr-space-sm bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded placeholder-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary" placeholder="Search Student ID / EMIS / Name..." type="text"/>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-9 px-space-md bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded flex items-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>Log Review / Case</span>
+</button>
+</div>
+<div class="relative flex items-center justify-center p-space-xs cursor-pointer text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute -top-1 -right-1 bg-error text-on-error font-label-sm text-label-sm px-space-xs py-0 rounded-full leading-none">7</span>
+</div>
+<div class="flex items-center gap-space-sm pl-space-sm">
+<div class="flex flex-col text-right hidden lg:block">
+<span class="font-label-md text-label-md text-on-surface font-medium leading-tight">R. Meenakshi</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant leading-tight">Head Counselor (M.S.W.)</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+</div>
+</div>
+</div>
+</header>
+<main class="relative pt-16 bg-surface min-h-[calc(100vh-4rem)] w-full px-gutter-desktop py-space-md">
+<div class="flex flex-col w-full space-y-space-md">
+<!-- BREADCRUMB & PAGE HEADER -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md pb-space-xs">
+<div class="space-y-1">
+<nav class="flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface-variant">
+<a class="hover:text-secondary flex items-center gap-1 transition-colors" href="#">
+<span class="material-symbols-outlined text-[15px]">home</span> Home
+        </a>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold">Students Directory</span>
+</nav>
+<div class="pt-1">
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Enrolled Student Registry</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+          1,428 enrolled students across Grades 6 through 12 • Synchronized with EMIS &amp; Daily Biometric Logs
+        </p>
+</div>
+</div>
+<!-- Header Action Buttons -->
+<div class="flex items-center gap-space-sm flex-wrap">
+<button class="h-9 px-space-md bg-surface-container-lowest text-on-surface hover:bg-surface-container font-label-md text-label-md rounded shadow-sm flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[17px] text-outline">file_download</span>
+<span>Export Directory (CSV)</span>
+</button>
+<button class="h-9 px-space-md bg-surface-container-lowest text-on-surface hover:bg-surface-container font-label-md text-label-md rounded shadow-sm flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[17px] text-outline">tune</span>
+<span>Batch Filter</span>
+</button>
+<button class="h-9 px-space-md bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded shadow-sm flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[17px]">person_add</span>
+<span>Register New Student</span>
+</button>
+</div>
+</div>
+<!-- METRICS OVERVIEW BAR -->
+<div class="grid grid-cols-2 md:grid-cols-5 gap-space-sm">
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-sm flex items-center justify-between">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block">Total Enrolled</span>
+<span class="font-numeric-metric text-numeric-metric text-on-surface">1,428</span>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[20px]">groups</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-sm flex items-center justify-between">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block">In Good Standing</span>
+<div class="flex items-baseline gap-1.5">
+<span class="font-numeric-metric text-numeric-metric text-secondary">1,289</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">90.3%</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-sm flex items-center justify-between">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block">Needs Review</span>
+<div class="flex items-baseline gap-1.5">
+<span class="font-numeric-metric text-numeric-metric text-[#b45309]">43</span>
+<span class="font-label-sm text-label-sm text-[#b45309] font-medium">3.0%</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-full bg-[#fef3c7] flex items-center justify-center text-[#92400e]">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-sm flex items-center justify-between">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block">Active Support</span>
+<div class="flex items-baseline gap-1.5">
+<span class="font-numeric-metric text-numeric-metric text-error">67</span>
+<span class="font-label-sm text-label-sm text-error font-medium">4.7%</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-on-error-container">
+<span class="material-symbols-outlined text-[20px]">assignment_late</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-sm flex items-center justify-between col-span-2 md:col-span-1">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block">Resolved (Term II)</span>
+<div class="flex items-baseline gap-1.5">
+<span class="font-numeric-metric text-numeric-metric text-on-surface">29</span>
+<span class="font-label-sm text-label-sm text-outline font-medium">2.0%</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[20px]">task_alt</span>
+</div>
+</div>
+</div>
+<!-- MULTI-DIMENSIONAL FILTER CONTROLS -->
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-sm space-y-space-sm">
+<!-- Top Search Row -->
+<div class="flex flex-col lg:flex-row gap-space-sm items-stretch lg:items-center">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline">search</span>
+<input class="w-full h-10 pl-9 pr-4 bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded placeholder-outline focus:outline-none focus:bg-surface-container-lowest shadow-sm" id="studentSearchInput" placeholder="Search by Student Name, EMIS ID, Guardian Name, or Aadhaar ref..." type="text"/>
+</div>
+<div class="flex items-center gap-space-xs flex-wrap">
+<button class="h-10 px-space-md bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md rounded flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[17px] text-secondary">bookmark</span>
+<span>Saved Views (3)</span>
+<span class="material-symbols-outlined text-[16px] text-outline">expand_more</span>
+</button>
+<button class="h-10 px-space-md bg-surface-container-low hover:bg-surface-container text-outline hover:text-on-surface font-label-md text-label-md rounded flex items-center gap-1 transition-colors" id="clearFiltersBtn">
+<span class="material-symbols-outlined text-[17px]">filter_alt_off</span>
+<span>Clear Filters</span>
+</button>
+</div>
+</div>
+<!-- Dropdown Filters Bar -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-space-xs pt-1">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Class / Grade</label>
+<select class="w-full h-9 px-2 bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded focus:outline-none focus:bg-surface-container-lowest">
+<option>All Grades (6-12)</option>
+<option>Grade 6</option>
+<option>Grade 7</option>
+<option>Grade 8</option>
+<option selected="">Grade 9</option>
+<option selected="">Grade 10</option>
+<option>Grade 11</option>
+<option>Grade 12</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Section</label>
+<select class="w-full h-9 px-2 bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded focus:outline-none focus:bg-surface-container-lowest">
+<option>All Sections</option>
+<option>Section A</option>
+<option>Section B</option>
+<option>Section C</option>
+<option>Section D</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Academic Year</label>
+<select class="w-full h-9 px-2 bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded focus:outline-none focus:bg-surface-container-lowest">
+<option selected="">2024-25 (Current)</option>
+<option>2023-24 (Archived)</option>
+<option>2022-23 (Archived)</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Support Status</label>
+<select class="w-full h-9 px-2 bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded focus:outline-none focus:bg-surface-container-lowest">
+<option>All Statuses</option>
+<option>Active Support Plan</option>
+<option>Needs Review</option>
+<option>No Active Triggers</option>
+<option>Resolved</option>
+<option>Overdue Review</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Attendance Band</label>
+<select class="w-full h-9 px-2 bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded focus:outline-none focus:bg-surface-container-lowest">
+<option>All Bands</option>
+<option>&gt;85% (Regular)</option>
+<option>75-85% (Warning)</option>
+<option>&lt;75% (Critical Action)</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Primary Case Lead</label>
+<select class="w-full h-9 px-2 bg-surface-container-low text-on-surface font-body-sm text-body-sm rounded focus:outline-none focus:bg-surface-container-lowest">
+<option>All Staff</option>
+<option>R. Meenakshi (Counselor)</option>
+<option>P. Anbarasan (Welfare Lead)</option>
+<option>S. Malathi (Class Teacher)</option>
+<option>T. Selvakumar (HM)</option>
+</select>
+</div>
+</div>
+</div>
+<!-- BULK ACTION BAR (Hidden by default, toggles on selection) -->
+<div class="hidden bg-inverse-surface text-inverse-on-surface px-space-md py-space-sm rounded-lg shadow-sm flex items-center justify-between" id="bulkActionBar">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary-container text-[20px]">check_circle</span>
+<span class="font-label-md text-label-md font-semibold text-inverse-on-surface" id="selectedCountText">0 students selected</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="h-8 px-space-sm bg-surface-container-lowest text-on-surface hover:bg-surface-container font-label-sm text-label-sm rounded flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[15px]">send</span>
+<span>Initiate Bulk Support Plan</span>
+</button>
+<button class="h-8 px-space-sm bg-surface-container-lowest text-on-surface hover:bg-surface-container font-label-sm text-label-sm rounded flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[15px]">mail</span>
+<span>Send Guardian SMS Alert</span>
+</button>
+<button class="h-8 px-space-sm bg-surface-container-lowest text-on-surface hover:bg-surface-container font-label-sm text-label-sm rounded flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[15px]">download</span>
+<span>Export Selection</span>
+</button>
+</div>
+</div>
+<!-- MAIN ROSTER DATA TABLE CONTAINER -->
+<div class="bg-surface-container-lowest rounded-lg shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm tracking-wider uppercase">
+<th class="py-3 px-3 w-10 text-center">
+<input class="w-4 h-4 rounded text-secondary focus:ring-0 cursor-pointer accent-secondary" id="selectAllCheckbox" type="checkbox"/>
+</th>
+<th class="py-3 px-4 min-w-[200px]">Student Details</th>
+<th class="py-3 px-3 min-w-[90px]">Grade &amp; Sec</th>
+<th class="py-3 px-4 min-w-[150px]">Attendance (30D)</th>
+<th class="py-3 px-4 min-w-[160px]">Term II Academic</th>
+<th class="py-3 px-3 min-w-[130px]">Submissions</th>
+<th class="py-3 px-4 min-w-[170px]">Support Status</th>
+<th class="py-3 px-3 min-w-[150px]">Case Lead</th>
+<th class="py-3 px-4 text-right min-w-[140px]">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container font-body-sm text-body-sm text-on-surface">
+<!-- Row 1: Anbarasan K. -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-3 px-3 text-center">
+<input class="row-checkbox w-4 h-4 rounded text-secondary focus:ring-0 cursor-pointer accent-secondary" type="checkbox"/>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-headline-sm text-[12px] font-bold">
+                  AK
+                </div>
+<div>
+<div class="font-label-md text-label-md font-semibold text-on-surface flex items-center gap-1.5">
+<span>Anbarasan K.</span>
+<span class="font-label-sm text-[10px] bg-surface-container text-on-surface-variant px-1 rounded">M • 15y</span>
+</div>
+<div class="font-numeric-table text-numeric-table text-on-surface-variant">EMIS: 3328014521</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 font-medium">Gr 10-A</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-between mb-1">
+<span class="font-numeric-table text-numeric-table font-semibold text-on-surface">89.2%</span>
+<span class="font-label-sm text-[11px] text-secondary font-medium">Stable</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 89.2%;"></div>
+</div>
+<span class="font-label-sm text-[10px] text-on-surface-variant block mt-0.5">0 unexcused days</span>
+</td>
+<td class="py-3 px-4">
+<div class="font-numeric-table text-numeric-table font-semibold text-on-surface">CAT-2: 74%</div>
+<div class="font-label-sm text-[11px] text-on-surface-variant">All subjects cleared</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-numeric-table text-numeric-table font-medium">95%</span>
+<span class="material-symbols-outlined text-[14px] text-secondary">trending_up</span>
+</div>
+<span class="font-label-sm text-[10px] text-outline">19/20 logged</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide bg-secondary-fixed text-on-secondary-fixed">
+                NO ACTIVE TRIGGERS
+              </span>
+</td>
+<td class="py-3 px-3">
+<span class="font-label-md text-label-md block leading-tight text-on-surface">S. Malathi</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">Class Teacher</span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="px-2 py-1 bg-surface-container-low hover:bg-surface-container text-on-surface rounded font-label-sm text-label-sm transition-colors" onclick="openProfileDrawer('Anbarasan K.', '3328014521', 'Gr 10-A', '89.2%', '74%', 'Regular attender, high homework discipline.')">
+                  View Profile
+                </button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Kavitha M. -->
+<tr class="hover:bg-surface-container-low transition-colors group bg-error-container/20">
+<td class="py-3 px-3 text-center">
+<input class="row-checkbox w-4 h-4 rounded text-secondary focus:ring-0 cursor-pointer accent-secondary" type="checkbox"/>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-[#fed7aa] text-[#7c2d12] flex items-center justify-center font-headline-sm text-[12px] font-bold">
+                  KM
+                </div>
+<div>
+<div class="font-label-md text-label-md font-semibold text-on-surface flex items-center gap-1.5">
+<span>Kavitha M.</span>
+<span class="font-label-sm text-[10px] bg-surface-container text-on-surface-variant px-1 rounded">F • 15y</span>
+</div>
+<div class="font-numeric-table text-numeric-table text-on-surface-variant">EMIS: 3328014490</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 font-medium">Gr 10-B</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-between mb-1">
+<span class="font-numeric-table text-numeric-table font-semibold text-error">62.4%</span>
+<span class="font-label-sm text-[11px] text-error font-medium">Critical Dip</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 62.4%;"></div>
+</div>
+<span class="font-label-sm text-[10px] text-error font-medium block mt-0.5">8 unexcused days</span>
+</td>
+<td class="py-3 px-4">
+<div class="font-numeric-table text-numeric-table font-semibold text-error">CAT-2: 24%</div>
+<div class="font-label-sm text-[11px] text-error">Math &amp; Science Below 35%</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-numeric-table text-numeric-table font-medium text-error">40%</span>
+<span class="material-symbols-outlined text-[14px] text-error">trending_down</span>
+</div>
+<span class="font-label-sm text-[10px] text-outline">8/20 logged</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide bg-[#fef3c7] text-[#92400e]">
+                NEEDS REVIEW
+              </span>
+</td>
+<td class="py-3 px-3">
+<span class="font-label-md text-label-md block leading-tight text-on-surface">R. Meenakshi</span>
+<span class="font-label-sm text-[10px] text-secondary">Head Counselor</span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="px-2 py-1 bg-surface-container-low hover:bg-surface-container text-on-surface rounded font-label-sm text-label-sm transition-colors" onclick="openProfileDrawer('Kavitha M.', '3328014490', 'Gr 10-B', '62.4%', '24%', 'Identified seasonal agriculture shift in household. Urgent home visit recommended.')">
+                  View Profile
+                </button>
+<button class="px-2 py-1 bg-secondary text-on-secondary rounded font-label-sm text-label-sm hover:bg-on-secondary-container transition-colors">
+                  Log Case
+                </button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Vignesh S. -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-3 px-3 text-center">
+<input class="row-checkbox w-4 h-4 rounded text-secondary focus:ring-0 cursor-pointer accent-secondary" type="checkbox"/>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-headline-sm text-[12px] font-bold">
+                  VS
+                </div>
+<div>
+<div class="font-label-md text-label-md font-semibold text-on-surface flex items-center gap-1.5">
+<span>Vignesh S.</span>
+<span class="font-label-sm text-[10px] bg-surface-container text-on-surface-variant px-1 rounded">M • 14y</span>
+</div>
+<div class="font-numeric-table text-numeric-table text-on-surface-variant">EMIS: 3328011284</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 font-medium">Gr 9-C</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-between mb-1">
+<span class="font-numeric-table text-numeric-table font-semibold text-[#b45309]">68.1%</span>
+<span class="font-label-sm text-[11px] text-[#b45309] font-medium">5d unexcused</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-[#f59e0b] h-full rounded-full" style="width: 68.1%;"></div>
+</div>
+<span class="font-label-sm text-[10px] text-on-surface-variant block mt-0.5">Consecutive Fri/Mon abs.</span>
+</td>
+<td class="py-3 px-4">
+<div class="font-numeric-table text-numeric-table font-semibold text-on-surface">CAT-2: 44%</div>
+<div class="font-label-sm text-[11px] text-on-surface-variant">Marginal Pass (Tamil 41%)</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-numeric-table text-numeric-table font-medium">60%</span>
+<span class="material-symbols-outlined text-[14px] text-outline">horizontal_rule</span>
+</div>
+<span class="font-label-sm text-[10px] text-outline">12/20 logged</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide bg-surface-container-high text-on-surface">
+                UNDER REVIEW
+              </span>
+</td>
+<td class="py-3 px-3">
+<span class="font-label-md text-label-md block leading-tight text-on-surface">P. Anbarasan</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">Welfare Lead</span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="px-2 py-1 bg-surface-container-low hover:bg-surface-container text-on-surface rounded font-label-sm text-label-sm transition-colors" onclick="openProfileDrawer('Vignesh S.', '3328011284', 'Gr 9-C', '68.1%', '44%', 'Frequent Monday absences. Parent engaged via SMS consultation.')">
+                  View Profile
+                </button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Priya D. -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-3 px-3 text-center">
+<input class="row-checkbox w-4 h-4 rounded text-secondary focus:ring-0 cursor-pointer accent-secondary" type="checkbox"/>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-headline-sm text-[12px] font-bold">
+                  PD
+                </div>
+<div>
+<div class="font-label-md text-label-md font-semibold text-on-surface flex items-center gap-1.5">
+<span>Priya D.</span>
+<span class="font-label-sm text-[10px] bg-surface-container text-on-surface-variant px-1 rounded">F • 16y</span>
+</div>
+<div class="font-numeric-table text-numeric-table text-on-surface-variant">EMIS: 3328019022</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 font-medium">Gr 11-A</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-between mb-1">
+<span class="font-numeric-table text-numeric-table font-semibold text-[#b45309]">78.5%</span>
+<span class="font-label-sm text-[11px] text-[#b45309] font-medium">Warning band</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-[#f59e0b] h-full rounded-full" style="width: 78.5%;"></div>
+</div>
+<span class="font-label-sm text-[10px] text-on-surface-variant block mt-0.5">3 unexcused days</span>
+</td>
+<td class="py-3 px-4">
+<div class="font-numeric-table text-numeric-table font-semibold text-[#b45309]">CAT-2: 38%</div>
+<div class="font-label-sm text-[11px] text-error">Chemistry drop (-19%)</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-numeric-table text-numeric-table font-medium">75%</span>
+<span class="material-symbols-outlined text-[14px] text-error">trending_down</span>
+</div>
+<span class="font-label-sm text-[10px] text-outline">15/20 logged</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide bg-secondary-fixed text-on-secondary-fixed">
+                SUPPORT RECOMMENDED
+              </span>
+</td>
+<td class="py-3 px-3">
+<span class="font-label-md text-label-md block leading-tight text-on-surface">T. Selvakumar</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">PG Chemistry</span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="px-2 py-1 bg-surface-container-low hover:bg-surface-container text-on-surface rounded font-label-sm text-label-sm transition-colors" onclick="openProfileDrawer('Priya D.', '3328019022', 'Gr 11-A', '78.5%', '38%', 'Sudden drop in science lab marks. Remedial peer study group initiated.')">
+                  View Profile
+                </button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Aravindhan K. -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-3 px-3 text-center">
+<input class="row-checkbox w-4 h-4 rounded text-secondary focus:ring-0 cursor-pointer accent-secondary" type="checkbox"/>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center font-headline-sm text-[12px] font-bold">
+                  AK
+                </div>
+<div>
+<div class="font-label-md text-label-md font-semibold text-on-surface flex items-center gap-1.5">
+<span>Aravindhan K.</span>
+<span class="font-label-sm text-[10px] bg-surface-container text-on-surface-variant px-1 rounded">M • 15y</span>
+</div>
+<div class="font-numeric-table text-numeric-table text-on-surface-variant">EMIS: 3328016571</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 font-medium">Gr 10-A</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-between mb-1">
+<span class="font-numeric-table text-numeric-table font-semibold text-[#b45309]">73.2%</span>
+<span class="font-label-sm text-[11px] text-[#b45309] font-medium">Midday meal skip</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-[#f59e0b] h-full rounded-full" style="width: 73.2%;"></div>
+</div>
+<span class="font-label-sm text-[10px] text-on-surface-variant block mt-0.5">Afternoon departures</span>
+</td>
+<td class="py-3 px-4">
+<div class="font-numeric-table text-numeric-table font-semibold text-on-surface">CAT-2: 52%</div>
+<div class="font-label-sm text-[11px] text-on-surface-variant">Social Studies 58%</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-numeric-table text-numeric-table font-medium">80%</span>
+<span class="material-symbols-outlined text-[14px] text-secondary">trending_up</span>
+</div>
+<span class="font-label-sm text-[10px] text-outline">16/20 logged</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide bg-[#fef3c7] text-[#92400e]">
+                HEALTH REFERRAL PENDING
+              </span>
+</td>
+<td class="py-3 px-3">
+<span class="font-label-md text-label-md block leading-tight text-on-surface">R. Meenakshi</span>
+<span class="font-label-sm text-[10px] text-secondary">Head Counselor</span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="px-2 py-1 bg-surface-container-low hover:bg-surface-container text-on-surface rounded font-label-sm text-label-sm transition-colors" onclick="openProfileDrawer('Aravindhan K.', '3328016571', 'Gr 10-A', '73.2%', '52%', 'Primary healthcare center nutritional referral requested.')">
+                  View Profile
+                </button>
+</div>
+</td>
+</tr>
+<!-- Row 6: Sneha R. -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-3 px-3 text-center">
+<input class="row-checkbox w-4 h-4 rounded text-secondary focus:ring-0 cursor-pointer accent-secondary" type="checkbox"/>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-headline-sm text-[12px] font-bold">
+                  SR
+                </div>
+<div>
+<div class="font-label-md text-label-md font-semibold text-on-surface flex items-center gap-1.5">
+<span>Sneha R.</span>
+<span class="font-label-sm text-[10px] bg-surface-container text-on-surface-variant px-1 rounded">F • 13y</span>
+</div>
+<div class="font-numeric-table text-numeric-table text-on-surface-variant">EMIS: 3328017833</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 font-medium">Gr 8-D</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-between mb-1">
+<span class="font-numeric-table text-numeric-table font-semibold text-on-surface">81.0%</span>
+<span class="font-label-sm text-[11px] text-secondary font-medium">Transit barrier</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 81%;"></div>
+</div>
+<span class="font-label-sm text-[10px] text-on-surface-variant block mt-0.5">Bus route concession applied</span>
+</td>
+<td class="py-3 px-4">
+<div class="font-numeric-table text-numeric-table font-semibold text-on-surface">CAT-2: 67%</div>
+<div class="font-label-sm text-[11px] text-on-surface-variant">English 71%, Math 62%</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-numeric-table text-numeric-table font-medium">90%</span>
+<span class="material-symbols-outlined text-[14px] text-secondary">trending_up</span>
+</div>
+<span class="font-label-sm text-[10px] text-outline">18/20 logged</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide bg-secondary text-on-secondary">
+                ACTIVE SUPPORT PLAN
+              </span>
+</td>
+<td class="py-3 px-3">
+<span class="font-label-md text-label-md block leading-tight text-on-surface">S. Mary</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">Social Worker</span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="px-2 py-1 bg-surface-container-low hover:bg-surface-container text-on-surface rounded font-label-sm text-label-sm transition-colors" onclick="openProfileDrawer('Sneha R.', '3328017833', 'Gr 8-D', '81.0%', '67%', 'State transport free bus pass issued. Attendance improved by 14% over last fortnight.')">
+                  View Profile
+                </button>
+</div>
+</td>
+</tr>
+<!-- Row 7: Karthik P. -->
+<tr class="hover:bg-surface-container-low transition-colors group bg-error-container/30">
+<td class="py-3 px-3 text-center">
+<input class="row-checkbox w-4 h-4 rounded text-secondary focus:ring-0 cursor-pointer accent-secondary" type="checkbox"/>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-error text-on-error flex items-center justify-center font-headline-sm text-[12px] font-bold">
+                  KP
+                </div>
+<div>
+<div class="font-label-md text-label-md font-semibold text-on-surface flex items-center gap-1.5">
+<span>Karthik P.</span>
+<span class="font-label-sm text-[10px] bg-surface-container text-on-surface-variant px-1 rounded">M • 17y</span>
+</div>
+<div class="font-numeric-table text-numeric-table text-on-surface-variant">EMIS: 3328013319</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 font-medium">Gr 12-B</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-between mb-1">
+<span class="font-numeric-table text-numeric-table font-semibold text-error">58.0%</span>
+<span class="font-label-sm text-[11px] text-error font-medium">Chronic</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 58%;"></div>
+</div>
+<span class="font-label-sm text-[10px] text-error font-medium block mt-0.5">14 consecutive unexcused days</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-surface-container-high text-on-surface-variant">
+                INCOMPLETE
+              </span>
+<div class="font-label-sm text-[11px] text-error mt-0.5">Absent for CAT-2 Exams</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-surface-container-high text-on-surface-variant">
+                Data Unavailable
+              </span>
+<span class="font-label-sm text-[10px] text-outline block mt-0.5">No notebook audit</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide bg-error text-on-error">
+                OVERDUE REVIEW
+              </span>
+</td>
+<td class="py-3 px-3">
+<span class="font-label-md text-label-md block leading-tight text-on-surface">P. Anbarasan</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">Welfare Lead</span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="px-2 py-1 bg-surface-container-low hover:bg-surface-container text-on-surface rounded font-label-sm text-label-sm transition-colors" onclick="openProfileDrawer('Karthik P.', '3328013319', 'Gr 12-B', '58.0%', 'Incomplete', 'Chronic non-attendance flag. Escalated to District Educational Officer (DEO) pastoral board.')">
+                  View Profile
+                </button>
+<button class="px-2 py-1 bg-error text-on-error rounded font-label-sm text-label-sm hover:opacity-90 transition-colors">
+                  Urgent Log
+                </button>
+</div>
+</td>
+</tr>
+<!-- Row 8: Divya Bharathi S. -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-3 px-3 text-center">
+<input class="row-checkbox w-4 h-4 rounded text-secondary focus:ring-0 cursor-pointer accent-secondary" type="checkbox"/>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-headline-sm text-[12px] font-bold">
+                  DB
+                </div>
+<div>
+<div class="font-label-md text-label-md font-semibold text-on-surface flex items-center gap-1.5">
+<span>Divya Bharathi S.</span>
+<span class="font-label-sm text-[10px] bg-surface-container text-on-surface-variant px-1 rounded">F • 14y</span>
+</div>
+<div class="font-numeric-table text-numeric-table text-on-surface-variant">EMIS: 3328012890</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 font-medium">Gr 9-A</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-between mb-1">
+<span class="font-numeric-table text-numeric-table font-semibold text-secondary">94.5%</span>
+<span class="font-label-sm text-[11px] text-secondary font-medium">Excellent</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 94.5%;"></div>
+</div>
+<span class="font-label-sm text-[10px] text-on-surface-variant block mt-0.5">Perfect punctuality record</span>
+</td>
+<td class="py-3 px-4">
+<div class="font-numeric-table text-numeric-table font-semibold text-on-surface">CAT-2: 88%</div>
+<div class="font-label-sm text-[11px] text-on-surface-variant">Grade Rank #2</div>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-numeric-table text-numeric-table font-medium">98%</span>
+<span class="material-symbols-outlined text-[14px] text-secondary">trending_up</span>
+</div>
+<span class="font-label-sm text-[10px] text-outline">20/20 logged</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide bg-secondary-fixed text-on-secondary-fixed">
+                IN GOOD STANDING
+              </span>
+</td>
+<td class="py-3 px-3">
+<span class="font-label-md text-label-md block leading-tight text-on-surface">R. Ramanathan</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">Science Lead</span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="px-2 py-1 bg-surface-container-low hover:bg-surface-container text-on-surface rounded font-label-sm text-label-sm transition-colors" onclick="openProfileDrawer('Divya Bharathi S.', '3328012890', 'Gr 9-A', '94.5%', '88%', 'Exemplary academic and social standing. Peer tutor nominee.')">
+                  View Profile
+                </button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- TABLE FOOTER & PAGINATION -->
+<div class="bg-surface-container-low px-space-md py-space-sm flex flex-col sm:flex-row items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-md text-on-surface-variant font-label-md text-label-md">
+<span>Showing <strong class="text-on-surface">1 to 8</strong> of <strong class="text-on-surface">1,428</strong> students</span>
+<div class="flex items-center gap-1.5">
+<span>Rows per page:</span>
+<select class="h-7 px-1.5 bg-surface-container-lowest text-on-surface text-label-sm font-label-sm rounded focus:outline-none shadow-sm">
+<option selected="">10</option>
+<option>25</option>
+<option>50</option>
+<option>100</option>
+</select>
+</div>
+</div>
+<!-- Pagination Navigation -->
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded bg-surface-container-lowest text-outline hover:text-on-surface flex items-center justify-center transition-colors shadow-sm disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-[18px]">first_page</span>
+</button>
+<button class="w-8 h-8 rounded bg-surface-container-lowest text-outline hover:text-on-surface flex items-center justify-center transition-colors shadow-sm disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded bg-secondary text-on-secondary font-label-md text-label-md font-semibold flex items-center justify-center shadow-sm">
+          1
+        </button>
+<button class="w-8 h-8 rounded bg-surface-container-lowest text-on-surface hover:bg-surface-container font-label-md text-label-md flex items-center justify-center transition-colors shadow-sm">
+          2
+        </button>
+<button class="w-8 h-8 rounded bg-surface-container-lowest text-on-surface hover:bg-surface-container font-label-md text-label-md flex items-center justify-center transition-colors shadow-sm">
+          3
+        </button>
+<span class="px-1 text-outline font-label-sm">...</span>
+<button class="w-8 h-8 rounded bg-surface-container-lowest text-on-surface hover:bg-surface-container font-label-md text-label-md flex items-center justify-center transition-colors shadow-sm">
+          143
+        </button>
+<button class="w-8 h-8 rounded bg-surface-container-lowest text-outline hover:text-on-surface flex items-center justify-center transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+<button class="w-8 h-8 rounded bg-surface-container-lowest text-outline hover:text-on-surface flex items-center justify-center transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">last_page</span>
+</button>
+</div>
+</div>
+</div>
+<!-- QUICK EMIS STUDENT PROFILE DRAWER (Slide-over component) -->
+<div class="fixed inset-0 z-50 pointer-events-none hidden" id="quickProfileDrawer">
+<!-- Backdrop scrim -->
+<div class="absolute inset-0 bg-primary-container/40 opacity-0 transition-opacity duration-300 pointer-events-auto" id="drawerBackdrop" onclick="closeProfileDrawer()"></div>
+<!-- Drawer Content Panel -->
+<div class="absolute right-0 top-0 bottom-0 w-full max-w-lg bg-surface-container-lowest shadow-2xl translate-x-full transition-transform duration-300 pointer-events-auto flex flex-col" id="drawerPanel">
+<!-- Drawer Header -->
+<div class="p-space-lg bg-surface-container flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-headline-sm text-headline-sm">
+<span class="material-symbols-outlined text-[22px]">badge</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface leading-tight" id="drawerStudentName">Student Profile</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant" id="drawerStudentEmis">EMIS: Loading...</p>
+</div>
+</div>
+<button class="w-8 h-8 rounded hover:bg-surface-container-highest flex items-center justify-center text-outline hover:text-on-surface transition-colors" onclick="closeProfileDrawer()">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Drawer Body -->
+<div class="flex-1 overflow-y-auto p-space-lg space-y-space-md">
+<!-- Quick Vitals Bento -->
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="p-space-sm bg-surface-container-low rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Enrolled Section</span>
+<span class="font-headline-sm text-headline-sm text-on-surface" id="drawerStudentClass">Gr 10-A</span>
+</div>
+<div class="p-space-sm bg-surface-container-low rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">30-Day Attendance</span>
+<span class="font-headline-sm text-headline-sm text-secondary" id="drawerStudentAttendance">89.2%</span>
+</div>
+<div class="p-space-sm bg-surface-container-low rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">CAT-2 Aggregate</span>
+<span class="font-headline-sm text-headline-sm text-on-surface" id="drawerStudentExam">74%</span>
+</div>
+<div class="p-space-sm bg-surface-container-low rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Biometric Uptime</span>
+<span class="font-headline-sm text-headline-sm text-secondary">99.1%</span>
+</div>
+</div>
+<!-- Case Worker Notes -->
+<div class="space-y-1.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[17px] text-secondary">notes</span>
+            Current Pastoral &amp; Academic Note
+          </span>
+<p class="p-space-md bg-surface-container-low rounded font-body-sm text-body-sm text-on-surface-variant leading-relaxed" id="drawerStudentNotes">
+            Record remarks loading...
+          </p>
+</div>
+<!-- Household & Guardian Metadata -->
+<div class="space-y-2">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Household Demographics</span>
+<div class="bg-surface-container-low rounded p-space-md space-y-2 font-body-sm text-body-sm">
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Primary Guardian:</span>
+<span class="font-medium text-on-surface">Murugan K. (Father)</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Contact (SMS Verified):</span>
+<span class="font-numeric-table text-on-surface font-medium">+91 98421 •••••</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Community Category:</span>
+<span class="font-medium text-on-surface">BC (Welfare Eligible)</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Distance to Campus:</span>
+<span class="font-medium text-on-surface">3.8 km (Bus Route 14B)</span>
+</div>
+</div>
+</div>
+<!-- Timeline snapshot -->
+<div class="space-y-2">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Recent Event Track</span>
+<div class="space-y-2">
+<div class="flex items-start gap-2 p-2 bg-surface-container-low rounded">
+<div class="w-2 h-2 rounded-full bg-secondary mt-1.5"></div>
+<div>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface block">Term II Attendance Check Completed</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">Nov 12, 2024 • Logged by R. Meenakshi</span>
+</div>
+</div>
+<div class="flex items-start gap-2 p-2 bg-surface-container-low rounded">
+<div class="w-2 h-2 rounded-full bg-outline mt-1.5"></div>
+<div>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface block">CAT-2 Answer Script Moderation</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">Nov 04, 2024 • Dept. of Mathematics</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Drawer Footer Action -->
+<div class="p-space-md bg-surface-container flex items-center justify-end gap-space-sm">
+<button class="h-9 px-space-md bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-label-md text-label-md rounded transition-colors shadow-sm" onclick="closeProfileDrawer()">
+          Dismiss
+        </button>
+<button class="h-9 px-space-md bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded flex items-center gap-1.5 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[16px]">open_in_new</span>
+<span>Open Full Case File</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Quick Profile Slide-Over Controller
+  function openProfileDrawer(name, emis, grade, attendance, exam, notes) {
+    document.getElementById('drawerStudentName').innerText = name;
+    document.getElementById('drawerStudentEmis').innerText = 'EMIS: ' + emis;
+    document.getElementById('drawerStudentClass').innerText = grade;
+    document.getElementById('drawerStudentAttendance').innerText = attendance;
+    document.getElementById('drawerStudentExam').innerText = exam;
+    document.getElementById('drawerStudentNotes').innerText = notes;
+
+    const drawer = document.getElementById('quickProfileDrawer');
+    const backdrop = document.getElementById('drawerBackdrop');
+    const panel = document.getElementById('drawerPanel');
+
+    drawer.classList.remove('hidden');
+    // Animate in
+    setTimeout(() => {
+      backdrop.classList.remove('opacity-0');
+      backdrop.classList.add('opacity-100');
+      panel.classList.remove('translate-x-full');
+      panel.classList.add('translate-x-0');
+    }, 10);
+  }
+
+  function closeProfileDrawer() {
+    const backdrop = document.getElementById('drawerBackdrop');
+    const panel = document.getElementById('drawerPanel');
+    const drawer = document.getElementById('quickProfileDrawer');
+
+    backdrop.classList.remove('opacity-100');
+    backdrop.classList.add('opacity-0');
+    panel.classList.remove('translate-x-0');
+    panel.classList.add('translate-x-full');
+
+    setTimeout(() => {
+      drawer.classList.add('hidden');
+    }, 300);
+  }
+
+  // Interactive Checkbox & Bulk Actions Logic
+  const selectAll = document.getElementById('selectAllCheckbox');
+  const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+  const bulkBar = document.getElementById('bulkActionBar');
+  const selectedText = document.getElementById('selectedCountText');
+
+  function updateBulkState() {
+    const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
+    if (checkedCount > 0) {
+      bulkBar.classList.remove('hidden');
+      selectedText.innerText = checkedCount + ' student' + (checkedCount > 1 ? 's' : '') + ' selected';
+    } else {
+      bulkBar.classList.add('hidden');
+    }
+  }
+
+  if (selectAll) {
+    selectAll.addEventListener('change', function () {
+      rowCheckboxes.forEach(cb => cb.checked = selectAll.checked);
+      updateBulkState();
+    });
+  }
+
+  rowCheckboxes.forEach(cb => {
+    cb.addEventListener('change', () => {
+      updateBulkState();
+      if (!cb.checked && selectAll) {
+        selectAll.checked = false;
+      }
+    });
+  });
+
+  // Clear filters mock trigger
+  const clearBtn = document.getElementById('clearFiltersBtn');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      document.getElementById('studentSearchInput').value = '';
+      const selects = document.querySelectorAll('select');
+      selects.forEach(sel => sel.selectedIndex = 0);
+    });
+  }
+</script>
+</main>
+</div>
+</body></html>

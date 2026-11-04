@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: thulir-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-thulir}
+      POSTGRES_USER: ${POSTGRES_USER:-thulir_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-thulir_secure_pass}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U thulir_user -d thulir"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: thulir-backend
+    restart: unless-stopped
+    environment:
+      APP_ENV: production
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-thulir_user}:${POSTGRES_PASSWORD:-thulir_secure_pass}@postgres:5432/${POSTGRES_DB:-thulir}
+      JWT_SECRET: ${JWT_SECRET:-thulir_prod_secret_key_change_in_env_file_2026}
+      CORS_ORIGINS: http://localhost,http://localhost:80,http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: thulir-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+
