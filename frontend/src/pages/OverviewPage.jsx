@@ -4,21 +4,24 @@ import { useTranslation } from 'react-i18next'
 import { apiGet, apiPost } from '../api/client.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import Badge from '../components/Badge.jsx'
+import StudentAvatar from '../components/StudentAvatar.jsx'
 
-function KPICard({ label, value, icon, iconClass, sub, subClass }) {
+function KPICard({ label, value, icon, iconClass, sub, subClass, accentBorder }) {
   return (
-    <div className="bg-surface-container-lowest p-4 rounded-xl shadow-sm flex flex-col justify-between">
+    <div className={`bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/25 hover:shadow-md hover:border-outline-variant/40 transition-all duration-200 flex flex-col justify-between ${accentBorder || ''}`}>
       <div>
-        <div className="flex items-center justify-between mb-1">
-          <span className="font-label-sm text-label-sm uppercase tracking-wider text-outline">{label}</span>
-          <span className={`material-symbols-outlined text-[20px] ${iconClass}`}>{icon}</span>
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="font-label-sm text-label-sm uppercase tracking-wider text-outline font-semibold">{label}</span>
+          <div className="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center">
+            <span className={`material-symbols-outlined text-[20px] ${iconClass}`}>{icon}</span>
+          </div>
         </div>
-        <div className="flex items-baseline gap-2">
-          <span className="font-numeric-metric text-numeric-metric text-on-surface">{value}</span>
+        <div className="flex items-baseline gap-2 mt-1">
+          <span className="font-numeric-metric text-numeric-metric text-on-surface font-bold tracking-tight">{value}</span>
         </div>
       </div>
       {sub && (
-        <div className={`mt-2 pt-1 bg-surface-container-low px-2 py-1 rounded flex justify-between font-label-sm text-label-sm ${subClass || 'text-on-surface-variant'}`}>
+        <div className={`mt-3 pt-1.5 bg-surface-container-low px-2.5 py-1 rounded-lg flex justify-between items-center font-label-sm text-label-sm ${subClass || 'text-on-surface-variant'}`}>
           {sub}
         </div>
       )}
@@ -31,6 +34,7 @@ export default function OverviewPage() {
   const { role } = useAuth()
 
   const [stats, setStats] = useState(null)
+  const [qualityStats, setQualityStats] = useState(null)
   const [indicators, setIndicators] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -42,13 +46,15 @@ export default function OverviewPage() {
       apiGet('/api/students?page_size=1'),
       apiGet('/api/indicators?page_size=5&status=Needs+Review'),
       apiGet('/api/indicators?page_size=1'),
+      apiGet('/api/data-quality/summary').catch(() => null),
     ])
-      .then(([studentsRes, needsReviewRes, allIndRes]) => {
+      .then(([studentsRes, needsReviewRes, allIndRes, qualityRes]) => {
         setStats({
           total_students: studentsRes.total,
           needs_review: needsReviewRes.total,
           all_indicators: allIndRes.total,
         })
+        setQualityStats(qualityRes)
         setIndicators(needsReviewRes.items || [])
       })
       .catch(err => setError(err.message))
@@ -132,7 +138,7 @@ export default function OverviewPage() {
       )}
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 mb-4">
         <KPICard
           label={t('overview.kpi_total_enrolled')}
           value={stats?.total_students ?? '—'}
@@ -152,12 +158,38 @@ export default function OverviewPage() {
           }
         />
         <KPICard
-          label="Total Indicators (All)"
+          label="Total Indicators"
           value={stats?.all_indicators ?? '—'}
           icon="flag"
           iconClass="text-secondary"
           sub={<span>{t('common.awaiting_review')}</span>}
         />
+        <div className="bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/25 hover:shadow-md hover:border-outline-variant/40 transition-all duration-200 flex flex-col justify-between border-l-4 border-l-amber-500">
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="font-label-sm text-label-sm uppercase tracking-wider text-outline font-semibold">
+                {t('data_quality.title')}
+              </span>
+              <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                <span className="material-symbols-outlined text-[20px] text-amber-600">verified_user</span>
+              </div>
+            </div>
+            <div className="flex items-baseline gap-2 mt-1">
+              <span className="font-numeric-metric text-numeric-metric text-on-surface font-bold tracking-tight">
+                {qualityStats ? `${qualityStats.profile_completeness_pct}%` : '—'}
+              </span>
+              <span className="font-label-sm text-label-sm text-on-surface-variant font-medium">profile completeness</span>
+            </div>
+          </div>
+          <div className="mt-3 pt-1.5 bg-surface-container-low px-2.5 py-1 rounded-lg flex justify-between items-center font-label-sm text-label-sm">
+            <span className={qualityStats?.total_issues_count > 0 ? 'text-amber-700 font-semibold' : 'text-emerald-700 font-medium'}>
+              {qualityStats?.total_issues_count ?? 0} {t('data_quality.total_issues')}
+            </span>
+            <Link to="/data-import?tab=quality" className="text-secondary hover:underline font-semibold flex items-center gap-0.5">
+              Inspect <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* Warning disclaimer */}
@@ -206,14 +238,19 @@ export default function OverviewPage() {
               {indicators.map((ind, idx) => (
                 <tr key={ind.id} className={idx % 2 === 0 ? 'bg-surface-container-lowest' : 'bg-surface-container-low'}>
                   <td className="px-4 py-2">
-                    <Link
-                      to={`/students/${ind.student?.id}`}
-                      className="font-label-md text-label-md text-secondary hover:underline"
-                    >
-                      {ind.student?.full_name}
-                    </Link>
-                    <div className="font-body-sm text-body-sm text-on-surface-variant">
-                      {ind.student?.grade}-{ind.student?.section}
+                    <div className="flex items-center gap-2.5">
+                      <StudentAvatar student={ind.student} size={32} />
+                      <div>
+                        <Link
+                          to={`/students/${ind.student?.id}`}
+                          className="font-label-md text-label-md text-secondary hover:underline"
+                        >
+                          {ind.student?.full_name}
+                        </Link>
+                        <div className="font-body-sm text-body-sm text-on-surface-variant">
+                          {ind.student?.grade}-{ind.student?.section}
+                        </div>
+                      </div>
                     </div>
                   </td>
                   <td className="px-4 py-2">

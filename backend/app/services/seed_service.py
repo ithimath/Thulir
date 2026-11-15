@@ -103,10 +103,10 @@ def seed_demo_data(db: Session, force: bool = False):
         db.commit()
         db.refresh(school)
 
-    # 2. Academic Year & Periods
-    ay = db.query(AcademicYear).filter(AcademicYear.school_id == school.id, AcademicYear.year_name == "2024-25").first()
+    # 2. Academic Year & Periods (2025-26)
+    ay = db.query(AcademicYear).filter(AcademicYear.school_id == school.id, AcademicYear.is_current == True).first()
     if not ay:
-        ay = AcademicYear(school_id=school.id, year_name="2024-25", is_current=True)
+        ay = AcademicYear(school_id=school.id, year_name="2025-26", is_current=True)
         db.add(ay)
         db.commit()
         db.refresh(ay)
@@ -117,8 +117,8 @@ def seed_demo_data(db: Session, force: bool = False):
             academic_year_id=ay.id,
             name="Term I",
             sequence_order=1,
-            start_date=datetime.date(2024, 6, 10),
-            end_date=datetime.date(2024, 10, 15),
+            start_date=datetime.date(2025, 6, 10),
+            end_date=datetime.date(2025, 10, 15),
             is_current=False
         )
         db.add(p1)
@@ -129,8 +129,8 @@ def seed_demo_data(db: Session, force: bool = False):
             academic_year_id=ay.id,
             name="Term II",
             sequence_order=2,
-            start_date=datetime.date(2024, 10, 20),
-            end_date=datetime.date(2025, 3, 31),
+            start_date=datetime.date(2025, 10, 20),
+            end_date=datetime.date(2026, 3, 31),
             is_current=True
         )
         db.add(p2)

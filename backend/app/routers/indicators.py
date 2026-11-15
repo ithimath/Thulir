@@ -4,7 +4,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import asc, desc
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from backend.app.database import get_db
 from backend.app.middleware.auth_middleware import (
@@ -101,6 +101,7 @@ def list_indicators(
     status_filter: Optional[str] = Query(None, alias="status"),
     rule_code: Optional[str] = Query(None),
     student_id: Optional[int] = Query(None),
+    data_origin: Optional[str] = Query(None, description="Filter by origin: all | dataset | mock | user"),
     auth: AuthenticatedUser = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -116,6 +117,8 @@ def list_indicators(
         base_q = base_q.filter(WarningIndicator.rule_code == rule_code)
     if student_id:
         base_q = base_q.filter(WarningIndicator.student_id == student_id)
+    if data_origin and data_origin != "all":
+        base_q = base_q.filter(WarningIndicator.data_origin == data_origin)
 
     # Default: newest first
     base_q = base_q.order_by(desc(WarningIndicator.detected_at))
@@ -125,25 +128,75 @@ def list_indicators(
     offset = (page - 1) * page_size
     indicators = base_q.offset(offset).limit(page_size).all()
 
-    items = [
-        IndicatorListItem(
-            id=ind.id,
-            rule_code=ind.rule_code,
-            category=ind.category,
-            priority=ind.priority,
-            status=ind.status,
-            plain_explanation=ind.plain_explanation,
-            detected_at=ind.detected_at,
-            student=_build_indicator_ref(ind, db),
+    # Bulk load students with class_section in 1 single query (eliminates N+1 query buffering)
+    student_ids = {ind.student_id for ind in indicators}
+    student_map = {}
+    if student_ids:
+        students = (
+            db.query(Student)
+            .options(joinedload(Student.class_section))
+            .filter(Student.id.in_(student_ids))
+            .all()
         )
-        for ind in indicators
-    ]
+        student_map = {s.id: s for s in students}
+
+    items = []
+    for ind in indicators:
+        student = student_map.get(ind.student_id)
+        cs = student.class_section if student else None
+        student_ref = IndicatorStudentRef(
+            id=student.id if student else ind.student_id,
+            emis_id=student.emis_id if student else "N/A",
+            full_name=student.full_name if student else f"Student #{ind.student_id}",
+            grade=cs.grade if cs else None,
+            section=cs.section if cs else None,
+        )
+        items.append(
+            IndicatorListItem(
+                id=ind.id,
+                rule_code=ind.rule_code,
+                category=ind.category,
+                priority=ind.priority,
+                status=ind.status,
+                plain_explanation=ind.plain_explanation,
+                detected_at=ind.detected_at,
+                data_origin=ind.data_origin,
+                source_ref=ind.source_ref,
+                student=student_ref,
+            )
+        )
     return IndicatorListOut(
         items=items,
         total=total,
         page=page,
         page_size=page_size,
         total_pages=total_pages,
+    )
+
+
+# ---------------------------------------------------------------------------
+# GET /api/indicators/patterns — Multi-Indicator Pattern Analysis (Feature 6)
+# ---------------------------------------------------------------------------
+
+@router.get("/patterns", response_model=dict)
+def get_indicator_patterns(
+    reporting_period: Optional[str] = Query(None),
+    grade: Optional[int] = Query(None),
+    section: Optional[str] = Query(None),
+    auth: AuthenticatedUser = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Identifies co-occurring indicator patterns across students.
+    Strictly avoids synthetic risk scores or automated ranking.
+    """
+    from backend.app.services.pattern_service import analyze_indicator_patterns
+    return analyze_indicator_patterns(
+        db=db,
+        school_id=auth.school_id,
+        reporting_period=reporting_period,
+        grade=grade,
+        section=section,
     )
 
 
@@ -209,6 +262,8 @@ def get_indicator(
         threshold_applied=ind.threshold_applied,
         data_quality_limitations=ind.data_quality_limitations,
         detected_at=ind.detected_at,
+        data_origin=ind.data_origin,
+        source_ref=ind.source_ref,
         student=_build_indicator_ref(ind, db),
         reviews=reviews,
     )
@@ -288,4 +343,124 @@ def run_warning_engine(
             f"{result['new_indicators']} new indicator(s) created."
         ),
     }
+
+
+# ---------------------------------------------------------------------------
+# GET /api/indicators/{indicator_id}/evidence-records (Feature 1 Pipeline)
+# ---------------------------------------------------------------------------
+@router.get("/{indicator_id}/evidence-records")
+def get_indicator_evidence_records(
+    indicator_id: int,
+    auth: AuthenticatedUser = Depends(require_role(["admin", "teacher", "counsellor"])),
+    db: Session = Depends(get_db),
+):
+    ind = db.query(WarningIndicator).filter(
+        WarningIndicator.id == indicator_id,
+        WarningIndicator.school_id == auth.school_id,
+    ).first()
+    if not ind:
+        raise HTTPException(status_code=404, detail="Indicator not found.")
+
+    from backend.app.models.models import AttendanceRecord, AssessmentRecord, AssignmentRecord, ReportingPeriod, DataCorrection
+    records_out = []
+    record_type = ind.category  # attendance, academic, assignment
+
+    # Pre-cache reporting periods and pending corrections (eliminates in-loop queries)
+    period_map = {p.id: p.name for p in db.query(ReportingPeriod).all()}
+    pending_corrs = {
+        (c.record_type, c.target_record_id)
+        for c in db.query(DataCorrection).filter(
+            DataCorrection.student_id == ind.student_id,
+            DataCorrection.status == "Pending",
+        ).all()
+    }
+
+    if ind.category == "attendance":
+        att_records = db.query(AttendanceRecord).filter(
+            AttendanceRecord.student_id == ind.student_id,
+            AttendanceRecord.school_id == auth.school_id,
+        ).order_by(desc(AttendanceRecord.created_at)).limit(10).all()
+
+        for a in att_records:
+            period_name = period_map.get(a.reporting_period_id)
+            has_pending = ("attendance", a.id) in pending_corrs
+            val_str = f"{a.attendance_percentage:.1f}% ({int(a.days_present or 0)}/{int(a.total_instructional_days or 0)} days)" if a.attendance_percentage is not None else f"{a.status or 'Recorded'}"
+            records_out.append({
+                "id": a.id,
+                "record_type": "attendance",
+                "date": str(a.record_date or a.created_at.date()),
+                "period": period_name or "Term II",
+                "metric": val_str,
+                "days_present": a.days_present,
+                "total_days": a.total_instructional_days,
+                "percentage": a.attendance_percentage,
+                "status": a.status,
+                "is_superseded": a.is_superseded,
+                "superseded_by_id": a.superseded_by_id,
+                "has_pending_correction": has_pending,
+            })
+
+    elif ind.category == "academic":
+        asm_records = db.query(AssessmentRecord).filter(
+            AssessmentRecord.student_id == ind.student_id,
+            AssessmentRecord.school_id == auth.school_id,
+        ).order_by(desc(AssessmentRecord.assessment_date)).limit(10).all()
+
+        for a in asm_records:
+            period_name = period_map.get(a.reporting_period_id)
+            has_pending = ("assessment", a.id) in pending_corrs
+            records_out.append({
+                "id": a.id,
+                "record_type": "assessment",
+                "date": str(a.assessment_date),
+                "period": period_name or "Term II",
+                "subject": a.subject,
+                "assessment_name": a.assessment_name,
+                "metric": f"{a.marks_obtained}/{a.max_marks} ({a.percentage:.1f}%)",
+                "marks_obtained": a.marks_obtained,
+                "max_marks": a.max_marks,
+                "percentage": a.percentage,
+                "is_superseded": a.is_superseded,
+                "superseded_by_id": a.superseded_by_id,
+                "has_pending_correction": has_pending,
+            })
+
+    elif ind.category == "assignment":
+        asg_records = db.query(AssignmentRecord).filter(
+            AssignmentRecord.student_id == ind.student_id,
+            AssignmentRecord.school_id == auth.school_id,
+        ).order_by(desc(AssignmentRecord.assignment_date)).limit(10).all()
+
+        for a in asg_records:
+            period_name = period_map.get(a.reporting_period_id)
+            has_pending = ("assignment", a.id) in pending_corrs
+            records_out.append({
+                "id": a.id,
+                "record_type": "assignment",
+                "date": str(a.assignment_date),
+                "period": period_name or "Term II",
+                "subject": a.subject,
+                "metric": f"{a.status.capitalize()} (Score: {a.score or '-'})",
+                "status": a.status,
+                "score": a.score,
+                "is_superseded": a.is_superseded,
+                "superseded_by_id": a.superseded_by_id,
+                "has_pending_correction": has_pending,
+            })
+
+    rep_period = records_out[0].get("period", "Term II") if records_out else "Term II"
+    return {
+        "indicator_id": ind.id,
+        "rule_code": ind.rule_code,
+        "rule_version": ind.rule_version,
+        "threshold_applied": ind.threshold_applied,
+        "rule_thresholds": {"threshold_value": ind.threshold_applied},
+        "reporting_period": rep_period,
+        "plain_explanation": ind.plain_explanation,
+        "category": ind.category,
+        "priority": ind.priority,
+        "records": records_out,
+        "evidence_records": records_out,
+    }
+
 

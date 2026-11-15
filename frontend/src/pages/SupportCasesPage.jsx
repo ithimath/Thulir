@@ -3,11 +3,106 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { apiGet, apiPost } from '../api/client.js'
 import { useAuth } from '../context/AuthContext.jsx'
+import { useNotification } from '../context/NotificationContext.jsx'
 import Badge from '../components/Badge.jsx'
+import EventTimeline from '../components/EventTimeline.jsx'
+import StudentAvatar from '../components/StudentAvatar.jsx'
+
+function InterventionEffectivenessCard({ caseId, interventionId }) {
+  const { t } = useTranslation()
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [expanded, setExpanded] = useState(false)
+
+  const handleToggle = async () => {
+    if (!expanded && !data) {
+      setLoading(true)
+      try {
+        const res = await apiGet(`/api/cases/${caseId}/interventions/${interventionId}/effectiveness`)
+        setData(res)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    setExpanded(!expanded)
+  }
+
+  return (
+    <div className="mt-2 border-t border-outline-variant/60 pt-2">
+      <button
+        type="button"
+        onClick={handleToggle}
+        className="text-secondary font-label-sm text-label-sm hover:underline flex items-center gap-1"
+      >
+        <span className="material-symbols-outlined text-[15px]">trending_up</span>
+        <span>{expanded ? 'Hide Effectiveness Tracking' : 'View Effectiveness Comparison'}</span>
+      </button>
+
+      {expanded && (
+        <div className="mt-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant font-body-sm text-body-sm">
+          {loading ? (
+            <div className="py-2 flex items-center justify-center">
+              <span className="material-symbols-outlined text-[18px] text-secondary animate-spin">progress_activity</span>
+            </div>
+          ) : !data ? (
+            <p className="text-on-surface-variant">No tracking data available.</p>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-label-sm text-label-sm font-semibold uppercase text-outline">
+                  Metric: {data.metric_domain}
+                </span>
+                <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                  data.status === 'improving' ? 'bg-emerald-50 text-emerald-700' :
+                  data.status === 'declining' ? 'bg-error/10 text-error' :
+                  data.status === 'insufficient_data' ? 'bg-amber-50 text-amber-800' :
+                  'bg-surface-container text-on-surface'
+                }`}>
+                  {data.status === 'improving' ? t('effectiveness.status_improving') :
+                   data.status === 'declining' ? t('effectiveness.status_declining') :
+                   data.status === 'insufficient_data' ? t('effectiveness.status_insufficient_data') :
+                   t('effectiveness.status_no_significant_change')}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 py-1 text-center font-numeric-table">
+                <div className="bg-surface-container-low p-2 rounded">
+                  <span className="text-xs text-on-surface-variant block">{t('effectiveness.baseline')}</span>
+                  <strong className="text-on-surface text-sm">
+                    {data.baseline_value != null ? `${data.baseline_value}` : '—'}
+                  </strong>
+                </div>
+                <div className="bg-surface-container-low p-2 rounded">
+                  <span className="text-xs text-on-surface-variant block">{t('effectiveness.current')}</span>
+                  <strong className="text-on-surface text-sm">
+                    {data.current_value != null ? `${data.current_value}` : '—'}
+                  </strong>
+                </div>
+                <div className="bg-surface-container-low p-2 rounded">
+                  <span className="text-xs text-on-surface-variant block">{t('effectiveness.change')}</span>
+                  <strong className={`text-sm ${data.change_delta > 0 ? 'text-emerald-600' : data.change_delta < 0 ? 'text-error' : 'text-on-surface'}`}>
+                    {data.change_delta != null ? `${data.change_delta > 0 ? '+' : ''}${data.change_delta}` : '—'}
+                  </strong>
+                </div>
+              </div>
+
+              <p className="text-xs text-outline italic pt-1 border-t border-outline-variant/40">
+                ℹ {data.disclaimer || t('effectiveness.disclaimer')}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function SupportCasesPage() {
   const { t } = useTranslation()
   const { user, role } = useAuth()
+  const { notify } = useNotification()
 
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -69,9 +164,9 @@ export default function SupportCasesPage() {
         reason: 'Escalated from staff-assisted student support request.',
       })
       fetchSupportRequests()
-      alert('Support request successfully escalated to a formal Support Case.')
+      notify.success('Support request successfully escalated to a formal Support Case.', 'Case Escalated')
     } catch (err) {
-      alert('Error escalating request: ' + err.message)
+      notify.parseError(err, 'Failed to Escalate Request')
     } finally {
       setEscalatingId(null)
     }
@@ -87,7 +182,7 @@ export default function SupportCasesPage() {
       setNewNote('')
       setIsSensitive(false)
     } catch (err) {
-      alert('Error loading case detail: ' + err.message)
+      notify.parseError(err, 'Failed to Load Case Details')
     } finally {
       setLoadingDetail(false)
     }
@@ -101,10 +196,11 @@ export default function SupportCasesPage() {
         note_text: newNote.trim(),
         is_sensitive: isSensitive,
       })
+      notify.success('Progress note saved to case timeline.', 'Note Added')
       // Refresh detail
       openCaseDetail(selectedCase.id)
     } catch (err) {
-      alert('Error: ' + err.message)
+      notify.parseError(err, 'Failed to Add Note')
     }
   }
 
@@ -162,59 +258,66 @@ export default function SupportCasesPage() {
               No pending student support requests.
             </div>
           ) : (
-            <table className="w-full">
-              <thead>
-                <tr className="bg-surface-container border-b border-outline-variant text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
-                  <th className="px-4 py-3 text-left">Tracking Number</th>
-                  <th className="px-4 py-3 text-left">Student</th>
-                  <th className="px-4 py-3 text-left">Domain</th>
-                  <th className="px-4 py-3 text-center">Urgency</th>
-                  <th className="px-4 py-3 text-center">Status</th>
-                  <th className="px-4 py-3 text-right">Escalation</th>
-                </tr>
-              </thead>
-              <tbody>
-                {supportRequests.map((req, idx) => (
-                  <tr key={req.id} className={`${idx % 2 === 0 ? 'bg-surface-container-lowest' : 'bg-surface-container-low'} hover:bg-surface-container transition-colors`}>
-                    <td className="px-4 py-2 font-mono text-[13px] font-semibold text-secondary">
-                      {req.tracking_number}
-                    </td>
-                    <td className="px-4 py-2">
-                      <Link to={`/students/${req.student?.id}`} className="font-label-md text-label-md text-secondary hover:underline">
-                        {req.student?.full_name}
-                      </Link>
-                      <div className="font-body-sm text-body-sm text-on-surface-variant">
-                        EMIS: {req.student?.emis_id}
-                      </div>
-                    </td>
-                    <td className="px-4 py-2 font-body-sm text-body-sm text-on-surface capitalize">
-                      {req.support_domain.replace('_', ' ')}
-                    </td>
-                    <td className="px-4 py-2 text-center">
-                      <Badge variant={req.urgency_level === 'priority' ? 'high' : 'medium'}>
-                        {req.urgency_level}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-2 text-center">
-                      <Badge variant={req.status === 'Linked to Case' ? 'resolved' : 'under_review'}>
-                        {req.status}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-2 text-right">
-                      {req.status !== 'Linked to Case' && (
-                        <button
-                          onClick={() => handleEscalateRequest(req.id)}
-                          disabled={escalatingId === req.id}
-                          className="px-3 py-1 bg-secondary text-on-secondary rounded font-label-md text-label-md hover:bg-on-secondary-container transition-colors disabled:opacity-50"
-                        >
-                          {escalatingId === req.id ? 'Escalating...' : 'Escalate to Case'}
-                        </button>
-                      )}
-                    </td>
+            <div className="overflow-x-auto w-full">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-surface-container border-b border-outline-variant text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left">Tracking Number</th>
+                    <th className="px-4 py-3 text-left">Student</th>
+                    <th className="px-4 py-3 text-left">Domain</th>
+                    <th className="px-4 py-3 text-center">Urgency</th>
+                    <th className="px-4 py-3 text-center">Status</th>
+                    <th className="px-4 py-3 text-right">Escalation</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {supportRequests.map((req, idx) => (
+                    <tr key={req.id} className={`${idx % 2 === 0 ? 'bg-surface-container-lowest' : 'bg-surface-container-low'} hover:bg-surface-container transition-colors`}>
+                      <td className="px-4 py-2 font-mono text-[13px] font-semibold text-secondary">
+                        {req.tracking_number}
+                      </td>
+                      <td className="px-4 py-2">
+                        <div className="flex items-center gap-2.5">
+                          <StudentAvatar student={req.student} size={32} />
+                          <div>
+                            <Link to={`/students/${req.student?.id}`} className="font-label-md text-label-md text-secondary hover:underline">
+                              {req.student?.full_name}
+                            </Link>
+                            <div className="font-body-sm text-body-sm text-on-surface-variant">
+                              EMIS: {req.student?.emis_id}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-2 font-body-sm text-body-sm text-on-surface capitalize">
+                        {req.support_domain.replace('_', ' ')}
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        <Badge variant={req.urgency_level === 'priority' ? 'high' : 'medium'}>
+                          {req.urgency_level}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        <Badge variant={req.status === 'Linked to Case' ? 'resolved' : 'under_review'}>
+                          {req.status}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-2 text-right">
+                        {req.status !== 'Linked to Case' && (
+                          <button
+                            onClick={() => handleEscalateRequest(req.id)}
+                            disabled={escalatingId === req.id}
+                            className="px-3 py-1 bg-secondary text-on-secondary rounded font-label-md text-label-md hover:bg-on-secondary-container transition-colors disabled:opacity-50"
+                          >
+                            {escalatingId === req.id ? 'Escalating...' : 'Escalate to Case'}
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       ) : (
@@ -269,57 +372,64 @@ export default function SupportCasesPage() {
             {t('common.no_data')}
           </div>
         ) : (
-          <table className="w-full">
-            <thead>
-              <tr className="bg-surface-container border-b border-outline-variant text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
-                <th className="px-4 py-3 text-left">Case #</th>
-                <th className="px-4 py-3 text-left">{t('common.student')}</th>
-                <th className="px-4 py-3 text-left">Category & Reason</th>
-                <th className="px-4 py-3 text-left">Assigned Staff</th>
-                <th className="px-4 py-3 text-center">{t('common.priority')}</th>
-                <th className="px-4 py-3 text-center">{t('common.status')}</th>
-                <th className="px-4 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.items.map((c, idx) => (
-                <tr key={c.id} className={`${idx % 2 === 0 ? 'bg-surface-container-lowest' : 'bg-surface-container-low'} hover:bg-surface-container transition-colors`}>
-                  <td className="px-4 py-2 font-label-md text-label-md font-semibold text-secondary">
-                    {c.case_number}
-                  </td>
-                  <td className="px-4 py-2">
-                    <Link to={`/students/${c.student?.id}`} className="font-label-md text-label-md text-secondary hover:underline">
-                      {c.student?.full_name}
-                    </Link>
-                    <div className="font-body-sm text-body-sm text-on-surface-variant">
-                      Grade {c.student?.grade}-{c.student?.section}
-                    </div>
-                  </td>
-                  <td className="px-4 py-2">
-                    <span className="font-label-sm text-label-sm uppercase text-on-surface font-semibold">{c.category}</span>
-                    <p className="font-body-sm text-body-sm text-on-surface-variant truncate max-w-xs">{c.reason}</p>
-                  </td>
-                  <td className="px-4 py-2 font-body-sm text-body-sm text-on-surface">
-                    {c.assigned_staff?.full_name || '—'}
-                  </td>
-                  <td className="px-4 py-2 text-center">
-                    <Badge variant={c.priority?.toLowerCase()}>{c.priority}</Badge>
-                  </td>
-                  <td className="px-4 py-2 text-center">
-                    <Badge variant="in_progress">{c.status}</Badge>
-                  </td>
-                  <td className="px-4 py-2 text-right">
-                    <button
-                      onClick={() => openCaseDetail(c.id)}
-                      className="px-3 py-1 bg-surface-container text-on-surface hover:bg-surface-container-high rounded font-label-md text-label-md transition-colors"
-                    >
-                      View Details
-                    </button>
-                  </td>
+          <div className="overflow-x-auto w-full">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-surface-container border-b border-outline-variant text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left">Case #</th>
+                  <th className="px-4 py-3 text-left">{t('common.student')}</th>
+                  <th className="px-4 py-3 text-left">Category & Reason</th>
+                  <th className="px-4 py-3 text-left">Assigned Staff</th>
+                  <th className="px-4 py-3 text-center">{t('common.priority')}</th>
+                  <th className="px-4 py-3 text-center">{t('common.status')}</th>
+                  <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {data.items.map((c, idx) => (
+                  <tr key={c.id} className={`${idx % 2 === 0 ? 'bg-surface-container-lowest' : 'bg-surface-container-low'} hover:bg-surface-container transition-colors`}>
+                    <td className="px-4 py-2 font-label-md text-label-md font-semibold text-secondary">
+                      {c.case_number}
+                    </td>
+                    <td className="px-4 py-2">
+                      <div className="flex items-center gap-2.5">
+                        <StudentAvatar student={c.student} size={32} />
+                        <div>
+                          <Link to={`/students/${c.student?.id}`} className="font-label-md text-label-md text-secondary hover:underline">
+                            {c.student?.full_name}
+                          </Link>
+                          <div className="font-body-sm text-body-sm text-on-surface-variant">
+                            Grade {c.student?.grade}-{c.student?.section}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-2">
+                      <span className="font-label-sm text-label-sm uppercase text-on-surface font-semibold">{c.category}</span>
+                      <p className="font-body-sm text-body-sm text-on-surface-variant truncate max-w-xs">{c.reason}</p>
+                    </td>
+                    <td className="px-4 py-2 font-body-sm text-body-sm text-on-surface">
+                      {c.assigned_staff?.full_name || '—'}
+                    </td>
+                    <td className="px-4 py-2 text-center">
+                      <Badge variant={c.priority?.toLowerCase()}>{c.priority}</Badge>
+                    </td>
+                    <td className="px-4 py-2 text-center">
+                      <Badge variant="in_progress">{c.status}</Badge>
+                    </td>
+                    <td className="px-4 py-2 text-right">
+                      <button
+                        onClick={() => openCaseDetail(c.id)}
+                        className="px-3 py-1 bg-surface-container text-on-surface hover:bg-surface-container-high rounded font-label-md text-label-md transition-colors"
+                      >
+                        View Details
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
       </>
@@ -370,6 +480,7 @@ export default function SupportCasesPage() {
                       <span className="font-label-sm text-label-sm text-on-surface-variant mt-1 block">
                         Start: {i.start_date} {i.target_date ? `• Target: ${i.target_date}` : ''}
                       </span>
+                      <InterventionEffectivenessCard caseId={selectedCase.id} interventionId={i.id} />
                     </div>
                   ))}
                 </div>
@@ -429,6 +540,15 @@ export default function SupportCasesPage() {
                   </button>
                 </div>
               </form>
+            </div>
+
+            {/* Case Event Timeline (Shared EventTimeline component) */}
+            <div className="mt-6 pt-4 border-t border-outline-variant">
+              <h3 className="font-headline-sm text-headline-sm text-on-surface mb-3 flex items-center gap-2">
+                <span className="material-symbols-outlined text-[20px] text-secondary">timeline</span>
+                <span>Case Event Timeline</span>
+              </h3>
+              <EventTimeline caseId={selectedCase.id} />
             </div>
           </div>
         </div>

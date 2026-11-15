@@ -3,12 +3,16 @@ import { useParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { apiGet, apiPost } from '../api/client.js'
 import { useAuth } from '../context/AuthContext.jsx'
+import { useNotification } from '../context/NotificationContext.jsx'
 import Badge from '../components/Badge.jsx'
+import EventTimeline from '../components/EventTimeline.jsx'
+import StudentAvatar from '../components/StudentAvatar.jsx'
 
 export default function StudentProfilePage() {
   const { studentId } = useParams()
   const { t } = useTranslation()
   const { user, role } = useAuth()
+  const { notify } = useNotification()
 
   const [student, setStudent] = useState(null)
   const [indicators, setIndicators] = useState([])
@@ -16,8 +20,19 @@ export default function StudentProfilePage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // Active tab state: 'overview' | 'attendance' | 'academic' | 'cases'
+  // Active tab state: 'overview' | 'attendance' | 'academic' | 'cases' | 'timeline' | 'trends'
   const [activeTab, setActiveTab] = useState('overview')
+
+  // Longitudinal Trends State (Feature 8)
+  const [trendsData, setTrendsData] = useState(null)
+  const [loadingTrends, setLoadingTrends] = useState(false)
+
+  // AI-Assisted Summarization State (Feature 10)
+  const [showAiModal, setShowAiModal] = useState(false)
+  const [aiData, setAiData] = useState(null)
+  const [loadingAi, setLoadingAi] = useState(false)
+  const [editableDraft, setEditableDraft] = useState('')
+  const [approvingAi, setApprovingAi] = useState(false)
 
   // Create Case Modal state
   const [showCaseModal, setShowCaseModal] = useState(false)
@@ -44,6 +59,16 @@ export default function StudentProfilePage() {
       .finally(() => setLoading(false))
   }, [studentId])
 
+  useEffect(() => {
+    if (activeTab === 'trends' && !trendsData) {
+      setLoadingTrends(true)
+      apiGet(`/api/students/${studentId}/trends`)
+        .then(res => setTrendsData(res))
+        .catch(err => console.error(err))
+        .finally(() => setLoadingTrends(false))
+    }
+  }, [activeTab, studentId, trendsData])
+
   const handleCreateCase = async (e) => {
     e.preventDefault()
     setSubmittingCase(true)
@@ -56,15 +81,48 @@ export default function StudentProfilePage() {
         reason: caseReason,
         observations: caseObservations || undefined,
       })
-      setCaseSuccess('Support case created successfully.')
+      notify.success('Support case created successfully and assigned.', 'Case Created')
       setShowCaseModal(false)
       // Refresh cases
       const updatedCases = await apiGet(`/api/cases?student_id=${studentId}`)
       setCases(updatedCases.items || [])
     } catch (err) {
-      alert('Error: ' + err.message)
+      notify.parseError(err, 'Failed to Create Support Case')
     } finally {
       setSubmittingCase(false)
+    }
+  }
+
+  const handleOpenAiModal = async () => {
+    setShowAiModal(true)
+    setLoadingAi(true)
+    try {
+      const res = await apiGet(`/api/students/${studentId}/ai-summary`)
+      setAiData(res)
+      setEditableDraft(res.summary_text || '')
+    } catch (err) {
+      setAiData({ available: false, message: 'AI summaries unavailable' })
+    } finally {
+      setLoadingAi(false)
+    }
+  }
+
+  const handleApproveAiSummary = async () => {
+    if (!editableDraft.trim()) return
+    setApprovingAi(true)
+    try {
+      await apiPost(`/api/students/${studentId}/ai-summary/approve`, {
+        approved_text: editableDraft.trim(),
+      })
+      notify.success('AI Summary approved by staff and committed to official case record.', 'Summary Approved')
+      setShowAiModal(false)
+      // Refresh cases & timeline
+      const updatedCases = await apiGet(`/api/cases?student_id=${studentId}`)
+      setCases(updatedCases.items || [])
+    } catch (err) {
+      notify.parseError(err, 'Failed to Approve Summary')
+    } finally {
+      setApprovingAi(false)
     }
   }
 
@@ -119,9 +177,7 @@ export default function StudentProfilePage() {
       <div className="bg-surface-container-lowest rounded-xl p-4 shadow-sm mb-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-xl bg-primary-container flex items-center justify-center flex-shrink-0 text-on-primary">
-              <span className="material-symbols-outlined text-[32px]">person</span>
-            </div>
+            <StudentAvatar student={student} size={64} className="rounded-xl flex-shrink-0 shadow-sm" />
             <div className="flex flex-col">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight">
@@ -143,6 +199,13 @@ export default function StudentProfilePage() {
             </div>
           </div>
           <div className="flex flex-wrap gap-2 justify-end">
+            <button
+              onClick={handleOpenAiModal}
+              className="h-9 px-3 bg-surface-container-high text-on-surface hover:bg-surface-tint hover:text-on-primary font-label-md text-label-md rounded flex items-center gap-1.5 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[16px] text-secondary">auto_awesome</span>
+              <span>AI Record Summary</span>
+            </button>
             <button
               onClick={() => setShowCaseModal(true)}
               className="h-9 px-3 bg-secondary text-on-secondary hover:bg-on-secondary-container font-label-md text-label-md rounded flex items-center gap-1 transition-colors"
@@ -202,15 +265,16 @@ export default function StudentProfilePage() {
             { id: 'attendance', label: 'Attendance History', icon: 'calendar_month' },
             { id: 'academic', label: 'Academic Scores', icon: 'school' },
             { id: 'cases', label: `Support Cases (${cases.length})`, icon: 'support_agent' },
+            { id: 'timeline', label: 'Support History & Timeline', icon: 'timeline' },
+            { id: 'trends', label: 'Longitudinal Trends', icon: 'trending_up' },
           ].map(tTab => (
             <button
               key={tTab.id}
               onClick={() => setActiveTab(tTab.id)}
-              className={`py-3 px-2 font-label-md text-label-md flex items-center gap-1 transition-colors ${
-                activeTab === tTab.id
-                  ? 'text-secondary border-b-2 border-secondary font-semibold'
-                  : 'text-on-surface-variant hover:text-on-surface'
-              }`}
+              className={`py-3 px-2 font-label-md text-label-md flex items-center gap-1 transition-colors ${activeTab === tTab.id
+                ? 'text-secondary border-b-2 border-secondary font-semibold'
+                : 'text-on-surface-variant hover:text-on-surface'
+                }`}
             >
               <span className="material-symbols-outlined text-[18px]">{tTab.icon}</span>
               <span>{tTab.label}</span>
@@ -344,6 +408,136 @@ export default function StudentProfilePage() {
               )}
             </div>
           )}
+
+          {/* TAB 5: Unified Event Timeline (Feature 5) */}
+          {activeTab === 'timeline' && (
+            <div>
+              <EventTimeline studentId={studentId} />
+            </div>
+          )}
+
+          {/* TAB 6: Longitudinal Trends & Trajectories (Feature 8) */}
+          {activeTab === 'trends' && (
+            <div className="space-y-6">
+              {/* Civic Trust Banner */}
+              <div className="px-4 py-3 bg-surface-container-low rounded-xl border-l-4 border-secondary flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-secondary text-[20px]">timeline</span>
+                  <strong className="text-on-surface font-label-md text-label-md">Data Integrity & Honest Gaps Mandate</strong>
+                </div>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">
+                  THULIR strictly forbids interpolating, smoothing, or fabricating missing historical attendance or assessment records. Trajectories reflect concrete logged data; unsubmitted or missing reporting periods are explicitly flagged as gaps.
+                </p>
+              </div>
+
+              {loadingTrends ? (
+                <div className="flex items-center justify-center py-16">
+                  <span className="material-symbols-outlined text-[32px] text-secondary animate-spin">progress_activity</span>
+                </div>
+              ) : !trendsData ? (
+                <p className="font-body-sm text-body-sm text-on-surface-variant py-4 text-center">No trend data available.</p>
+              ) : (
+                <div className="space-y-6">
+                  {/* Attendance Trajectory Card */}
+                  <div className="bg-surface-container-low rounded-xl p-4 border border-outline-variant">
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <h3 className="font-headline-sm text-headline-sm text-on-surface">Attendance Longitudinal Trajectory</h3>
+                        <p className="font-body-sm text-body-sm text-on-surface-variant">Cumulative Attendance: <strong className="text-secondary">{trendsData.cumulative_attendance_percentage ? `${trendsData.cumulative_attendance_percentage}%` : '—'}</strong></p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                      {trendsData.attendance_trajectory?.map((point, pIdx) => (
+                        <div key={pIdx} className={`p-3 rounded-lg border flex flex-col justify-between ${point.has_data ? 'bg-surface-container-lowest border-outline-variant' : 'bg-amber-500/10 border-amber-500/30'}`}>
+                          <div>
+                            <span className="font-label-sm text-label-sm uppercase tracking-wider text-outline block">{point.period_name}</span>
+                            <span className="font-label-xs text-[11px] text-on-surface-variant block">{point.academic_year}</span>
+                          </div>
+                          <div className="mt-2">
+                            {point.has_data ? (
+                              <>
+                                <span className={`font-numeric-metric text-headline-sm font-bold ${point.attendance_percentage < 75 ? 'text-error' : 'text-on-surface'}`}>
+                                  {point.attendance_percentage}%
+                                </span>
+                                <span className="font-label-xs text-[11px] text-on-surface-variant block mt-0.5">
+                                  {point.days_present} / {point.total_days} days
+                                </span>
+                              </>
+                            ) : (
+                              <div className="flex items-center gap-1 text-amber-700 py-1">
+                                <span className="material-symbols-outlined text-[16px]">warning</span>
+                                <span className="font-label-xs text-[11px] font-semibold">{point.gap_reason || 'Data Gap (Not Logged)'}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Academic Subject Trajectories */}
+                  <div className="bg-surface-container-low rounded-xl p-4 border border-outline-variant">
+                    <h3 className="font-headline-sm text-headline-sm text-on-surface mb-3">Academic Assessment Trajectories by Subject</h3>
+                    <div className="space-y-4">
+                      {Object.entries(trendsData.academic_trajectory || {}).map(([subject, points]) => (
+                        <div key={subject} className="bg-surface-container-lowest rounded-lg p-3 border border-outline-variant">
+                          <span className="font-label-md text-label-md font-semibold text-secondary block mb-2">{subject}</span>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
+                            {points.map((pt, idx) => (
+                              <div key={idx} className={`p-2 rounded border ${pt.has_data ? 'bg-surface-container-low border-outline-variant/60' : 'bg-surface-container border-dashed border-outline-variant'}`}>
+                                <span className="font-label-xs text-[11px] text-outline block">{pt.period_name}</span>
+                                {pt.has_data ? (
+                                  <div className="flex items-baseline justify-between mt-1">
+                                    <span className={`font-numeric-table font-bold ${pt.average_percentage < 35 ? 'text-error' : 'text-on-surface'}`}>
+                                      {pt.average_percentage}%
+                                    </span>
+                                    <span className="font-label-xs text-[10px] text-outline">
+                                      {pt.assessments_count} exam{pt.assessments_count > 1 ? 's' : ''}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span className="font-label-xs text-[10px] text-outline italic block mt-1">
+                                    {pt.gap_reason || 'No Exam Logged'}
+                                  </span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Assignment Trajectory */}
+                  <div className="bg-surface-container-low rounded-xl p-4 border border-outline-variant">
+                    <h3 className="font-headline-sm text-headline-sm text-on-surface mb-3">Assignment Completion Longitudinal Trajectory</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                      {trendsData.assignment_trajectory?.map((asg, aIdx) => (
+                        <div key={aIdx} className={`p-3 rounded-lg border ${asg.has_data ? 'bg-surface-container-lowest border-outline-variant' : 'bg-surface-container border-dashed border-outline-variant'}`}>
+                          <span className="font-label-sm text-label-sm uppercase tracking-wider text-outline block">{asg.period_name}</span>
+                          {asg.has_data ? (
+                            <div className="mt-1">
+                              <span className={`font-numeric-metric text-headline-sm font-bold ${asg.completion_rate < 60 ? 'text-error' : 'text-on-surface'}`}>
+                                {asg.completion_rate}%
+                              </span>
+                              <span className="font-label-xs text-[11px] text-on-surface-variant block mt-0.5">
+                                {asg.submitted_count} of {asg.total_assignments} assignments
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="font-label-xs text-[11px] text-outline italic block mt-2">
+                              {asg.gap_reason || 'No Assignments'}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -418,6 +612,129 @@ export default function StudentProfilePage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* AI RECORD SUMMARY MODAL (FEATURE 10) */}
+      {showAiModal && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+          <div className="bg-surface-container-lowest rounded-xl max-w-2xl w-full p-6 shadow-xl max-h-[85vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-outline-variant pb-3 mb-4">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-secondary text-[24px]">auto_awesome</span>
+                <span className="font-headline-sm text-headline-sm text-on-surface">AI Record Summary & Draft</span>
+              </div>
+              <button onClick={() => setShowAiModal(false)} className="text-on-surface-variant hover:text-on-surface">
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            {loadingAi ? (
+              <div className="flex items-center justify-center py-16">
+                <span className="material-symbols-outlined text-[32px] text-secondary animate-spin">progress_activity</span>
+              </div>
+            ) : !aiData || !aiData.available ? (
+              <div className="py-8 text-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-surface-container mx-auto flex items-center justify-center text-outline">
+                  <span className="material-symbols-outlined text-[24px]">cloud_off</span>
+                </div>
+                <h3 className="font-headline-sm text-headline-sm text-on-surface">
+                  {aiData?.message || 'AI summaries unavailable'}
+                </h3>
+                <p className="font-body-sm text-body-sm text-on-surface-variant max-w-md mx-auto">
+                  AI-assisted summarization is disabled by system policy (`AI_ENABLED=false`) or unconfigured. Every other core feature, indicator, and support case tool in THULIR functions completely normally.
+                </p>
+                <div className="pt-2">
+                  <button
+                    onClick={() => setShowAiModal(false)}
+                    className="px-4 py-2 bg-surface-container text-on-surface rounded font-label-md hover:bg-surface-container-high transition-colors"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Draft Mandate Alert */}
+                <div className="p-3 bg-amber-500/10 border-l-4 border-amber-600 rounded-r-lg">
+                  <div className="flex items-center gap-1.5 font-label-md text-amber-900 font-semibold">
+                    <span className="material-symbols-outlined text-[18px]">verified</span>
+                    <span>STAFF REVIEW MANDATE — DRAFT ONLY</span>
+                  </div>
+                  <p className="font-body-sm text-body-sm text-amber-800 mt-0.5">
+                    This summary is a grounded draft synthesized from verified school records. It has not been committed to student history. A human staff member must review and explicitly approve before saving.
+                  </p>
+                </div>
+
+                {/* Anonymized Metadata & Citations */}
+                <div className="p-3 bg-surface-container-low rounded-lg font-body-sm text-body-sm space-y-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-outline-variant/60 pb-2">
+                    <div>
+                      <span className="text-outline text-label-xs">Anonymized Reference ID: </span>
+                      <strong className="text-on-surface font-mono">{aiData.anonymized_reference_id}</strong>
+                    </div>
+                    <div>
+                      <span className="text-outline text-label-xs">Target Class: </span>
+                      <strong className="text-on-surface">{aiData.class_label}</strong>
+                    </div>
+                    <span className="px-2 py-0.5 rounded bg-surface-container text-label-xs font-semibold text-secondary uppercase">
+                      {aiData.status}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span className="text-outline text-label-xs block mb-1">Grounded Record Sources Cited:</span>
+                    <div className="flex flex-wrap gap-1">
+                      {aiData.sources_cited?.map((src, sIdx) => (
+                        <span key={sIdx} className="px-2 py-0.5 rounded bg-surface-container font-mono text-[11px] text-on-surface">
+                          {src}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Editable Text Area */}
+                <div>
+                  <label className="block font-label-md text-label-md text-on-surface mb-1">
+                    Editable Record Summary Draft
+                  </label>
+                  <textarea
+                    rows={6}
+                    value={editableDraft}
+                    onChange={e => setEditableDraft(e.target.value)}
+                    className="w-full p-3 bg-surface-container-low text-on-surface rounded-lg border border-outline-variant font-body-sm text-body-sm focus:border-secondary focus:outline-none"
+                    placeholder="Staff may refine or augment this summary before approving..."
+                  />
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center justify-between pt-2 border-t border-outline-variant">
+                  <span className="font-label-xs text-[11px] text-on-surface-variant max-w-sm">
+                    No PII (EMIS, name, contact) was shared with external providers.
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowAiModal(false)}
+                      className="px-4 py-2 bg-surface-container text-on-surface font-label-md text-label-md rounded hover:bg-surface-container-high transition-colors"
+                    >
+                      Discard Draft
+                    </button>
+                    <button
+                      type="button"
+                      disabled={approvingAi || !editableDraft.trim()}
+                      onClick={handleApproveAiSummary}
+                      className="px-4 py-2 bg-secondary text-on-secondary font-label-md text-label-md rounded hover:bg-on-secondary-container transition-colors disabled:opacity-60 flex items-center gap-1.5"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                      <span>{approvingAi ? 'Approving...' : 'Approve & Save to Record'}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

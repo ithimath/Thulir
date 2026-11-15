@@ -120,6 +120,7 @@ def list_students(
     grade: Optional[int] = Query(None),
     section: Optional[str] = Query(None),
     is_active: Optional[bool] = Query(None),
+    data_origin: Optional[str] = Query(None, description="Filter by origin: all | dataset | mock | user"),
     auth: AuthenticatedUser = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -153,6 +154,8 @@ def list_students(
         )
     if is_active is not None:
         base_q = base_q.filter(Student.is_active == is_active)
+    if data_origin and data_origin != "all":
+        base_q = base_q.filter(Student.data_origin == data_origin)
     if grade is not None or section is not None:
         if auth.role_name != "teacher":  # teacher already joined ClassSection
             base_q = base_q.join(ClassSection, Student.current_class_section_id == ClassSection.id, isouter=True)
@@ -205,6 +208,8 @@ def list_students(
             gender=s.gender,
             class_section=cs_out,
             is_active=s.is_active,
+            data_origin=s.data_origin,
+            source_ref=s.source_ref,
             latest_attendance_pct=latest_att_pct,
             open_indicators_count=open_ind or 0,
             open_cases_count=open_cases or 0,
@@ -429,4 +434,103 @@ def update_student(
 
     db.commit()
     return {"id": student.id, "message": "Student updated successfully."}
+
+
+# ---------------------------------------------------------------------------
+# 5. SHARED STUDENT SUPPORT TIMELINE (GET /api/students/{id}/timeline)
+# ---------------------------------------------------------------------------
+@router.get("/{student_id}/timeline")
+def get_student_event_timeline(
+    student_id: int,
+    case_id: Optional[int] = Query(None),
+    auth: AuthenticatedUser = Depends(require_role(["admin", "teacher", "counsellor"])),
+    db: Session = Depends(get_db),
+):
+    student = _get_student_or_404(db, student_id, auth.school_id)
+    if auth.role_name == "teacher":
+        _check_teacher_class_access(auth, student, db)
+
+    from backend.app.services.timeline_service import build_student_timeline
+    events = build_student_timeline(db, student.id, auth.school_id, auth, case_id=case_id)
+    return {
+        "student_id": student.id,
+        "emis_id": student.emis_id,
+        "full_name": student.full_name,
+        "events": events,
+        "total_events": len(events),
+    }
+
+
+# ---------------------------------------------------------------------------
+# 6. HISTORICAL TREND COMPARISON (GET /api/students/{id}/trends) — Feature 8
+# ---------------------------------------------------------------------------
+@router.get("/{student_id}/trends")
+def get_student_trends(
+    student_id: int,
+    auth: AuthenticatedUser = Depends(require_role(["admin", "teacher", "counsellor"])),
+    db: Session = Depends(get_db),
+):
+    """
+    Longitudinal comparison of attendance and academic trajectories.
+    Explicitly highlights missing data gaps without fabrication.
+    """
+    student = _get_student_or_404(db, student_id, auth.school_id)
+    if auth.role_name == "teacher":
+        _check_teacher_class_access(auth, student, db)
+
+    from backend.app.services.trend_service import get_student_historical_trends
+    return get_student_historical_trends(db, student.id)
+
+
+# ---------------------------------------------------------------------------
+# 7. AI-ASSISTED RECORD SUMMARIZATION (Feature 10)
+# ---------------------------------------------------------------------------
+@router.get("/{student_id}/ai-summary")
+def get_student_ai_summary(
+    student_id: int,
+    auth: AuthenticatedUser = Depends(require_role(["admin", "teacher", "counsellor"])),
+    db: Session = Depends(get_db),
+):
+    """
+    Returns an anonymized, grounded draft summary of student records.
+    If AI_ENABLED=false, gracefully returns {"available": False, "message": "AI summaries unavailable"}.
+    """
+    student = _get_student_or_404(db, student_id, auth.school_id)
+    if auth.role_name == "teacher":
+        _check_teacher_class_access(auth, student, db)
+
+    from backend.app.services.ai_summary_service import generate_student_ai_summary
+    return generate_student_ai_summary(db, student.id)
+
+
+@router.post("/{student_id}/ai-summary/approve")
+def approve_student_ai_summary(
+    student_id: int,
+    payload: dict,
+    auth: AuthenticatedUser = Depends(require_role(["admin", "teacher", "counsellor"])),
+    db: Session = Depends(get_db),
+):
+    """
+    Staff explicitly approves and saves a reviewed summary draft to permanent record.
+    """
+    student = _get_student_or_404(db, student_id, auth.school_id)
+    if auth.role_name == "teacher":
+        _check_teacher_class_access(auth, student, db)
+
+    approved_text = payload.get("approved_text")
+    if not approved_text or not approved_text.strip():
+        raise HTTPException(status_code=400, detail="Approved text is required.")
+
+    case_id = payload.get("case_id")
+    from backend.app.services.ai_summary_service import approve_and_save_ai_summary
+    return approve_and_save_ai_summary(
+        db=db,
+        student_id=student.id,
+        staff_user_id=auth.id,
+        approved_text=approved_text.strip(),
+        case_id=case_id,
+    )
+
+
+
 

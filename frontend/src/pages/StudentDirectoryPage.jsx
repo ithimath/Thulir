@@ -3,6 +3,8 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { apiGet } from '../api/client.js'
 import Badge from '../components/Badge.jsx'
+import DemoDataBanner from '../components/DemoDataBanner.jsx'
+import StudentAvatar from '../components/StudentAvatar.jsx'
 
 export default function StudentDirectoryPage() {
   const { t } = useTranslation()
@@ -16,6 +18,7 @@ export default function StudentDirectoryPage() {
   const [search, setSearch] = useState(searchParams.get('search') || '')
   const [grade, setGrade] = useState('')
   const [section, setSection] = useState('')
+  const [dataOrigin, setDataOrigin] = useState('')
   const [page, setPage] = useState(1)
 
   const fetchStudents = useCallback(() => {
@@ -24,12 +27,13 @@ export default function StudentDirectoryPage() {
     if (search) params.set('search', search)
     if (grade) params.set('grade', grade)
     if (section) params.set('section', section)
+    if (dataOrigin) params.set('data_origin', dataOrigin)
 
     apiGet(`/api/students?${params}`)
       .then(res => { setData(res); setError(null) })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false))
-  }, [search, grade, section, page])
+  }, [search, grade, section, dataOrigin, page])
 
   useEffect(() => { fetchStudents() }, [fetchStudents])
 
@@ -41,9 +45,11 @@ export default function StudentDirectoryPage() {
   }
 
   const clearFilters = () => {
-    setSearch(''); setGrade(''); setSection(''); setPage(1)
+    setSearch(''); setGrade(''); setSection(''); setDataOrigin(''); setPage(1)
     setSearchParams({})
   }
+
+  const isMockActive = dataOrigin === 'mock' || (data?.items?.some(s => s.data_origin === 'mock'))
 
   return (
     <div className="flex flex-col w-full">
@@ -88,6 +94,17 @@ export default function StudentDirectoryPage() {
           <option value="">All Sections</option>
           {['A','B','C','D'].map(s => <option key={s} value={s}>Section {s}</option>)}
         </select>
+        <select
+          value={dataOrigin}
+          onChange={e => { setDataOrigin(e.target.value); setPage(1) }}
+          className="h-9 px-3 bg-surface-container-lowest text-on-surface font-body-sm text-body-sm rounded border border-outline-variant focus:outline-none"
+          title="Filter by Data Origin"
+        >
+          <option value="">All Data Origins</option>
+          <option value="dataset">Cleaned Datasets Only</option>
+          <option value="mock">Synthetic / Demo Mock Only</option>
+          <option value="user">User Created Only</option>
+        </select>
         <button
           type="submit"
           className="h-9 px-4 bg-secondary text-on-secondary font-label-md text-label-md rounded hover:bg-on-secondary-container transition-colors"
@@ -103,6 +120,14 @@ export default function StudentDirectoryPage() {
         </button>
       </form>
 
+      {/* Demo data banner */}
+      {isMockActive && (
+        <DemoDataBanner
+          origin={dataOrigin}
+          onClearFilter={dataOrigin === 'mock' ? () => setDataOrigin('') : null}
+        />
+      )}
+
       {/* Table */}
       <div className="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
         {loading ? (
@@ -115,7 +140,8 @@ export default function StudentDirectoryPage() {
           <div className="py-10 text-center font-body-sm text-body-sm text-on-surface-variant">{t('common.no_data')}</div>
         ) : (
           <>
-            <table className="w-full">
+            <div className="overflow-x-auto w-full">
+              <table className="w-full">
               <thead>
                 <tr className="bg-surface-container border-b border-outline-variant">
                   <th className="px-4 py-3 text-left font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">EMIS ID</th>
@@ -134,13 +160,30 @@ export default function StudentDirectoryPage() {
                   >
                     <td className="px-4 py-2 font-numeric-table text-numeric-table text-on-surface-variant">{s.emis_id}</td>
                     <td className="px-4 py-2">
-                      <Link
-                        to={`/students/${s.id}`}
-                        className="font-label-md text-label-md text-secondary hover:underline"
-                      >
-                        {s.full_name}
-                      </Link>
-                      <div className="font-body-sm text-body-sm text-on-surface-variant">{s.gender}</div>
+                      <div className="flex items-center gap-3">
+                        <StudentAvatar student={s} size={36} />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <Link
+                              to={`/students/${s.id}`}
+                              className="font-label-md text-label-md text-secondary hover:underline"
+                            >
+                              {s.full_name}
+                            </Link>
+                            {s.data_origin === 'mock' && (
+                              <span className="px-1.5 py-0.2 rounded text-[10px] font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-700/50">
+                                DEMO
+                              </span>
+                            )}
+                            {s.data_origin === 'dataset' && (
+                              <span className="px-1.5 py-0.2 rounded text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700/50">
+                                DATASET
+                              </span>
+                            )}
+                          </div>
+                          <div className="font-body-sm text-body-sm text-on-surface-variant">{s.gender}</div>
+                        </div>
+                      </div>
                     </td>
                     <td className="px-4 py-2 font-label-md text-label-md text-on-surface">
                       {s.class_section ? `${s.class_section.grade}-${s.class_section.section}` : '—'}
@@ -174,6 +217,7 @@ export default function StudentDirectoryPage() {
                 ))}
               </tbody>
             </table>
+            </div>
 
             {/* Pagination */}
             {data.total_pages > 1 && (

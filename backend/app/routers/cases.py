@@ -85,9 +85,15 @@ def _check_case_access(auth: AuthenticatedUser, case: SupportCase, for_write: bo
             raise HTTPException(status_code=403, detail="Access denied: you are not assigned to this case.")
 
 def _generate_case_number(db: Session, school_id: int) -> str:
-    count = db.query(func.count(SupportCase.id)).filter(SupportCase.school_id == school_id).scalar() or 0
+    max_id = db.query(func.max(SupportCase.id)).scalar() or 0
+    total = db.query(func.count(SupportCase.id)).scalar() or 0
+    seq = max(max_id, total) + 1
     year = datetime.datetime.now().year
-    return f"CAS-{year}-{school_id:02d}-{count + 1:04d}"
+    candidate = f"CAS-{year}-{school_id:02d}-{seq:04d}"
+    while db.query(SupportCase).filter(SupportCase.case_number == candidate).first():
+        seq += 1
+        candidate = f"CAS-{year}-{school_id:02d}-{seq:04d}"
+    return candidate
 
 # ---------------------------------------------------------------------------
 # 1. LIST CASES (GET /api/cases)
@@ -189,6 +195,18 @@ def create_case(
         cs = student.class_section
         if not cs or f"{cs.grade}-{cs.section}" not in allowed:
             raise HTTPException(status_code=403, detail="Cannot create case for a student not in your assigned classes.")
+
+    # Prevent duplicate cases for the same indicator (Feature 1 Pipeline requirement)
+    if payload.indicator_id:
+        existing_case = db.query(SupportCase).filter(
+            SupportCase.indicator_id == payload.indicator_id,
+            SupportCase.school_id == auth.school_id
+        ).first()
+        if existing_case:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"A support case ({existing_case.case_number}) already exists for this indicator. Creating duplicate cases for the same indicator is blocked."
+            )
 
     case_number = _generate_case_number(db, auth.school_id)
     case = SupportCase(
@@ -351,6 +369,11 @@ def add_intervention(
     _check_case_access(auth, case, for_write=True)
 
     staff_id = payload.assigned_staff_id or auth.id
+
+    # Feature 4: Capture baseline snapshot at intervention start
+    from backend.app.services.intervention_service import capture_baseline_snapshot
+    baseline_snap = capture_baseline_snapshot(db, case.student_id, auth.school_id)
+
     intervention = Intervention(
         case_id=case.id,
         intervention_type=payload.intervention_type,
@@ -360,11 +383,16 @@ def add_intervention(
         assigned_staff_id=staff_id,
         start_date=payload.start_date,
         target_date=payload.target_date,
+        baseline_snapshot=baseline_snap,
     )
     db.add(intervention)
     db.commit()
     db.refresh(intervention)
-    return {"id": intervention.id, "message": "Intervention added successfully."}
+    return {
+        "id": intervention.id,
+        "message": "Intervention added successfully.",
+        "has_baseline": bool(baseline_snap),
+    }
 
 # ---------------------------------------------------------------------------
 # 6. FOLLOW-UPS (POST /api/cases/{case_id}/follow-ups)
@@ -420,4 +448,52 @@ def add_case_note(
     db.commit()
     db.refresh(note)
     return {"id": note.id, "message": "Case note added successfully."}
+
+
+# ---------------------------------------------------------------------------
+# 8. SHARED CASE TIMELINE (GET /api/cases/{case_id}/timeline)
+# ---------------------------------------------------------------------------
+@router.get("/{case_id}/timeline")
+def get_case_timeline(
+    case_id: int,
+    auth: AuthenticatedUser = Depends(require_role(["admin", "teacher", "counsellor"])),
+    db: Session = Depends(get_db),
+):
+    case = _get_case_or_404(db, case_id, auth.school_id)
+    _check_case_access(auth, case, for_write=False)
+
+    from backend.app.services.timeline_service import build_student_timeline
+    events = build_student_timeline(db, case.student_id, auth.school_id, auth, case_id=case.id)
+    return {
+        "case_id": case.id,
+        "case_number": case.case_number,
+        "student_id": case.student_id,
+        "events": events,
+        "total_events": len(events),
+    }
+
+
+# ---------------------------------------------------------------------------
+# 9. INTERVENTION EFFECTIVENESS COMPARISON (GET /api/cases/{case_id}/interventions/{inv_id}/effectiveness)
+# ---------------------------------------------------------------------------
+@router.get("/{case_id}/interventions/{intervention_id}/effectiveness")
+def get_intervention_effectiveness(
+    case_id: int,
+    intervention_id: int,
+    auth: AuthenticatedUser = Depends(require_role(["admin", "teacher", "counsellor"])),
+    db: Session = Depends(get_db),
+):
+    case = _get_case_or_404(db, case_id, auth.school_id)
+    _check_case_access(auth, case, for_write=False)
+
+    inv = db.query(Intervention).filter(
+        Intervention.id == intervention_id,
+        Intervention.case_id == case.id
+    ).first()
+    if not inv:
+        raise HTTPException(status_code=404, detail="Intervention not found.")
+
+    from backend.app.services.intervention_service import compute_intervention_comparison
+    return compute_intervention_comparison(db, inv)
+
 

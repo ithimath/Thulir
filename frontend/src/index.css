@@ -3,6 +3,66 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --bg-surface: #f8f9ff;
+    --bg-surface-lowest: #ffffff;
+    --bg-surface-low: #eff4ff;
+    --bg-surface-container: #e5eeff;
+    --bg-surface-high: #dce9ff;
+    --bg-surface-highest: #d3e4fe;
+    --text-on-surface: #0b1c30;
+    --text-on-surface-variant: #45464d;
+    --border-outline: #76777d;
+    --border-outline-variant: #c6c6cd;
+    --color-primary: #000000;
+    --color-primary-container: #131b2e;
+    --color-on-primary: #ffffff;
+    --color-on-primary-container: #7c839b;
+    --color-secondary: #006a61;
+    --color-secondary-container: #86f2e4;
+    --color-on-secondary: #ffffff;
+    --color-on-secondary-container: #006f66;
+    --color-tertiary: #000000;
+    --color-tertiary-container: #111c2d;
+    --color-on-tertiary: #ffffff;
+    --color-on-tertiary-container: #79849a;
+    --color-inverse-surface: #213145;
+    --color-inverse-on-surface: #eaf1ff;
+    --color-error: #ba1a1a;
+    --color-error-container: #ffdad6;
+    --color-on-error-container: #93000a;
+  }
+
+  .dark {
+    --bg-surface: #0b1320;
+    --bg-surface-lowest: #070d17;
+    --bg-surface-low: #101a2b;
+    --bg-surface-container: #182438;
+    --bg-surface-high: #202f47;
+    --bg-surface-highest: #2b3d5b;
+    --text-on-surface: #f1f5f9;
+    --text-on-surface-variant: #94a3b8;
+    --border-outline: #64748b;
+    --border-outline-variant: #26354d;
+    --color-primary: #ffffff;
+    --color-primary-container: #070d17;
+    --color-on-primary: #0b1c30;
+    --color-on-primary-container: #94a3b8;
+    --color-secondary: #14b8a6;
+    --color-secondary-container: #134e4a;
+    --color-on-secondary: #042f2e;
+    --color-on-secondary-container: #5eead4;
+    --color-tertiary: #ffffff;
+    --color-tertiary-container: #0b1220;
+    --color-on-tertiary: #0b1c30;
+    --color-on-tertiary-container: #94a3b8;
+    --color-inverse-surface: #e2e8f0;
+    --color-inverse-on-surface: #0f172a;
+    --color-error: #f87171;
+    --color-error-container: #7f1d1d;
+    --color-on-error-container: #fecaca;
+  }
+
   html, body {
     margin: 0;
     padding: 0;
@@ -10,6 +70,9 @@
   body {
     overscroll-behavior: none;
     font-variant-numeric: tabular-nums;
+    background-color: var(--bg-surface);
+    color: var(--text-on-surface);
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 }
 
@@ -29,3 +92,53 @@
   -webkit-font-smoothing: antialiased;
 }
 
+/* Character Animation Keyframes */
+@keyframes studentBlink {
+  0%, 92%, 100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes studentFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2.5px);
+  }
+}
+
+@keyframes studentGentleSway {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(0.8deg);
+  }
+}
+
+.anim-blink {
+  transform-origin: center;
+  animation: studentBlink 4.5s infinite ease-in-out;
+}
+
+.anim-float {
+  animation: studentFloat 3.8s infinite ease-in-out;
+}
+
+.anim-sway {
+  transform-origin: bottom center;
+  animation: studentGentleSway 5s infinite ease-in-out;
+}
+
+/* Accessibility: Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .anim-blink,
+  .anim-float,
+  .anim-sway {
+    animation: none !important;
+  }
+}

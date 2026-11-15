@@ -72,12 +72,13 @@ def _evidence_key(*parts: object) -> str:
 # ---------------------------------------------------------------------------
 
 def check_att_low(
-    attendance_by_period: list[tuple[str, float, float, float]]
+    attendance_by_period: list[tuple[str, float, float, float]],
+    threshold: float = 75.0,
 ) -> Optional[IndicatorResult]:
     """
     attendance_by_period: [(period_name, days_present, total_days, att_pct), ...]
                           sorted ascending by period sequence.
-    Returns IndicatorResult if latest period att_pct < 75.0, else None.
+    Returns IndicatorResult if latest period att_pct < threshold, else None.
     """
     periodic = [(n, dp, td, p) for n, dp, td, p in attendance_by_period
                 if td is not None and td > 0]
@@ -86,13 +87,13 @@ def check_att_low(
 
     name, days_present, total_days, att_pct = periodic[-1]
 
-    if att_pct >= 75.0:
+    if att_pct >= threshold:
         return None
 
     explanation = (
         f"Attendance in {name} is {att_pct:.1f}% "
         f"({int(days_present)} of {int(total_days)} days) — "
-        f"below the 75% statutory floor."
+        f"below the {threshold:.0f}% statutory floor."
     )
     evidence = {
         "period": name,
@@ -106,7 +107,7 @@ def check_att_low(
         category="attendance",
         plain_explanation=explanation,
         supporting_evidence=evidence,
-        threshold_applied=75.0,
+        threshold_applied=threshold,
         data_quality_limitations=None,
         evidence_key=_evidence_key("ATT-LOW", name, att_pct),
     )
@@ -117,9 +118,10 @@ def check_att_low(
 # ---------------------------------------------------------------------------
 
 def check_att_decline(
-    attendance_by_period: list[tuple[str, float, float, float]]
+    attendance_by_period: list[tuple[str, float, float, float]],
+    threshold: float = 10.0,
 ) -> Optional[IndicatorResult]:
-    """Drop >= 10.0 pp between the two most recent periods with valid data."""
+    """Drop >= threshold pp between the two most recent periods with valid data."""
     periodic = [(n, dp, td, p) for n, dp, td, p in attendance_by_period
                 if td is not None and td > 0]
     if len(periodic) < 2:
@@ -129,7 +131,7 @@ def check_att_decline(
     curr_name, days_present, total_days, curr_pct = periodic[-1]
     drop = prev_pct - curr_pct
 
-    if drop < 10.0:
+    if drop < threshold:
         return None
 
     explanation = (
@@ -150,7 +152,7 @@ def check_att_decline(
         category="attendance",
         plain_explanation=explanation,
         supporting_evidence=evidence,
-        threshold_applied=10.0,
+        threshold_applied=threshold,
         data_quality_limitations=None,
         evidence_key=_evidence_key("ATT-DECLINE", prev_name, curr_name, round(drop, 2)),
     )
@@ -161,12 +163,13 @@ def check_att_decline(
 # ---------------------------------------------------------------------------
 
 def check_att_consec(
-    daily_records: list[tuple[datetime.date, str]]
+    daily_records: list[tuple[datetime.date, str]],
+    threshold: int = 3,
 ) -> Optional[IndicatorResult]:
     """
     daily_records: [(date, status), ...] sorted ascending by date.
     status one of 'present', 'absent', 'excused'.
-    Triggers if 3+ consecutive 'absent' records exist (excused breaks the run).
+    Triggers if threshold+ consecutive 'absent' records exist (excused breaks the run).
     """
     if not daily_records:
         return None
@@ -184,7 +187,7 @@ def check_att_consec(
         else:
             current_run = []
 
-    if len(best_run_dates) < 3:
+    if len(best_run_dates) < threshold:
         return None
 
     dates_str = [str(d) for d in best_run_dates]
@@ -204,7 +207,7 @@ def check_att_consec(
         category="attendance",
         plain_explanation=explanation,
         supporting_evidence=evidence,
-        threshold_applied=3.0,
+        threshold_applied=float(threshold),
         data_quality_limitations=None,
         evidence_key=_evidence_key("ATT-CONSEC", str(best_run_dates[0]), str(best_run_dates[-1]), len(best_run_dates)),
     )
@@ -215,11 +218,12 @@ def check_att_consec(
 # ---------------------------------------------------------------------------
 
 def check_mark_low(
-    assessments: list[tuple[str, str, datetime.date, float, float, float]]
+    assessments: list[tuple[str, str, datetime.date, float, float, float]],
+    threshold: float = 35.0,
 ) -> Optional[IndicatorResult]:
     """
     assessments: [(name, subject, date, obtained, max_marks, pct), ...] sorted by date ascending.
-    Triggers if the LATEST assessment for ANY subject is strictly < 35%.
+    Triggers if the LATEST assessment for ANY subject is strictly < threshold.
     Returns the worst (lowest percentage) finding.
     """
     if not assessments:
@@ -233,7 +237,7 @@ def check_mark_low(
 
     findings = [(a_name, subj, a_date, obt, mx, pct)
                 for a_name, subj, a_date, obt, mx, pct in subject_latest.values()
-                if pct < 35.0]
+                if pct < threshold]
     if not findings:
         return None
 
@@ -242,7 +246,7 @@ def check_mark_low(
     a_name, subj, a_date, obt, mx, pct = worst
     explanation = (
         f"Latest {subj} assessment ({a_name} on {a_date}) scored {pct:.1f}% "
-        f"({obt:.0f} / {mx:.0f} marks) — below the 35% pass threshold."
+        f"({obt:.0f} / {mx:.0f} marks) — below the {threshold:.0f}% pass threshold."
     )
     evidence = {
         "assessment_name": a_name,
@@ -262,7 +266,7 @@ def check_mark_low(
         category="academic",
         plain_explanation=explanation,
         supporting_evidence=evidence,
-        threshold_applied=35.0,
+        threshold_applied=threshold,
         data_quality_limitations=None,
         evidence_key=_evidence_key("MARK-LOW", subj, str(a_date), pct),
     )
@@ -350,13 +354,14 @@ def check_mark_decline(
 # ---------------------------------------------------------------------------
 
 def check_asg_low(
-    assignments_by_period: list[tuple[str, list[str]]]
+    assignments_by_period: list[tuple[str, list[str]]],
+    threshold: float = 60.0,
 ) -> Optional[IndicatorResult]:
     """
     assignments_by_period: [(period_name, [status_list]), ...] sorted ascending.
     Each status is 'submitted', 'missing', or 'late'.
     Requires >= 3 assignments in the latest period.
-    Triggers if completion rate (submitted + late) / total < 60%.
+    Triggers if completion rate (submitted + late) / total < threshold.
     """
     if not assignments_by_period:
         return None
@@ -369,12 +374,12 @@ def check_asg_low(
     completed = sum(1 for s in statuses if s in ("submitted", "late"))
     completion_rate = (completed / total) * 100.0
 
-    if completion_rate >= 60.0:
+    if completion_rate >= threshold:
         return None
 
     explanation = (
         f"Assignment completion in {period_name} is {completion_rate:.1f}% "
-        f"({completed} of {total} assignments submitted) — below 60%."
+        f"({completed} of {total} assignments submitted) — below {threshold:.0f}%."
     )
     evidence = {
         "period": period_name,
@@ -389,7 +394,7 @@ def check_asg_low(
         category="assignment",
         plain_explanation=explanation,
         supporting_evidence=evidence,
-        threshold_applied=60.0,
+        threshold_applied=threshold,
         data_quality_limitations=None,
         evidence_key=_evidence_key("ASG-LOW", period_name, round(completion_rate, 2), total),
     )
@@ -400,10 +405,11 @@ def check_asg_low(
 # ---------------------------------------------------------------------------
 
 def check_asg_decline(
-    assignments_by_period: list[tuple[str, list[str]]]
+    assignments_by_period: list[tuple[str, list[str]]],
+    threshold: float = 20.0,
 ) -> Optional[IndicatorResult]:
     """
-    Triggers if completion rate dropped >= 20 pp between the two most recent
+    Triggers if completion rate dropped >= threshold pp between the two most recent
     periods, each with >= 3 assignments.
     """
     valid = []
@@ -422,7 +428,7 @@ def check_asg_decline(
     curr_name, curr_total, curr_completed, curr_rate = valid[-1]
     drop = prev_rate - curr_rate
 
-    if drop < 20.0:
+    if drop < threshold:
         return None
 
     explanation = (
@@ -443,7 +449,7 @@ def check_asg_decline(
         category="assignment",
         plain_explanation=explanation,
         supporting_evidence=evidence,
-        threshold_applied=20.0,
+        threshold_applied=threshold,
         data_quality_limitations=None,
         evidence_key=_evidence_key("ASG-DECLINE", prev_name, curr_name, round(drop, 2)),
     )
@@ -454,10 +460,12 @@ def check_asg_decline(
 # ---------------------------------------------------------------------------
 
 def _get_rule(db: Session, rule_code: str) -> Optional[WarningRule]:
-    return db.query(WarningRule).filter(
-        WarningRule.rule_code == rule_code,
-        WarningRule.is_active == True,
-    ).first()
+    return (
+        db.query(WarningRule)
+        .filter(WarningRule.rule_code == rule_code, WarningRule.is_active == True)
+        .order_by(WarningRule.version.desc())
+        .first()
+    )
 
 
 def _indicator_exists(db: Session, student_id: int, rule_code: str, evidence_key: str) -> bool:
@@ -507,6 +515,8 @@ def _persist_indicator(
         threshold_applied=result.threshold_applied,
         data_quality_limitations=result.data_quality_limitations,
         detected_at=datetime.datetime.now(datetime.timezone.utc),
+        data_origin=student.data_origin or "user",
+        source_ref=f"rule:{result.rule_code}",
     )
     db.add(indicator)
     db.flush()  # get .id without committing full transaction
@@ -542,6 +552,7 @@ def run_engine_for_student(db: Session, student: Student) -> list[WarningIndicat
         .filter(
             AttendanceRecord.student_id == student.id,
             AttendanceRecord.record_date == None,  # noqa: E711
+            AttendanceRecord.is_superseded == False,
         )
         .order_by(asc(ReportingPeriod.sequence_order))
         .all()
@@ -558,6 +569,7 @@ def run_engine_for_student(db: Session, student: Student) -> list[WarningIndicat
             AttendanceRecord.student_id == student.id,
             AttendanceRecord.record_date != None,  # noqa: E711
             AttendanceRecord.status != None,  # noqa: E711
+            AttendanceRecord.is_superseded == False,
         )
         .order_by(asc(AttendanceRecord.record_date))
         .all()
@@ -574,7 +586,10 @@ def run_engine_for_student(db: Session, student: Student) -> list[WarningIndicat
             AssessmentRecord.max_marks,
             AssessmentRecord.percentage,
         )
-        .filter(AssessmentRecord.student_id == student.id)
+        .filter(
+            AssessmentRecord.student_id == student.id,
+            AssessmentRecord.is_superseded == False,
+        )
         .order_by(asc(AssessmentRecord.assessment_date))
         .all()
     )
@@ -593,7 +608,10 @@ def run_engine_for_student(db: Session, student: Student) -> list[WarningIndicat
             AssignmentRecord.status,
         )
         .join(AssignmentRecord, AssignmentRecord.reporting_period_id == RP.id)
-        .filter(AssignmentRecord.student_id == student.id)
+        .filter(
+            AssignmentRecord.student_id == student.id,
+            AssignmentRecord.is_superseded == False,
+        )
         .order_by(asc(RP.sequence_order))
         .all()
     )
@@ -606,15 +624,27 @@ def run_engine_for_student(db: Session, student: Student) -> list[WarningIndicat
         for (_, name), statuses in sorted(asg_by_period_dict.items())
     ]
 
-    # --- Run rules ---
+    # --- Run rules with configured active thresholds ---
+    active_rules = {
+        r.rule_code: r
+        for r in db.query(WarningRule).filter(WarningRule.is_active == True).all()
+    }
+    att_low_th = active_rules["ATT-LOW"].threshold_value if "ATT-LOW" in active_rules else 75.0
+    att_dec_th = active_rules["ATT-DECLINE"].threshold_value if "ATT-DECLINE" in active_rules else 10.0
+    att_con_th = int(active_rules["ATT-CONSEC"].threshold_value) if "ATT-CONSEC" in active_rules else 3
+    mark_low_th = active_rules["MARK-LOW"].threshold_value if "MARK-LOW" in active_rules else 35.0
+    mark_dec_th = active_rules["MARK-DECLINE"].threshold_value if "MARK-DECLINE" in active_rules else 15.0
+    asg_low_th = active_rules["ASG-LOW"].threshold_value if "ASG-LOW" in active_rules else 60.0
+    asg_dec_th = active_rules["ASG-DECLINE"].threshold_value if "ASG-DECLINE" in active_rules else 20.0
+
     checks = [
-        check_att_low(attendance_by_period),
-        check_att_decline(attendance_by_period),
-        check_att_consec(daily_records),
-        check_mark_low(assessments),
+        check_att_low(attendance_by_period, threshold=att_low_th),
+        check_att_decline(attendance_by_period, threshold=att_dec_th),
+        check_att_consec(daily_records, threshold=att_con_th),
+        check_mark_low(assessments, threshold=mark_low_th),
         check_mark_decline(assessments),
-        check_asg_low(assignments_by_period),
-        check_asg_decline(assignments_by_period),
+        check_asg_low(assignments_by_period, threshold=asg_low_th),
+        check_asg_decline(assignments_by_period, threshold=asg_dec_th),
     ]
 
     for result in checks:
@@ -645,4 +675,16 @@ def run_engine_for_school(db: Session, school_id: int) -> dict[str, int]:
         total_new += len(new)
 
     return {"students_checked": len(students), "new_indicators": total_new}
+
+
+def run_student_indicators(db: Session, student_id: int, school_id: int) -> list[WarningIndicator]:
+    """Helper to run the engine for a specific student ID."""
+    student = db.query(Student).filter(
+        Student.id == student_id,
+        Student.school_id == school_id,
+    ).first()
+    if not student:
+        return []
+    return run_engine_for_student(db, student)
+
 

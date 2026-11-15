@@ -260,3 +260,393 @@ def commit_student_import(
         db.commit()
         raise e
 
+
+def validate_attendance_rows(
+    df: pd.DataFrame,
+    school_id: int,
+    db: Session,
+) -> Tuple[List[Dict[str, Any]], Dict[str, int]]:
+    """Validate attendance import rows and verify student references."""
+    required_cols = {"emis_id", "total_days", "attended_days"}
+    missing = required_cols - set(df.columns)
+    if missing:
+        raise ValueError(f"Missing required columns in attendance file: {', '.join(missing)}")
+
+    # Fetch existing EMIS to student_id map
+    student_map = {
+        s.emis_id: s.id for s in db.query(Student.emis_id, Student.id).filter(
+            Student.school_id == school_id, Student.is_active == True
+        ).all()
+    }
+
+    rows_analysis = []
+    stats = {"valid": 0, "warnings": 0, "rejected": 0, "duplicates": 0}
+
+    for idx, row in df.iterrows():
+        row_num = idx + 1
+        raw_data = row.to_dict()
+        emis = str(row.get("emis_id", "")).strip()
+
+        if not emis or emis.lower() == 'nan':
+            category = "rejected"
+            message = "EMIS ID is missing."
+            stats["rejected"] += 1
+        elif emis not in student_map:
+            category = "rejected"
+            message = f"Student with EMIS '{emis}' not found in school directory."
+            stats["rejected"] += 1
+        else:
+            try:
+                tot = float(row.get("total_days", 0))
+                att = float(row.get("attended_days", 0))
+                if tot <= 0:
+                    category = "rejected"
+                    message = f"Total instructional days must be greater than 0 (got {tot})."
+                    stats["rejected"] += 1
+                elif att < 0 or att > tot:
+                    category = "rejected"
+                    message = f"Attended days ({att}) must be between 0 and total days ({tot})."
+                    stats["rejected"] += 1
+                else:
+                    category = "imported"
+                    pct = round((att / tot) * 100, 1)
+                    message = f"Valid attendance: {att}/{tot} days ({pct}%)."
+                    stats["valid"] += 1
+            except (ValueError, TypeError):
+                category = "rejected"
+                message = "Invalid numeric values for total_days or attended_days."
+                stats["rejected"] += 1
+
+        rows_analysis.append({
+            "row_number": row_num,
+            "raw_data": raw_data,
+            "category": category,
+            "message": message,
+        })
+
+    return rows_analysis, stats
+
+
+def commit_attendance_import(
+    batch: ImportBatch,
+    rows_analysis: List[Dict[str, Any]],
+    school_id: int,
+    db: Session,
+) -> Dict[str, int]:
+    """Execute transactional commit for attendance records."""
+    from backend.app.services.warning_engine import run_student_indicators
+
+    # Resolve active reporting period
+    curr_period = db.query(ReportingPeriod).join(
+        AcademicYear, ReportingPeriod.academic_year_id == AcademicYear.id
+    ).filter(
+        AcademicYear.school_id == school_id,
+        ReportingPeriod.is_current == True
+    ).first()
+
+    # Fallback to latest reporting period if is_current not flagged
+    if not curr_period:
+        curr_period = db.query(ReportingPeriod).join(
+            AcademicYear, ReportingPeriod.academic_year_id == AcademicYear.id
+        ).filter(AcademicYear.school_id == school_id).order_by(ReportingPeriod.id.desc()).first()
+
+    student_map = {
+        s.emis_id: s.id for s in db.query(Student.emis_id, Student.id).filter(
+            Student.school_id == school_id
+        ).all()
+    }
+
+    imported = 0
+    duplicates = 0
+    rejected = 0
+    affected_students = set()
+
+    try:
+        for r in rows_analysis:
+            if r["category"] != "imported":
+                rejected += 1
+                continue
+
+            raw = r["raw_data"]
+            emis = str(raw["emis_id"]).strip()
+            student_id = student_map[emis]
+            tot = float(raw["total_days"])
+            att = float(raw["attended_days"])
+            pct = round((att / tot) * 100, 2)
+            period_name = str(raw.get("reporting_period", "")).strip()
+
+            target_period = curr_period
+            if period_name:
+                custom_period = db.query(ReportingPeriod).join(
+                    AcademicYear, ReportingPeriod.academic_year_id == AcademicYear.id
+                ).filter(
+                    AcademicYear.school_id == school_id,
+                    ReportingPeriod.name.ilike(period_name)
+                ).first()
+                if custom_period:
+                    target_period = custom_period
+
+            period_id = target_period.id if target_period else None
+
+            # Check if record already exists for this period
+            existing = None
+            if period_id:
+                existing = db.query(AttendanceRecord).filter(
+                    AttendanceRecord.student_id == student_id,
+                    AttendanceRecord.reporting_period_id == period_id,
+                    AttendanceRecord.record_date == None,
+                ).first()
+
+            if existing:
+                existing.days_present = att
+                existing.total_instructional_days = tot
+                existing.attendance_percentage = pct
+                existing.data_origin = "user"
+                existing.source_ref = f"import_batch_{batch.id}"
+                duplicates += 1
+            else:
+                new_rec = AttendanceRecord(
+                    student_id=student_id,
+                    school_id=school_id,
+                    reporting_period_id=period_id,
+                    days_present=att,
+                    total_instructional_days=tot,
+                    attendance_percentage=pct,
+                    data_origin="user",
+                    source_ref=f"import_batch_{batch.id}",
+                )
+                db.add(new_rec)
+                imported += 1
+
+            affected_students.add(student_id)
+
+            row_res = ImportRowResult(
+                batch_id=batch.id,
+                row_number=r["row_number"],
+                raw_data=raw,
+                category=r["category"],
+                message=r["message"],
+            )
+            db.add(row_res)
+
+        batch.status = "committed"
+        batch.imported_count = imported
+        batch.duplicates_count = duplicates
+        batch.rejected_count = rejected
+        batch.committed_at = datetime.datetime.now(datetime.timezone.utc)
+        db.commit()
+
+        # Recalculate early-warning indicators for all updated students
+        for sid in affected_students:
+            run_student_indicators(db, sid, school_id)
+
+        return {
+            "imported": imported,
+            "duplicates": duplicates,
+            "rejected": rejected,
+        }
+    except Exception as e:
+        db.rollback()
+        batch.status = "failed"
+        batch.error_summary = str(e)
+        db.commit()
+        raise e
+
+
+def validate_marks_rows(
+    df: pd.DataFrame,
+    school_id: int,
+    db: Session,
+) -> Tuple[List[Dict[str, Any]], Dict[str, int]]:
+    """Validate assessment/exam marks import rows."""
+    required_cols = {"emis_id", "subject", "marks_obtained"}
+    missing = required_cols - set(df.columns)
+    if missing:
+        raise ValueError(f"Missing required columns in assessment file: {', '.join(missing)}")
+
+    student_map = {
+        s.emis_id: s.id for s in db.query(Student.emis_id, Student.id).filter(
+            Student.school_id == school_id, Student.is_active == True
+        ).all()
+    }
+
+    rows_analysis = []
+    stats = {"valid": 0, "warnings": 0, "rejected": 0, "duplicates": 0}
+
+    for idx, row in df.iterrows():
+        row_num = idx + 1
+        raw_data = row.to_dict()
+        emis = str(row.get("emis_id", "")).strip()
+        subj = str(row.get("subject", "")).strip()
+
+        if not emis or emis.lower() == 'nan':
+            category = "rejected"
+            message = "EMIS ID is missing."
+            stats["rejected"] += 1
+        elif emis not in student_map:
+            category = "rejected"
+            message = f"Student with EMIS '{emis}' not found in school directory."
+            stats["rejected"] += 1
+        elif not subj or subj.lower() == 'nan':
+            category = "rejected"
+            message = "Subject name is missing."
+            stats["rejected"] += 1
+        else:
+            try:
+                obt = float(row.get("marks_obtained", 0))
+                mx = float(row.get("max_marks", 100))
+                if mx <= 0:
+                    category = "rejected"
+                    message = f"Max marks must be greater than 0 (got {mx})."
+                    stats["rejected"] += 1
+                elif obt < 0 or obt > mx:
+                    category = "rejected"
+                    message = f"Marks obtained ({obt}) must be between 0 and maximum marks ({mx})."
+                    stats["rejected"] += 1
+                else:
+                    category = "imported"
+                    pct = round((obt / mx) * 100, 1)
+                    message = f"Valid score: {obt}/{mx} in {subj} ({pct}%)."
+                    stats["valid"] += 1
+            except (ValueError, TypeError):
+                category = "rejected"
+                message = "Invalid numeric marks_obtained or max_marks."
+                stats["rejected"] += 1
+
+        rows_analysis.append({
+            "row_number": row_num,
+            "raw_data": raw_data,
+            "category": category,
+            "message": message,
+        })
+
+    return rows_analysis, stats
+
+
+def commit_marks_import(
+    batch: ImportBatch,
+    rows_analysis: List[Dict[str, Any]],
+    school_id: int,
+    db: Session,
+) -> Dict[str, int]:
+    """Execute transactional commit for assessment marks."""
+    from backend.app.services.warning_engine import run_student_indicators
+
+    curr_period = db.query(ReportingPeriod).join(
+        AcademicYear, ReportingPeriod.academic_year_id == AcademicYear.id
+    ).filter(
+        AcademicYear.school_id == school_id,
+        ReportingPeriod.is_current == True
+    ).first()
+
+    if not curr_period:
+        curr_period = db.query(ReportingPeriod).join(
+            AcademicYear, ReportingPeriod.academic_year_id == AcademicYear.id
+        ).filter(AcademicYear.school_id == school_id).order_by(ReportingPeriod.id.desc()).first()
+
+    student_map = {
+        s.emis_id: s.id for s in db.query(Student.emis_id, Student.id).filter(
+            Student.school_id == school_id
+        ).all()
+    }
+
+    imported = 0
+    duplicates = 0
+    rejected = 0
+    affected_students = set()
+
+    try:
+        for r in rows_analysis:
+            if r["category"] != "imported":
+                rejected += 1
+                continue
+
+            raw = r["raw_data"]
+            emis = str(raw["emis_id"]).strip()
+            student_id = student_map[emis]
+            subj = str(raw["subject"]).strip()
+            obt = float(raw["marks_obtained"])
+            mx = float(raw.get("max_marks", 100))
+            pct = round((obt / mx) * 100, 2)
+            exam_name = str(raw.get("assessment_type", raw.get("assessment_name", "Assessment"))).strip()
+            period_name = str(raw.get("reporting_period", "")).strip()
+
+            target_period = curr_period
+            if period_name:
+                custom_period = db.query(ReportingPeriod).join(
+                    AcademicYear, ReportingPeriod.academic_year_id == AcademicYear.id
+                ).filter(
+                    AcademicYear.school_id == school_id,
+                    ReportingPeriod.name.ilike(period_name)
+                ).first()
+                if custom_period:
+                    target_period = custom_period
+
+            period_id = target_period.id if target_period else None
+
+            # Check if record already exists for student, subject, and exam_name
+            existing = db.query(AssessmentRecord).filter(
+                AssessmentRecord.student_id == student_id,
+                AssessmentRecord.subject == subj,
+                AssessmentRecord.assessment_name == exam_name,
+            ).first()
+
+            if existing:
+                existing.marks_obtained = obt
+                existing.max_marks = mx
+                existing.percentage = pct
+                existing.reporting_period_id = period_id
+                existing.data_origin = "user"
+                existing.source_ref = f"import_batch_{batch.id}"
+                duplicates += 1
+            else:
+                new_rec = AssessmentRecord(
+                    student_id=student_id,
+                    school_id=school_id,
+                    reporting_period_id=period_id,
+                    subject=subj,
+                    assessment_name=exam_name,
+                    assessment_date=datetime.date.today(),
+                    marks_obtained=obt,
+                    max_marks=mx,
+                    percentage=pct,
+                    data_origin="user",
+                    source_ref=f"import_batch_{batch.id}",
+                )
+                db.add(new_rec)
+                imported += 1
+
+            affected_students.add(student_id)
+
+            row_res = ImportRowResult(
+                batch_id=batch.id,
+                row_number=r["row_number"],
+                raw_data=raw,
+                category=r["category"],
+                message=r["message"],
+            )
+            db.add(row_res)
+
+        batch.status = "committed"
+        batch.imported_count = imported
+        batch.duplicates_count = duplicates
+        batch.rejected_count = rejected
+        batch.committed_at = datetime.datetime.now(datetime.timezone.utc)
+        db.commit()
+
+        # Recalculate indicators for updated students
+        for sid in affected_students:
+            run_student_indicators(db, sid, school_id)
+
+        return {
+            "imported": imported,
+            "duplicates": duplicates,
+            "rejected": rejected,
+        }
+    except Exception as e:
+        db.rollback()
+        batch.status = "failed"
+        batch.error_summary = str(e)
+        db.commit()
+        raise e
+

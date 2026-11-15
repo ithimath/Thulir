@@ -1,7 +1,10 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+load_dotenv(BASE_DIR / ".env")
+
 DEFAULT_DB_PATH = str(BASE_DIR / "thulir.db").replace("\\", "/")
 
 class Settings:
@@ -15,5 +18,9 @@ class Settings:
         if origin.strip()
     ]
     MAX_UPLOAD_SIZE_MB: int = int(os.getenv("MAX_UPLOAD_SIZE_MB", "5"))
+    AI_ENABLED: bool = os.getenv("AI_ENABLED", "false").lower() in ("true", "1")
+    AI_PROVIDER: str = os.getenv("AI_PROVIDER", "mock")
+    AI_MODEL: str = os.getenv("AI_MODEL", "gemini-1.5-flash")
+    AI_API_KEY: str = os.getenv("AI_API_KEY", "")
 
 settings = Settings()

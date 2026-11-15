@@ -18,6 +18,10 @@ from backend.app.services.import_service import (
     parse_file_to_dataframe,
     validate_student_rows,
     commit_student_import,
+    validate_attendance_rows,
+    commit_attendance_import,
+    validate_marks_rows,
+    commit_marks_import,
 )
 
 router = APIRouter(prefix="/api/import", tags=["Data Import"])
@@ -53,8 +57,18 @@ async def upload_import_file(
             rows_analysis, stats = validate_student_rows(df, auth.school_id, db)
         except ValueError as e:
             raise HTTPException(status_code=422, detail=str(e))
+    elif import_type == "attendance":
+        try:
+            rows_analysis, stats = validate_attendance_rows(df, auth.school_id, db)
+        except ValueError as e:
+            raise HTTPException(status_code=422, detail=str(e))
+    elif import_type == "marks":
+        try:
+            rows_analysis, stats = validate_marks_rows(df, auth.school_id, db)
+        except ValueError as e:
+            raise HTTPException(status_code=422, detail=str(e))
     else:
-        raise HTTPException(status_code=400, detail=f"Unsupported import type: '{import_type}'.")
+        raise HTTPException(status_code=400, detail=f"Unsupported import type: '{import_type}'. Supported: students, attendance, marks.")
 
     # Create batch in 'validated' status
     batch = ImportBatch(
@@ -126,30 +140,35 @@ def confirm_import(
 
     if batch.import_type == "students":
         results = commit_student_import(batch, rows_analysis, auth.school_id, db)
-        # Evict from in-memory pending cache
-        _PENDING_BATCHES.pop(batch_id, None)
-
-        return ImportCommitResponse(
-            batch_id=batch.id,
-            status=batch.status,
-            total_rows=batch.total_rows,
-            imported_count=results["imported"],
-            duplicates_count=results["duplicates"],
-            rejected_count=results["rejected"],
-            message=(
-                f"Import committed successfully: {results['imported']} new records created, "
-                f"{results['duplicates']} updated, {results['rejected']} rejected."
-            ),
-        )
+    elif batch.import_type == "attendance":
+        results = commit_attendance_import(batch, rows_analysis, auth.school_id, db)
+    elif batch.import_type == "marks":
+        results = commit_marks_import(batch, rows_analysis, auth.school_id, db)
     else:
         raise HTTPException(status_code=400, detail="Unsupported import type.")
+
+    # Evict from in-memory pending cache
+    _PENDING_BATCHES.pop(batch_id, None)
+
+    return ImportCommitResponse(
+        batch_id=batch.id,
+        status=batch.status,
+        total_rows=batch.total_rows,
+        imported_count=results["imported"],
+        duplicates_count=results["duplicates"],
+        rejected_count=results["rejected"],
+        message=(
+            f"Import committed successfully: {results['imported']} new records created, "
+            f"{results['duplicates']} updated, {results['rejected']} rejected."
+        ),
+    )
 
 # ---------------------------------------------------------------------------
 # 3. IMPORT HISTORY (GET /api/import/history)
 # ---------------------------------------------------------------------------
 @router.get("/history", response_model=List[ImportBatchListItem])
 def list_import_history(
-    auth: AuthenticatedUser = Depends(require_role(["admin"])),
+    auth: AuthenticatedUser = Depends(require_role(["admin", "teacher", "counsellor"])),
     db: Session = Depends(get_db),
 ):
     batches = db.query(ImportBatch).filter(

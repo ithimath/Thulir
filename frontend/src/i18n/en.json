@@ -17,10 +17,11 @@
     "interventions": "Interventions",
     "reports": "Reports",
     "data_import": "Data Import",
+    "rules_config": "Rule Configuration",
     "settings": "Settings"
   },
   "header": {
-    "term": "2024-25 • Term II",
+    "term": "2025-26 • Term II",
     "search_placeholder": "Search Student ID / EMIS / Name...",
     "log_review_case": "Log Review / Case",
     "notifications": "Notifications",
@@ -96,7 +97,7 @@
   },
   "overview": {
     "title": "Early-Warning & Support Overview",
-    "subtitle": "Term II (2024-25) • Rule-based early detection across biometric registers, CAT assessments, and staff observations.",
+    "subtitle": "Term II (2025-26) • Rule-based early detection across biometric registers, CAT assessments, and staff observations.",
     "live_sync": "Live Sync",
     "initiate_review": "Initiate Review Session",
     "kpi_total_enrolled": "Total Enrolled Cohort",
@@ -117,6 +118,51 @@
     "invalid_credentials": "Invalid username or password.",
     "session_expired": "Your session has expired. Please sign in again.",
     "unauthorized": "You do not have permission to access this resource."
+  },
+  "data_quality": {
+    "title": "Data Quality Monitor",
+    "subtitle": "Continuous audit of attendance, marks, profile completeness and import integrity.",
+    "completeness_score": "Profile Completeness",
+    "attendance_completeness": "Attendance Completeness",
+    "total_issues": "Quality Alerts",
+    "filter_category": "Filter Category",
+    "filter_class": "Filter Class",
+    "no_issues": "All records meet data quality verification criteria.",
+    "disclaimer": "Data quality issues represent missing or conflicting input records, not student indicators."
+  },
+  "corrections": {
+    "title": "Correction Centre",
+    "subtitle": "Audited indicator verification and immutable data correction proposals.",
+    "propose": "Propose Correction",
+    "original_value": "Original Value",
+    "proposed_value": "Proposed Value",
+    "reason": "Justification Reason",
+    "status": "Review Status",
+    "approve": "Approve & Recalculate",
+    "reject": "Reject",
+    "superseded_notice": "Original values are never deleted. Approved corrections create audited superseding records and trigger deterministic indicator recalculation."
+  },
+  "timeline": {
+    "title": "Unified Student Support History",
+    "filter_all": "All Events",
+    "filter_indicators": "Indicators",
+    "filter_cases": "Cases",
+    "filter_interventions": "Interventions",
+    "filter_corrections": "Corrections",
+    "filter_notes": "Observations & Notes",
+    "confidential_tag": "Confidential Note",
+    "no_events": "No recorded events found in this student timeline."
+  },
+  "effectiveness": {
+    "title": "Intervention Effectiveness",
+    "disclaimer": "Observed change, not proof that the intervention caused it. Multiple factors influence student outcomes.",
+    "baseline": "Baseline at Inception",
+    "current": "Current Metric",
+    "change": "Observed Delta",
+    "status_improving": "Positive Trend",
+    "status_declining": "Declining Trend",
+    "status_no_significant_change": "No Significant Change",
+    "status_insufficient_data": "Insufficient Follow-up Data"
   }
 }
 

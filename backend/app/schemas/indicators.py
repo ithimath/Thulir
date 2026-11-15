@@ -37,6 +37,8 @@ class IndicatorOut(BaseModel):
     threshold_applied: float
     data_quality_limitations: Optional[str]
     detected_at: datetime.datetime
+    data_origin: Optional[str] = "user"
+    source_ref: Optional[str] = None
     student: IndicatorStudentRef
     reviews: list[IndicatorReviewOut] = []
 
@@ -51,6 +53,8 @@ class IndicatorListItem(BaseModel):
     status: str
     plain_explanation: str
     detected_at: datetime.datetime
+    data_origin: Optional[str] = "user"
+    source_ref: Optional[str] = None
     student: IndicatorStudentRef
 
     model_config = {"from_attributes": True}

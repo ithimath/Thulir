@@ -20,6 +20,7 @@ from backend.app.models.models import (
     ImportRowResult,
     AuditLog,
     StudentSupportRequest,
+    DataCorrection,
 )
 
 __all__ = [
@@ -44,5 +45,6 @@ __all__ = [
     "ImportRowResult",
     "AuditLog",
     "StudentSupportRequest",
+    "DataCorrection",
 ]
 

@@ -13,6 +13,8 @@ class School(Base):
     name = Column(String(255), nullable=False)
     district = Column(String(100), nullable=True)
     block = Column(String(100), nullable=True)
+    data_origin = Column(String(16), default="user", nullable=False, index=True)
+    source_ref = Column(String(128), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow, nullable=False)
 
@@ -33,6 +35,8 @@ class User(Base):
     email = Column(String(255), nullable=True)
     designation = Column(String(100), nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
+    data_origin = Column(String(16), default="user", nullable=False, index=True)
+    source_ref = Column(String(128), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow, nullable=False)
 
@@ -62,7 +66,7 @@ class AcademicYear(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     school_id = Column(Integer, ForeignKey("schools.id", ondelete="CASCADE"), nullable=False, index=True)
-    year_name = Column(String(32), nullable=False)  # e.g. "2024-25"
+    year_name = Column(String(32), nullable=False)  # e.g. "2025-26"
     is_current = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
 
@@ -95,6 +99,8 @@ class ClassSection(Base):
     grade = Column(Integer, nullable=False)  # 6 to 12
     section = Column(String(16), nullable=False)  # 'A', 'B', 'C', 'D'
     class_teacher_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    data_origin = Column(String(16), default="user", nullable=False, index=True)
+    source_ref = Column(String(128), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
 
     academic_year = relationship("AcademicYear", back_populates="classes_sections")
@@ -119,6 +125,8 @@ class Student(Base):
     guardian_phone = Column(String(32), nullable=True)
     address = Column(Text, nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
+    data_origin = Column(String(16), default="user", nullable=False, index=True)
+    source_ref = Column(String(128), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow, nullable=False)
 
@@ -129,6 +137,8 @@ class Student(Base):
     assignment_records = relationship("AssignmentRecord", back_populates="student", cascade="all, delete-orphan")
     warning_indicators = relationship("WarningIndicator", back_populates="student", cascade="all, delete-orphan")
     support_cases = relationship("SupportCase", back_populates="student", cascade="all, delete-orphan")
+    profile = relationship("StudentProfile", back_populates="student", uselist=False, cascade="all, delete-orphan")
+    engagement_metrics = relationship("StudentEngagementMetric", back_populates="student", cascade="all, delete-orphan")
 
     __table_args__ = (
         UniqueConstraint("school_id", "emis_id", name="uq_school_student_emis"),
@@ -147,9 +157,15 @@ class AttendanceRecord(Base):
     days_present = Column(Float, nullable=True)
     total_instructional_days = Column(Float, nullable=True)
     attendance_percentage = Column(Float, nullable=True)
+    is_superseded = Column(Boolean, default=False, nullable=False)
+    superseded_by_id = Column(Integer, nullable=True)
+    correction_id = Column(Integer, ForeignKey("data_corrections.id", ondelete="SET NULL"), nullable=True)
+    data_origin = Column(String(16), default="user", nullable=False, index=True)
+    source_ref = Column(String(128), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
 
     student = relationship("Student", back_populates="attendance_records")
+    correction = relationship("DataCorrection", foreign_keys=[correction_id])
 
 
 class AssessmentRecord(Base):
@@ -165,9 +181,15 @@ class AssessmentRecord(Base):
     marks_obtained = Column(Float, nullable=False)
     max_marks = Column(Float, nullable=False)
     percentage = Column(Float, nullable=False)
+    is_superseded = Column(Boolean, default=False, nullable=False)
+    superseded_by_id = Column(Integer, nullable=True)
+    correction_id = Column(Integer, ForeignKey("data_corrections.id", ondelete="SET NULL"), nullable=True)
+    data_origin = Column(String(16), default="user", nullable=False, index=True)
+    source_ref = Column(String(128), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
 
     student = relationship("Student", back_populates="assessment_records")
+    correction = relationship("DataCorrection", foreign_keys=[correction_id])
 
 
 class AssignmentRecord(Base):
@@ -181,9 +203,15 @@ class AssignmentRecord(Base):
     assignment_date = Column(Date, nullable=False)
     status = Column(String(32), nullable=False)  # 'submitted', 'missing', 'late'
     score = Column(Float, nullable=True)
+    is_superseded = Column(Boolean, default=False, nullable=False)
+    superseded_by_id = Column(Integer, nullable=True)
+    correction_id = Column(Integer, ForeignKey("data_corrections.id", ondelete="SET NULL"), nullable=True)
+    data_origin = Column(String(16), default="user", nullable=False, index=True)
+    source_ref = Column(String(128), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
 
     student = relationship("Student", back_populates="assignment_records")
+    correction = relationship("DataCorrection", foreign_keys=[correction_id])
 
 
 class WarningRule(Base):
@@ -198,8 +226,13 @@ class WarningRule(Base):
     threshold_value = Column(Float, nullable=False)
     required_records_count = Column(Integer, nullable=False, default=1)
     description = Column(Text, nullable=False)
+    effective_from = Column(Date, nullable=True)
+    change_reason = Column(Text, nullable=True)
+    created_by_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow, nullable=False)
+
+    created_by = relationship("User", foreign_keys=[created_by_id])
 
     __table_args__ = (
         UniqueConstraint("rule_code", "version", name="uq_rule_code_version"),
@@ -223,6 +256,10 @@ class WarningIndicator(Base):
     supporting_evidence = Column(JSON, nullable=False)
     threshold_applied = Column(Float, nullable=False)
     data_quality_limitations = Column(Text, nullable=True)
+    is_superseded = Column(Boolean, default=False, nullable=False)
+    superseded_by_id = Column(Integer, nullable=True)
+    data_origin = Column(String(16), default="user", nullable=False, index=True)
+    source_ref = Column(String(128), nullable=True)
     detected_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False, index=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow, nullable=False)
@@ -267,6 +304,8 @@ class SupportCase(Base):
     reason = Column(Text, nullable=False)
     observations = Column(Text, nullable=True)
     review_date = Column(Date, nullable=True)
+    data_origin = Column(String(16), default="user", nullable=False, index=True)
+    source_ref = Column(String(128), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow, nullable=False)
 
@@ -295,6 +334,9 @@ class Intervention(Base):
     target_date = Column(Date, nullable=True)
     completion_date = Column(Date, nullable=True)
     outcome_notes = Column(Text, nullable=True)
+    baseline_snapshot = Column(JSON, nullable=True)
+    data_origin = Column(String(16), default="user", nullable=False, index=True)
+    source_ref = Column(String(128), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow, nullable=False)
 
@@ -350,6 +392,8 @@ class ImportBatch(Base):
     duplicates_count = Column(Integer, default=0, nullable=False)
     status = Column(String(32), default="uploaded", nullable=False)  # uploaded, validated, committed, failed
     error_summary = Column(Text, nullable=True)
+    data_origin = Column(String(16), default="user", nullable=False, index=True)
+    source_ref = Column(String(128), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
     committed_at = Column(DateTime, nullable=True)
 
@@ -401,6 +445,8 @@ class StudentSupportRequest(Base):
     status = Column(String(32), default="Submitted", nullable=False, index=True)  # Submitted, Acknowledged, Linked to Case, Resolved
     description = Column(Text, nullable=False)
     intake_notes = Column(Text, nullable=True)
+    data_origin = Column(String(16), default="user", nullable=False, index=True)
+    source_ref = Column(String(128), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow, nullable=False)
 
@@ -409,4 +455,220 @@ class StudentSupportRequest(Base):
     intake_staff = relationship("User", foreign_keys=[intake_staff_id])
     assigned_staff = relationship("User", foreign_keys=[assigned_staff_id])
     case = relationship("SupportCase")
+
+
+class DataCorrection(Base):
+    __tablename__ = "data_corrections"
+
+    id = Column(Integer, primary_key=True, index=True)
+    school_id = Column(Integer, ForeignKey("schools.id", ondelete="CASCADE"), nullable=False, index=True)
+    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False, index=True)
+    record_type = Column(String(32), nullable=False, index=True)  # 'attendance', 'assessment', 'assignment'
+    target_record_id = Column(Integer, nullable=False, index=True)  # ID of original record
+    superseding_record_id = Column(Integer, nullable=True)  # ID of newly created superseding record
+    status = Column(String(32), default="Pending", nullable=False, index=True)  # 'Pending', 'Approved', 'Rejected'
+    original_data = Column(JSON, nullable=False)  # snapshot of original record values
+    proposed_data = Column(JSON, nullable=False)  # proposed new values
+    reason = Column(Text, nullable=False)  # required reason for correction
+    proposed_by_id = Column(Integer, ForeignKey("users.id", ondelete="RESTRICT"), nullable=False, index=True)
+    approved_by_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    approved_at = Column(DateTime, nullable=True)
+    rejection_reason = Column(Text, nullable=True)
+    data_origin = Column(String(16), default="user", nullable=False, index=True)
+    source_ref = Column(String(128), nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow, nullable=False)
+
+    school = relationship("School")
+    student = relationship("Student")
+    proposer = relationship("User", foreign_keys=[proposed_by_id])
+    approver = relationship("User", foreign_keys=[approved_by_id])
+
+
+# ===========================================================================
+# Reference & Side Tables for Real Dataset Integration
+# ===========================================================================
+
+class RefStudentPerformance(Base):
+    __tablename__ = "ref_student_performance"
+
+    id = Column(Integer, primary_key=True, index=True)
+    record_id = Column(Integer, nullable=False, index=True)
+    subject = Column(String(32), nullable=False, index=True)
+    school = Column(String(32), nullable=True)
+    gender = Column(String(16), nullable=True)
+    age = Column(Integer, nullable=True)
+    address = Column(String(16), nullable=True)
+    family_size = Column(String(16), nullable=True)
+    parents_status = Column(String(16), nullable=True)
+    mother_edu = Column(Integer, nullable=True)
+    father_edu = Column(Integer, nullable=True)
+    mother_job = Column(String(64), nullable=True)
+    father_job = Column(String(64), nullable=True)
+    reason = Column(String(64), nullable=True)
+    guardian = Column(String(32), nullable=True)
+    travel_time = Column(Integer, nullable=True)
+    study_time = Column(Integer, nullable=True)
+    failures = Column(Integer, nullable=True)
+    school_support = Column(Integer, nullable=True)
+    family_support = Column(Integer, nullable=True)
+    paid_classes = Column(Integer, nullable=True)
+    activities = Column(Integer, nullable=True)
+    nursery = Column(Integer, nullable=True)
+    wants_higher_edu = Column(Integer, nullable=True)
+    internet = Column(Integer, nullable=True)
+    romantic = Column(Integer, nullable=True)
+    family_relationship = Column(Integer, nullable=True)
+    free_time = Column(Integer, nullable=True)
+    go_out = Column(Integer, nullable=True)
+    workday_alcohol = Column(Integer, nullable=True)
+    weekend_alcohol = Column(Integer, nullable=True)
+    health = Column(Integer, nullable=True)
+    absences = Column(Integer, nullable=True)
+    grade_p1 = Column(Float, nullable=True)
+    grade_p2 = Column(Float, nullable=True)
+    grade_final = Column(Float, nullable=True)
+    passed = Column(Integer, nullable=True)
+    grade_final_pct = Column(Float, nullable=True)
+    zero_final_flag = Column(Integer, nullable=True)
+    grade_trend = Column(Integer, nullable=True)
+    source_file = Column(String(128), nullable=False)
+    imported_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+
+
+class RefLmsEngagement(Base):
+    __tablename__ = "ref_lms_engagement"
+
+    id = Column(Integer, primary_key=True, index=True)
+    record_id = Column(Integer, nullable=False, index=True)
+    gender = Column(String(16), nullable=True)
+    nationality = Column(String(64), nullable=True)
+    place_of_birth = Column(String(64), nullable=True)
+    stage = Column(String(64), nullable=True)
+    grade = Column(String(16), nullable=True)
+    section = Column(String(16), nullable=True)
+    topic = Column(String(64), nullable=True)
+    semester = Column(String(32), nullable=True)
+    relation = Column(String(32), nullable=True)
+    raised_hands = Column(Integer, nullable=True)
+    visited_resources = Column(Integer, nullable=True)
+    announcements_view = Column(Integer, nullable=True)
+    discussion = Column(Integer, nullable=True)
+    parent_answered_survey = Column(String(16), nullable=True)
+    parent_school_satisfaction = Column(String(32), nullable=True)
+    absence_band = Column(String(32), nullable=True)
+    performance_class = Column(String(16), nullable=True, index=True)
+    source_file = Column(String(128), nullable=False)
+    imported_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+
+
+class RefHigherEdDropout(Base):
+    __tablename__ = "ref_higher_ed_dropout"
+
+    id = Column(Integer, primary_key=True, index=True)
+    record_id = Column(Integer, nullable=False, index=True)
+    marital_status = Column(String(32), nullable=True)
+    application_mode = Column(Integer, nullable=True)
+    application_order = Column(Integer, nullable=True)
+    course = Column(Integer, nullable=True)
+    daytime_attendance = Column(String(32), nullable=True)
+    previous_qualification = Column(Integer, nullable=True)
+    nationality = Column(Integer, nullable=True)
+    mother_qualification = Column(Integer, nullable=True)
+    father_qualification = Column(Integer, nullable=True)
+    mother_occupation = Column(Integer, nullable=True)
+    father_occupation = Column(Integer, nullable=True)
+    displaced = Column(Integer, nullable=True)
+    educational_special_needs = Column(Integer, nullable=True)
+    debtor = Column(Integer, nullable=True)
+    tuition_fees_up_to_date = Column(Integer, nullable=True)
+    gender = Column(String(16), nullable=True)
+    scholarship_holder = Column(Integer, nullable=True)
+    age_at_enrollment = Column(Integer, nullable=True)
+    international = Column(Integer, nullable=True)
+    sem1_credited = Column(Float, nullable=True)
+    sem1_enrolled = Column(Float, nullable=True)
+    sem1_evaluations = Column(Float, nullable=True)
+    sem1_approved = Column(Float, nullable=True)
+    sem1_grade = Column(Float, nullable=True)
+    sem1_without_eval = Column(Float, nullable=True)
+    sem2_credited = Column(Float, nullable=True)
+    sem2_enrolled = Column(Float, nullable=True)
+    sem2_evaluations = Column(Float, nullable=True)
+    sem2_approved = Column(Float, nullable=True)
+    sem2_grade = Column(Float, nullable=True)
+    sem2_without_eval = Column(Float, nullable=True)
+    unemployment_rate = Column(Float, nullable=True)
+    inflation_rate = Column(Float, nullable=True)
+    gdp = Column(Float, nullable=True)
+    outcome = Column(String(32), nullable=True, index=True)
+    sem1_pass_rate = Column(Float, nullable=True)
+    sem2_pass_rate = Column(Float, nullable=True)
+    pass_rate_change = Column(Float, nullable=True)
+    grade_change = Column(Float, nullable=True)
+    dropout_flag = Column(Integer, nullable=True)
+    source_file = Column(String(128), nullable=False)
+    imported_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+
+
+class StudentProfile(Base):
+    __tablename__ = "student_profiles"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False, unique=True, index=True)
+    age = Column(Integer, nullable=True)
+    address = Column(String(32), nullable=True)
+    family_size = Column(String(16), nullable=True)
+    parents_status = Column(String(16), nullable=True)
+    mother_edu = Column(Integer, nullable=True)
+    father_edu = Column(Integer, nullable=True)
+    mother_job = Column(String(64), nullable=True)
+    father_job = Column(String(64), nullable=True)
+    reason = Column(String(64), nullable=True)
+    guardian = Column(String(32), nullable=True)
+    travel_time = Column(Integer, nullable=True)
+    study_time = Column(Integer, nullable=True)
+    failures = Column(Integer, nullable=True)
+    school_support = Column(Integer, nullable=True)
+    family_support = Column(Integer, nullable=True)
+    paid_classes = Column(Integer, nullable=True)
+    activities = Column(Integer, nullable=True)
+    nursery = Column(Integer, nullable=True)
+    wants_higher_edu = Column(Integer, nullable=True)
+    internet = Column(Integer, nullable=True)
+    romantic = Column(Integer, nullable=True)
+    family_relationship = Column(Integer, nullable=True)
+    free_time = Column(Integer, nullable=True)
+    go_out = Column(Integer, nullable=True)
+    workday_alcohol = Column(Integer, nullable=True)
+    weekend_alcohol = Column(Integer, nullable=True)
+    health = Column(Integer, nullable=True)
+    raw_profile_data = Column(JSON, nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+
+    student = relationship("Student", back_populates="profile")
+
+
+class StudentEngagementMetric(Base):
+    __tablename__ = "student_engagement_metrics"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False, index=True)
+    stage = Column(String(64), nullable=True)
+    topic = Column(String(64), nullable=True)
+    semester = Column(String(32), nullable=True)
+    relation = Column(String(32), nullable=True)
+    raised_hands = Column(Integer, nullable=True)
+    visited_resources = Column(Integer, nullable=True)
+    announcements_view = Column(Integer, nullable=True)
+    discussion = Column(Integer, nullable=True)
+    parent_answered_survey = Column(String(16), nullable=True)
+    parent_school_satisfaction = Column(String(32), nullable=True)
+    absence_band = Column(String(32), nullable=True)
+    performance_class = Column(String(16), nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+
+    student = relationship("Student", back_populates="engagement_metrics")
+
+
 

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext.jsx'
+import ThulirLogo from '../components/ThulirLogo.jsx'
 
 export default function LoginPage() {
   const { t } = useTranslation()
@@ -35,11 +36,18 @@ export default function LoginPage() {
     <div className="min-h-screen bg-surface flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         {/* Logo area */}
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-primary-container mb-4">
-            <span className="material-symbols-outlined text-on-primary text-[28px]">school</span>
+        <div className="mb-8 text-center flex flex-col items-center">
+          <div className="relative p-3 rounded-2xl bg-gradient-to-br from-slate-900 to-teal-950 ring-1 ring-teal-500/30 shadow-lg shadow-teal-950/20 mb-3 flex items-center justify-center">
+            <ThulirLogo size={48} />
           </div>
-          <h1 className="font-headline-lg text-headline-lg text-on-surface">{t('app.name')}</h1>
+          <div className="flex items-center gap-2 justify-center">
+            <h1 className="font-brand font-extrabold text-[28px] text-on-surface tracking-wider">
+              {t('app.name')}
+            </h1>
+            <span className="px-2 py-0.5 rounded text-xs font-semibold bg-secondary/15 text-secondary border border-secondary/30">
+              துளிர்
+            </span>
+          </div>
           <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">{t('app.subtitle')}</p>
         </div>
 
@@ -94,6 +102,36 @@ export default function LoginPage() {
               {loading ? t('auth.logging_in') : t('auth.login_button')}
             </button>
           </form>
+
+          {/* Quick Fill Demo Roles */}
+          <div className="mt-4 pt-4 border-t border-outline-variant/30">
+            <span className="text-[11px] font-semibold text-outline uppercase tracking-wider block mb-2">
+              Demo Access Quick-Fill:
+            </span>
+            <div className="grid grid-cols-3 gap-1.5">
+              <button
+                type="button"
+                onClick={() => { setUsername('admin'); setPassword('Password123!'); setError(null); }}
+                className="px-2 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface text-[11px] font-medium transition-colors text-center"
+              >
+                Admin
+              </button>
+              <button
+                type="button"
+                onClick={() => { setUsername('teacher'); setPassword('Password123!'); setError(null); }}
+                className="px-2 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface text-[11px] font-medium transition-colors text-center"
+              >
+                Teacher
+              </button>
+              <button
+                type="button"
+                onClick={() => { setUsername('counsellor'); setPassword('Password123!'); setError(null); }}
+                className="px-2 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface text-[11px] font-medium transition-colors text-center"
+              >
+                Counselor
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Disclaimer */}

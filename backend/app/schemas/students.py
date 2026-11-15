@@ -39,6 +39,8 @@ class StudentOut(BaseModel):
     guardian_phone: Optional[str]
     address: Optional[str]
     is_active: bool
+    data_origin: Optional[str] = "user"
+    source_ref: Optional[str] = None
     created_at: datetime.datetime
     updated_at: datetime.datetime
 
@@ -53,6 +55,8 @@ class StudentListItem(BaseModel):
     gender: Optional[str]
     class_section: Optional[ClassSectionOut]
     is_active: bool
+    data_origin: Optional[str] = "user"
+    source_ref: Optional[str] = None
     # Latest attendance summary (from most recent period)
     latest_attendance_pct: Optional[float] = None
     open_indicators_count: int = 0
