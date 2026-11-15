@@ -84,7 +84,7 @@ export default function StudentDirectoryPage() {
           className="h-9 px-3 bg-surface-container-lowest text-on-surface font-body-sm text-body-sm rounded border border-outline-variant focus:outline-none"
         >
           <option value="">All Grades</option>
-          {[6,7,8,9,10,11,12].map(g => <option key={g} value={g}>Grade {g}</option>)}
+          {[6, 7, 8, 9, 10, 11, 12].map(g => <option key={g} value={g}>Grade {g}</option>)}
         </select>
         <select
           value={section}
@@ -92,7 +92,7 @@ export default function StudentDirectoryPage() {
           className="h-9 px-3 bg-surface-container-lowest text-on-surface font-body-sm text-body-sm rounded border border-outline-variant focus:outline-none"
         >
           <option value="">All Sections</option>
-          {['A','B','C','D'].map(s => <option key={s} value={s}>Section {s}</option>)}
+          {['A', 'B', 'C', 'D'].map(s => <option key={s} value={s}>Section {s}</option>)}
         </select>
         <select
           value={dataOrigin}
@@ -142,81 +142,81 @@ export default function StudentDirectoryPage() {
           <>
             <div className="overflow-x-auto w-full">
               <table className="w-full">
-              <thead>
-                <tr className="bg-surface-container border-b border-outline-variant">
-                  <th className="px-4 py-3 text-left font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">EMIS ID</th>
-                  <th className="px-4 py-3 text-left font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{t('common.student')}</th>
-                  <th className="px-4 py-3 text-left font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{t('common.class_sec')}</th>
-                  <th className="px-4 py-3 text-right font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Attendance</th>
-                  <th className="px-4 py-3 text-center font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Indicators</th>
-                  <th className="px-4 py-3 text-center font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Cases</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.items.map((s, idx) => (
-                  <tr
-                    key={s.id}
-                    className={`${idx % 2 === 0 ? 'bg-surface-container-lowest' : 'bg-surface-container-low'} hover:bg-surface-container transition-colors`}
-                  >
-                    <td className="px-4 py-2 font-numeric-table text-numeric-table text-on-surface-variant">{s.emis_id}</td>
-                    <td className="px-4 py-2">
-                      <div className="flex items-center gap-3">
-                        <StudentAvatar student={s} size={36} />
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <Link
-                              to={`/students/${s.id}`}
-                              className="font-label-md text-label-md text-secondary hover:underline"
-                            >
-                              {s.full_name}
-                            </Link>
-                            {s.data_origin === 'mock' && (
-                              <span className="px-1.5 py-0.2 rounded text-[10px] font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-700/50">
-                                DEMO
-                              </span>
-                            )}
-                            {s.data_origin === 'dataset' && (
-                              <span className="px-1.5 py-0.2 rounded text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700/50">
-                                DATASET
-                              </span>
-                            )}
-                          </div>
-                          <div className="font-body-sm text-body-sm text-on-surface-variant">{s.gender}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-2 font-label-md text-label-md text-on-surface">
-                      {s.class_section ? `${s.class_section.grade}-${s.class_section.section}` : '—'}
-                    </td>
-                    <td className="px-4 py-2 text-right">
-                      {s.latest_attendance_pct != null ? (
-                        <span className={`font-numeric-table text-numeric-table ${s.latest_attendance_pct < 75 ? 'text-error font-semibold' : 'text-on-surface'}`}>
-                          {s.latest_attendance_pct.toFixed(1)}%
-                        </span>
-                      ) : (
-                        <span className="font-body-sm text-body-sm text-on-surface-variant">{t('common.insufficient_data')}</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-2 text-center">
-                      {s.open_indicators_count > 0 ? (
-                        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-error text-on-error font-label-sm text-label-sm">
-                          {s.open_indicators_count}
-                        </span>
-                      ) : (
-                        <span className="font-body-sm text-body-sm text-on-surface-variant">—</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-2 text-center">
-                      {s.open_cases_count > 0 ? (
-                        <Badge variant="in_progress">{s.open_cases_count}</Badge>
-                      ) : (
-                        <span className="font-body-sm text-body-sm text-on-surface-variant">—</span>
-                      )}
-                    </td>
+                <thead>
+                  <tr className="bg-surface-container border-b border-outline-variant">
+                    <th className="px-4 py-3 text-left font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">EMIS ID</th>
+                    <th className="px-4 py-3 text-left font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{t('common.student')}</th>
+                    <th className="px-4 py-3 text-left font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{t('common.class_sec')}</th>
+                    <th className="px-4 py-3 text-right font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Attendance</th>
+                    <th className="px-4 py-3 text-center font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Indicators</th>
+                    <th className="px-4 py-3 text-center font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Cases</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {data.items.map((s, idx) => (
+                    <tr
+                      key={s.id}
+                      className={`${idx % 2 === 0 ? 'bg-surface-container-lowest' : 'bg-surface-container-low'} hover:bg-surface-container transition-colors`}
+                    >
+                      <td className="px-4 py-2 font-numeric-table text-numeric-table text-on-surface-variant">{s.emis_id}</td>
+                      <td className="px-4 py-2">
+                        <div className="flex items-center gap-3">
+                          <StudentAvatar student={s} size={36} />
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <Link
+                                to={`/students/${s.id}`}
+                                className="font-label-md text-label-md text-secondary hover:underline"
+                              >
+                                {s.full_name}
+                              </Link>
+                              {s.data_origin === 'mock' && (
+                                <span className="px-1.5 py-0.2 rounded text-[10px] font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-700/50">
+                                  DEMO
+                                </span>
+                              )}
+                              {s.data_origin === 'dataset' && (
+                                <span className="px-1.5 py-0.2 rounded text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700/50">
+                                  DATASET
+                                </span>
+                              )}
+                            </div>
+                            <div className="font-body-sm text-body-sm text-on-surface-variant">{s.gender}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-2 font-label-md text-label-md text-on-surface">
+                        {s.class_section ? `${s.class_section.grade}-${s.class_section.section}` : '—'}
+                      </td>
+                      <td className="px-4 py-2 text-right">
+                        {s.latest_attendance_pct != null ? (
+                          <span className={`font-numeric-table text-numeric-table ${s.latest_attendance_pct < 75 ? 'text-error font-semibold' : 'text-on-surface'}`}>
+                            {s.latest_attendance_pct.toFixed(1)}%
+                          </span>
+                        ) : (
+                          <span className="font-body-sm text-body-sm text-on-surface-variant">{t('common.insufficient_data')}</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        {s.open_indicators_count > 0 ? (
+                          <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-error text-on-error font-label-sm text-label-sm">
+                            {s.open_indicators_count}
+                          </span>
+                        ) : (
+                          <span className="font-body-sm text-body-sm text-on-surface-variant">—</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        {s.open_cases_count > 0 ? (
+                          <Badge variant="in_progress">{s.open_cases_count}</Badge>
+                        ) : (
+                          <span className="font-body-sm text-body-sm text-on-surface-variant">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
 
             {/* Pagination */}

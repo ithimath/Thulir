@@ -10,6 +10,7 @@ from backend.app.config import settings
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
 @router.post("/login", response_model=LoginResponse)
+@router.post("/login/", response_model=LoginResponse, include_in_schema=False)
 def login(
     req: LoginRequest,
     response: Response,
@@ -129,6 +130,7 @@ def login(
 
 
 @router.post("/logout")
+@router.post("/logout/", include_in_schema=False)
 def logout(response: Response, auth: AuthenticatedUser = Depends(get_current_user), db: Session = Depends(get_db)):
     response.delete_cookie(key="thulir_session", httponly=True, samesite="lax")
     audit = AuditLog(
@@ -144,6 +146,7 @@ def logout(response: Response, auth: AuthenticatedUser = Depends(get_current_use
 
 
 @router.get("/me", response_model=UserProfileOut)
+@router.get("/me/", response_model=UserProfileOut, include_in_schema=False)
 def get_current_profile(auth: AuthenticatedUser = Depends(get_current_user), db: Session = Depends(get_db)):
     roles = db.query(UserSchoolRole, School).join(
         School, UserSchoolRole.school_id == School.id

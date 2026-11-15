@@ -298,9 +298,8 @@ export default function DataImportPage() {
                     accept=".csv, .xlsx, .xls"
                     disabled={role?.role_name !== 'admin'}
                     onChange={handleFileChange}
-                    className={`w-full h-10 px-2 py-1 bg-surface-container-low text-on-surface rounded border ${
-                      uploadError ? 'border-rose-500 ring-1 ring-rose-500/30' : 'border-outline-variant'
-                    } font-body-sm text-body-sm disabled:opacity-60 transition-colors`}
+                    className={`w-full h-10 px-2 py-1 bg-surface-container-low text-on-surface rounded border ${uploadError ? 'border-rose-500 ring-1 ring-rose-500/30' : 'border-outline-variant'
+                      } font-body-sm text-body-sm disabled:opacity-60 transition-colors`}
                   />
                   {uploadError && (
                     <div className="mt-3 p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 rounded-lg flex items-start gap-2.5 text-rose-900 dark:text-rose-200">

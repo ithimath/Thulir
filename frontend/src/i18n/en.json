@@ -117,7 +117,9 @@
     "logging_in": "Signing In...",
     "invalid_credentials": "Invalid username or password.",
     "session_expired": "Your session has expired. Please sign in again.",
-    "unauthorized": "You do not have permission to access this resource."
+    "unauthorized": "You do not have permission to access this resource.",
+    "server_unavailable": "Backend service unreachable (HTTP 404). Please ensure the backend server is running on http://127.0.0.1:8000.",
+    "connection_error": "Cannot connect to backend server. Please verify backend is running on http://127.0.0.1:8000."
   },
   "data_quality": {
     "title": "Data Quality Monitor",

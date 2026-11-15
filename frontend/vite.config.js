@@ -47,8 +47,29 @@ export default defineConfig(({ mode }) => {
       port: 5173,
       proxy: {
         '/api': {
-          target: 'http://localhost:8000',
+          target: 'http://127.0.0.1:8000',
           changeOrigin: true,
+          secure: false,
+          configure: (proxy, _options) => {
+            proxy.on('error', (err, _req, res) => {
+              if (res && !res.headersSent) {
+                res.writeHead(503, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({
+                  detail: 'THULIR backend server is unreachable at http://127.0.0.1:8000. Please start the backend service.'
+                }));
+              }
+            });
+          },
+        },
+      },
+    },
+    preview: {
+      port: 5173,
+      proxy: {
+        '/api': {
+          target: 'http://127.0.0.1:8000',
+          changeOrigin: true,
+          secure: false,
         },
       },
     },

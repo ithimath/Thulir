@@ -70,6 +70,8 @@ async def generic_exception_handler(request: Request, exc: Exception):
 
 # 4. Include Routers
 app.include_router(auth.router)
+# Support direct /auth path without /api prefix
+app.include_router(auth.router, prefix="/auth", include_in_schema=False)
 app.include_router(students.router)
 app.include_router(indicators.router)
 app.include_router(cases.router)
@@ -113,3 +115,31 @@ def get_current_academic_year(
         "term_name": current_period.name if current_period else None,
         "term_sequence": current_period.sequence_order if current_period else None,
     }
+
+
+# 5. Serve Frontend SPA (if built)
+import os
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+frontend_dist = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist"))
+if os.path.exists(frontend_dist) and os.path.exists(os.path.join(frontend_dist, "index.html")):
+    assets_dir = os.path.join(frontend_dist, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="static-assets")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_spa(request: Request, full_path: str):
+        # Don't intercept API routes or documentation
+        if (
+            full_path.startswith("api/")
+            or full_path.startswith("auth/")
+            or full_path in ("api", "auth", "docs", "redoc", "openapi.json")
+        ):
+            return JSONResponse(status_code=404, content={"detail": f"Endpoint /{full_path} not found"})
+
+        target_file = os.path.join(frontend_dist, full_path)
+        if full_path and os.path.exists(target_file) and os.path.isfile(target_file):
+            return FileResponse(target_file)
+        return FileResponse(os.path.join(frontend_dist, "index.html"))
+

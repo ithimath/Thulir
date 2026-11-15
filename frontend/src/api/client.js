@@ -23,11 +23,15 @@ async function request(method, path, body) {
   try {
     data = await res.json()
   } catch {
-    data = { detail: res.statusText }
+    const fallbackMessage = res.status === 404
+      ? 'Backend service or requested endpoint not found (HTTP 404). Please ensure the backend is running at http://127.0.0.1:8000.'
+      : (res.statusText || `HTTP ${res.status}`)
+    data = { detail: fallbackMessage }
   }
 
   if (!res.ok) {
-    const err = new Error(data?.detail || `HTTP ${res.status}`)
+    const message = data?.detail || (res.status === 404 ? 'Endpoint not found (HTTP 404)' : `HTTP ${res.status}`)
+    const err = new Error(typeof message === 'string' ? message : JSON.stringify(message))
     err.status = res.status
     err.data = data
     throw err
@@ -50,9 +54,18 @@ export async function apiUpload(path, formData) {
     credentials: 'include',
     body: formData, // do NOT set Content-Type — browser sets it with boundary
   })
-  const data = await res.json().catch(() => ({ detail: res.statusText }))
+  let data
+  try {
+    data = await res.json()
+  } catch {
+    const fallbackMessage = res.status === 404
+      ? 'Backend service or requested endpoint not found (HTTP 404). Please ensure the backend is running at http://127.0.0.1:8000.'
+      : (res.statusText || `HTTP ${res.status}`)
+    data = { detail: fallbackMessage }
+  }
   if (!res.ok) {
-    const err = new Error(data?.detail || `HTTP ${res.status}`)
+    const message = data?.detail || (res.status === 404 ? 'Endpoint not found (HTTP 404)' : `HTTP ${res.status}`)
+    const err = new Error(typeof message === 'string' ? message : JSON.stringify(message))
     err.status = res.status
     err.data = data
     throw err

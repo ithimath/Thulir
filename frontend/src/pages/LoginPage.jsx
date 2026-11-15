@@ -24,6 +24,10 @@ export default function LoginPage() {
     } catch (err) {
       if (err.status === 401) {
         setError(t('auth.invalid_credentials'))
+      } else if (err.status === 404 || err.message === 'HTTP 404' || err.message?.includes('404')) {
+        setError(t('auth.server_unavailable'))
+      } else if (err.status === 503 || err.status === 502 || err.message?.includes('unreachable') || err.message?.includes('Failed to fetch')) {
+        setError(t('auth.connection_error'))
       } else {
         setError(err.message || t('common.error'))
       }
