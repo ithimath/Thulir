@@ -6,7 +6,7 @@ import ThulirLogo from '../components/ThulirLogo.jsx'
 
 export default function LoginPage() {
   const { t } = useTranslation()
-  const { login } = useAuth()
+  const { login, loginDemo } = useAuth()
   const navigate = useNavigate()
 
   const [username, setUsername] = useState('')
@@ -60,9 +60,26 @@ export default function LoginPage() {
           <h2 className="font-headline-sm text-headline-sm text-on-surface mb-6">{t('auth.title')}</h2>
 
           {error && (
-            <div className="mb-4 px-3 py-2 rounded bg-error-container text-on-error-container font-body-sm text-body-sm flex items-start gap-2">
-              <span className="material-symbols-outlined text-[16px] mt-0.5 text-error">error</span>
-              {error}
+            <div className="mb-4 p-3 rounded-lg bg-error-container text-on-error-container font-body-sm text-body-sm space-y-2">
+              <div className="flex items-start gap-2">
+                <span className="material-symbols-outlined text-[18px] mt-0.5 text-error flex-shrink-0">error</span>
+                <span className="leading-snug">{error}</span>
+              </div>
+              {(error.includes('unreachable') || error.includes('backend') || error.includes('404') || error.includes('503') || error.includes('connect')) && (
+                <div className="pt-2 border-t border-error/20 flex items-center justify-between">
+                  <span className="text-[11px] text-on-error-container/80">Evaluate offline?</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      loginDemo(username || 'admin')
+                      navigate('/overview', { replace: true })
+                    }}
+                    className="px-2.5 py-1 text-[11px] font-semibold bg-surface-container-lowest text-on-surface hover:bg-surface-container rounded transition-colors shadow-sm"
+                  >
+                    Enter Demo Mode →
+                  </button>
+                </div>
+              )}
             </div>
           )}
 

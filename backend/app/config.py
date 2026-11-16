@@ -14,7 +14,10 @@ class Settings:
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
     CORS_ORIGINS: list[str] = [
         origin.strip()
-        for origin in os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
+        for origin in os.getenv(
+            "CORS_ORIGINS",
+            "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,http://localhost:4173,http://127.0.0.1:4173,http://localhost:8000,http://127.0.0.1:8000"
+        ).split(",")
         if origin.strip()
     ]
     MAX_UPLOAD_SIZE_MB: int = int(os.getenv("MAX_UPLOAD_SIZE_MB", "5"))

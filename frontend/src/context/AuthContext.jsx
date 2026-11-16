@@ -46,6 +46,47 @@ export function AuthProvider({ children }) {
     return data
   }, [])
 
+  const loginDemo = useCallback((demoRole = 'admin') => {
+    const roleKey = demoRole.toLowerCase()
+    const demoProfiles = {
+      admin: {
+        id: 1,
+        username: 'admin',
+        full_name: 'R. Selvam (HM)',
+        email: 'admin@school.tn.gov.in',
+        designation: 'Headmaster & Administrator',
+        role: { role_name: 'admin', school_id: 1, school_name: 'Government Higher Secondary School Kovilpatti', assigned_classes: null }
+      },
+      teacher: {
+        id: 2,
+        username: 'teacher',
+        full_name: 'K. Revathi (PGT)',
+        email: 'teacher@school.tn.gov.in',
+        designation: 'Post Graduate Teacher',
+        role: { role_name: 'teacher', school_id: 1, school_name: 'Government Higher Secondary School Kovilpatti', assigned_classes: '9-A, 10-B' }
+      },
+      counsellor: {
+        id: 3,
+        username: 'counsellor',
+        full_name: 'R. Meenakshi',
+        email: 'counsellor@school.tn.gov.in',
+        designation: 'District Counsellor',
+        role: { role_name: 'counsellor', school_id: 1, school_name: 'Government Higher Secondary School Kovilpatti', assigned_classes: null }
+      }
+    }
+    const profile = demoProfiles[roleKey] || demoProfiles.admin
+    setUser({
+      id: profile.id,
+      username: profile.username,
+      full_name: profile.full_name,
+      email: profile.email,
+      designation: profile.designation,
+      is_demo_session: true,
+    })
+    setRole(profile.role)
+    return profile
+  }, [])
+
   const logout = useCallback(async () => {
     try {
       await apiPost('/api/auth/logout', {})
@@ -59,7 +100,7 @@ export function AuthProvider({ children }) {
   const isAuthenticated = !!user
 
   return (
-    <AuthContext.Provider value={{ user, role, loading, error, isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ user, role, loading, error, isAuthenticated, login, loginDemo, logout }}>
       {children}
     </AuthContext.Provider>
   )
